@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Travela - Tourism Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/userAssets/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/userAssets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/userAssets/css/style.css" rel="stylesheet">
+    <link href="/userAssets/css/boyug-my-page.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+    <!-- Navbar & Hero Start -->
+    <div class="container-fluid position-relative p-0">
+        <div th:replace="~{userView/modules/navbar}"></div>
+    </div>
+
+    <button type="button" class="open-nav-btn">>></button>
+    <div class="side-nav-container">
+        <button type="button" class="close-nav-btn"><<</button>
+        <a href="boyug-my-info" class="side-nav-item">내 정보 관리</a>
+        <a href="boyug-file-list" class="side-nav-item">사진 관리</a>
+        <a href="boyug-my-session-list" class="side-nav-item">활동 글 내역</a>
+        <a href="boyug-request" class="side-nav-item">신청 보낸 내역</a>
+        <a href="boyug-response" class="side-nav-item">신청 온 내역</a>
+        <a href="boyug-matching" class="side-nav-item">매칭 내역</a>
+        <a href="/userView/advice" class="side-nav-item">상담 요청</a>
+    </div>
+
+    <div class="main-container">
+        <!-- 신청 내역 -->
+
+    </div>
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/userAssets/lib/easing/easing.min.js"></script>
+    <script src="/userAssets/lib/waypoints/waypoints.min.js"></script>
+    <script src="/userAssets/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="/userAssets/lib/lightbox/js/lightbox.min.js"></script>
+
+
+    <!-- Template Javascript -->
+    <script src="/userAssets/js/main.js"></script>
+    <script src="/userAssets/js/boyug-my-page.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+
+        $('.main-container').load('response-module');
+
+        $('.main-container').on('click', '.boyug-response-confirm-btn', (e) => {
+            const detailId = $(e.target).parent().data('detailid');
+            const userId = $(e.target).parent().data('userid');
+            $.ajax({
+                url : "response-confirm",
+                method : "POST",
+                data : "detailId=" + detailId + "&userId=" + userId,
+                dataType : "text",
+                success : (response, status, xhr) => {
+                    $('.main-container').load('response-module');
+                },
+                error : (status, xhr, err) => {
+                    alert('전송 실패');
+                }
+            });
+        });
+
+        $('.main-container').on('click', '.boyug-response-refuse-btn', (e) => {
+            const detailId = $(e.target).parent().data('detailid');
+            const userId = $(e.target).parent().data('userid');
+            $.ajax({
+                url : "response-refuse",
+                method : "POST",
+                data : "detailId=" + detailId + "&userId=" + userId,
+                dataType : "text",
+                success : (response, status, xhr) => {
+                    $('.main-container').load('response-module');
+                },
+                error : (status, xhr, err) => {
+                    alert('전송 실패');
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+<div class="boyug-container" xmlns:th="http://www.thymeleaf.org">
+    <div class="boyug-request-header">
+        <h3>참가 신청 보낸 내역</h3>
+    </div>
+    <div class="boyug-request-main-container">
+        <ul class="boyug-request-ul">
+            <li th:each="detail, detailStat : ${ details }">
+                <span th:text="${users.get(detailStat.index).userName}"></span>
+                <span th:text="${detail.boyugProgramDetailDate}"></span>
+                <div>
+                    <span th:text="|${detail.boyugProgramDetailStartTime} ~ |"></span>
+                    <span th:text="${detail.boyugProgramDetailEndTime}"></span>
+                </div>
+                <span th:text="${detail.sessionName}"></span>
+                <span class="badge text-bg-secondary">대기중</span>
+            </li>
+        </ul>
+        <nav aria-label="Page navigation example" class="boyug-pagination">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>

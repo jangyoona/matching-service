@@ -1,0 +1,43 @@
+const closeBtn = $(".close-btn");
+const chatbox = $(".chatbox");
+const chatInput = $(".chat-input textarea");
+const sendChatBtn = $(".chat-input span");
+
+let userMessage = null;
+const inputInitHeight = chatInput.scrollHeight;
+
+const createChatLi = (message, className) => {
+    const chatLi = $("<li></li>");
+    chatLi.addClass(["chat", className]);
+    let chatContent = className === "outgoing" ? `<p></p>` : `<span class="material-symbols-outlined">smart_toy</span><p></p>`;
+    chatLi.html(chatContent);
+    chatLi.find("p").text(message);
+    return chatLi;
+}
+
+const generateResponse = (chatElement, message) => {
+    const messageElement = chatElement.find("p");
+
+    // messageElement.textContent = "The answer is yes";
+    messageElement.text(message);
+
+    chatbox.scrollTop(chatbox[0].scrollHeight);
+}
+
+chatInput.on("input", () => {
+    // Adjust the height of the input textarea based on its content
+    chatInput.css('height', `${inputInitHeight}px`);
+    chatInput.css('height', `${chatInput[0].scrollHeight}px`);
+});
+
+chatInput.on("keydown", (e) => {
+    // If Enter key is pressed without Shift key and the window
+    // width is greater than 800px, handle the chat
+    if(e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
+        e.preventDefault();
+        handleChat();
+    }
+});
+
+sendChatBtn.on("click", handleChat);
+closeBtn.on("click", () => $('body').removeClass("show-chatbot"));

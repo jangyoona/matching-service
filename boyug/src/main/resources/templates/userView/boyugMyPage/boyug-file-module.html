@@ -1,0 +1,14 @@
+<div xmlns:th="http://www.thymeleaf.org" th:if="${isHave == false}">등록된 사진이 없습니다</div>
+<div class="card custom-card"
+     th:if="${isHave == true}"
+     th:each="image : ${ images }">
+    <img th:src="@{'/profile-image/' + ${image.imgSavedName}}" class="card-img-top selected-image" alt="...">
+    <div class="card-body">
+        <h5 class="card-title" th:if="${image.imgOriginName.length > 10}"
+            th:text="|${image.imgOriginName.substring(0, 10)} ...|"></h5>
+        <h5 class="card-title" th:if="${image.imgOriginName.length < 10}"
+            th:text="${image.imgOriginName}"></h5>
+        <button type="button" class="btn btn-danger delete-btn"
+                th:data-imageid="${image.imageId}">삭제</button>
+    </div>
+</div>

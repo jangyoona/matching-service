@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ko"  xmlns:th="http://www.thymeleaf.org">
+<!-- For RTL verison -->
+<!-- <html lang="en" dir="rtl"> -->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- Primary Meta Tags -->
+<title>공지&문의 게시판 관리</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="title" content="공지&문의 게시판 관리">
+<meta name="author" content="ColorlibHQ">
+<meta name="description" content="AdminLTE is a Free Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
+<meta name="keywords" content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard" />
+
+<meta name="color-scheme" content="light dark">
+
+
+<!-- OPTIONAL LINKS -->
+
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+<!-- overlayScrollbars -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/css/OverlayScrollbars.min.css" integrity="sha256-WKijf8KI68sbq8Znd6yMepIuFF0wdWfIt6gk3JWcQfk=" crossorigin="anonymous">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+
+<!-- REQUIRED LINKS -->
+
+<!-- Theme style -->
+<link rel="stylesheet" th:href='@{/adminAssets/css/adminlte.css}'>
+<!-- datatables 정렬 검색  -->
+<link rel="stylesheet" th:href='@{/adminAssets/css/datatables.css}'>
+
+  </head>
+  <body class="layout-fixed">
+    <div class="wrapper">
+
+      <!-- navbar -->
+      <div th:replace="~{adminView/modules/navbar}"></div>
+
+      <!-- Main Sidebar Container -->
+      <div th:replace="~{adminView/modules/sidebar}"></div>
+
+      <!-- Main content -->
+      <main class="content-wrapper">
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <div class="fs-3">공지&문의 게시판 관리</div>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="/admin/home">관리자Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">공지&문의 게시판 관리</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Main content -->
+        <div class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <!-- Default box -->
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">문의리스트</h3>
+                    <!-- 버튼을 가운데 정렬 -->
+                    <div class="d-flex justify-content-center">
+
+                      <a class="btn btn-outline-danger" href="noticewrite">공지사항 쓰기</a>
+                    </div>
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <button type="button" class="btn btn-tool" data-lte-dismiss="card-remove" title="Remove">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <table id="example2" class="table table-striped">
+                      <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>게시판번호</th>
+                        <th>타이틀</th>
+<!--                        <th>내용</th>-->
+                        <th>회원번호</th>
+                        <th>등록일</th>
+                        <th>수정일</th>
+<!--                        <th>조회수</th>-->
+                        <th>대답여부</th>
+                        <th>카테고리</th>
+                        <th>활성화</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr th:each="board:${boardList}">
+                        <td></td>
+                        <td th:text="${board.boardId}">보드번호</td>
+                        <td>
+                          <a th:if="${board.boardActive}" th:href="@{/admin/inquiryEdit(boardId=${board.boardId})}"  th:text="${board.boardTitle}"></a>
+                          <a th:unless="${board.boardActive}" th:href="@{/admin/inquiryEdit(boardId=${board.boardId})}"  th:text="${board.boardTitle}" style="color: gray"></a>
+                        </td>
+<!--                        <td th:text="${board.boardContent}">내용</td>-->
+                        <td th:text="${board.writer}">작성자</td>
+                        <td th:text='${ #dates.format(board.boardRegdate, "yyyy-MM-dd") }'>등록일</td>
+                        <td th:text='${ #dates.format(board.boardModifydate, "yyyy-MM-dd") }'>수정일</td>
+<!--                        <td th:text="${board.boardCount}">조회수</td>-->
+                        <td>
+                          <span th:if="${board.boardAnswer}" class="badge rounded-pill bg-primary">답변완</span>
+                          <span th:unless="${board.boardAnswer}" class="badge rounded-pill bg-danger">미답변</span>
+                        </td>
+                        <td th:text="${board.boardCategory}">카테고리</td>
+<!--                        <td th:text="${board.boardActive}">활성화</td>-->
+                        <td>
+                          <button class="btn btn-outline-primary"
+                                  th:onclick="toggleActiveStatus([[${board.boardId}]], this)">
+                            <span th:if="${board.boardActive}" th:text="'활성화됨'"></span>
+                            <span th:unless="${board.boardActive}" th:text="'비활성화됨'"></span>
+                          </button>
+                        </td>
+                      </tr>
+
+                      </tbody>
+                      <tfoot>
+                      <tr>
+                        <th>#</th>
+                        <th>게시판번호</th>
+                        <th>타이틀</th>
+<!--                        <th>내용</th>-->
+                        <th>회원번호</th>
+                        <th>등록일</th>
+                        <th>수정일</th>
+<!--                        <th>조회수</th>-->
+                        <th>대답여부</th>
+                        <th>카테고리</th>
+                        <th>활성화</th>
+                      </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                  <!-- /.card-body -->
+                  <div class="card-footer">
+
+                  </div>
+                  <!-- /.card-footer-->
+                </div>
+                <!-- /.card -->
+              </div>
+            </div>
+            <!-- /.row -->
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+      </main>
+      <!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <div th:replace="~{adminView/modules/footer}"></div>
+
+</div>
+<!--  ./wrapper -->
+
+<!-- OPTIONAL SCRIPTS -->
+
+<!-- jquery-3.7.1 -->
+<script src="http://code.jquery.com/jquery-3.7.1.js"></script>
+<!-- overlayScrollbars -->
+<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/js/OverlayScrollbars.min.js" integrity="sha256-7mHsZb07yMyUmZE5PP1ayiSGILxT6KyU+a/kTDCWHA8=" crossorigin="anonymous"></script>
+<!-- Bootstrap 5 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha256-9SEPo+fwJFpMUet/KACSwO+Z/dKMReF9q4zFhU/fT9M=" crossorigin="anonymous"></script>
+
+<!-- REQUIRED SCRIPTS -->
+
+<!-- AdminLTE App -->
+<script src="/adminAssets/js/adminlte.js"></script>
+<!-- datatables -->
+<script src="/adminAssets/js/datatables2.js"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+
+<script type="text/javascript" th:inline="javascript">
+  const SELECTOR_SIDEBAR = '.sidebar'
+  const Default = {
+    scrollbarTheme: 'os-theme-light',
+    scrollbarAutoHide: 'leave'
+  }
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof OverlayScrollbars !== 'undefined') {
+      OverlayScrollbars(document.querySelectorAll(SELECTOR_SIDEBAR), {
+        className: Default.scrollbarTheme,
+        sizeAutoCapable: true,
+        scrollbars: {
+          autoHide: Default.scrollbarAutoHide,
+          clickScrolling: true
+        }
+      })
+    }
+  })
+
+function toggleActiveStatus(boardId, btn) {
+  // 현재 버튼 텍스트에 따라 활성화 상태를 변경
+  const currentStatus = $(btn).text().trim() === '활성화됨';
+  const newStatus = currentStatus ? 'false' : 'true';
+
+  $.ajax({
+    type: 'POST',
+    url: '/board/updateBoardActive',
+    data: { boardId: boardId, boardActive: newStatus },
+    success: function(response) {
+      if (response === 'success') {
+        // 상태를 토글
+        $(btn).text(newStatus === 'true' ? '활성화됨' : '비활성화됨');
+      } else {
+        alert('상태 변경에 실패했습니다.');
+      }
+    },
+    error: function() {
+      alert('서버 오류가 발생했습니다.');
+    }
+  });
+}
+
+  $(function () {
+      $("#example1").DataTable({
+        "responsive": true, "lengthChange": true, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+      $('#example2').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+      });
+    });
+
+
+</script>
+
+  </body>
+</html>

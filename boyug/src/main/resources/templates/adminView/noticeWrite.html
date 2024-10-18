@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko"  xmlns:th="http://www.thymeleaf.org">
+<!-- For RTL verison -->
+<!-- <html lang="en" dir="rtl"> -->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- Primary Meta Tags -->
+<title>상담</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="title" content="상담">
+<meta name="author" content="ColorlibHQ">
+<meta name="description" content="AdminLTE is a Free Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
+<meta name="keywords" content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard" />
+
+<meta name="color-scheme" content="light dark">
+
+
+<!-- OPTIONAL LINKS -->
+
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+<!-- overlayScrollbars -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/css/OverlayScrollbars.min.css" integrity="sha256-WKijf8KI68sbq8Znd6yMepIuFF0wdWfIt6gk3JWcQfk=" crossorigin="anonymous">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+
+<!-- REQUIRED LINKS -->
+
+<!-- Theme style -->
+<link rel="stylesheet" th:href='@{/adminAssets/css/adminlte.css}'>
+
+
+  </head>
+  <body class="layout-fixed">
+    <div class="wrapper">
+
+      <!-- navbar -->
+      <div th:replace="~{adminView/modules/navbar}"></div>
+
+      <!-- Main Sidebar Container -->
+      <div th:replace="~{adminView/modules/sidebar}"></div>
+
+      <!-- Main content -->
+      <main class="content-wrapper">
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <div class="fs-3">공지</div>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="/admin/home">관리자Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">공지</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Main content -->
+        <div class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <!-- Default box -->
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">공지사항 작성</h3>
+
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <button type="button" class="btn btn-tool" data-lte-dismiss="card-remove" title="Remove">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+
+                    <form action="noticewrite" method="post" enctype="multipart/form-data">
+                      <div class="mb-3">
+                        <label for="title" class="form-label">공지사항 제목</label>
+                        <input type="text" class="form-control" id="title" name="boardTitle"
+                               placeholder="공지사항 제목 " required>
+                      </div>
+                      <div class="mb-3">
+                        <label for="writer" class="form-label">작성자</label>
+                        <th:block th:if="${ #authentication.principal.Username != null}">
+                          <input type="hidden" name="writer" id="writer"
+                                 th:value='${ #authentication.principal.Username }'>
+                          <span th:text='${ #authentication.principal.Username }'></span>
+                          <input type="hidden" name="userId" id="userId"
+                                 th:value='${ #authentication.principal.user.userId }'>
+                        </th:block>
+
+                      </div>
+                      <div class="mb-3">
+                        <label for="attach" class="form-label">첨부파일</label>
+                        <input type="file" class="form-control" id="attach" name="attach">
+                      </div>
+                      <div class="mb-3">
+                        <label for="content" class="form-label">공지사항 내용</label>
+                        <textarea class="form-control" id="content" name="boardContent" rows="10"
+                                  placeholder="공지사항 내용을 작성해 주세요" required></textarea>
+                      </div>
+                      <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-outline-success me-2">공지사항 쓰기</button>
+                        <button id="cancel-btn" type="button" class="btn btn-outline-warning">취소/목록</button>
+                      </div>
+                    </form>
+
+<!--                    <form th:action="@{/admin/noticewrite}" th:object="${boardDto}" method="post">-->
+<!--                      <div class="form-group">-->
+<!--                        <label for="title">제목</label>-->
+<!--                        <input type="text" class="form-control" id="title" th:field="*{boardTitle}" placeholder="제목을 입력하세요">-->
+<!--                      </div>-->
+<!--                      <div class="form-group">-->
+<!--                        <label for="content">내용</label>-->
+<!--                        <textarea class="form-control" id="content" th:field="*{boardContent}" rows="5" placeholder="내용을 입력하세요"></textarea>-->
+<!--                      </div>-->
+<!--                      <div class="form-group">-->
+<!--                        <label for="writer">작성자</label>-->
+<!--                        <input type="text" class="form-control" id="writer" th:field="*{writer}" placeholder="작성자를 입력하세요">-->
+<!--                      </div>-->
+<!--                      <button type="submit" class="btn btn-primary">작성하기</button>-->
+<!--                    </form>-->
+
+                  </div>
+                  <!-- /.card-body -->
+                  <div class="card-footer">
+
+                  </div>
+                  <!-- /.card-footer-->
+                </div>
+                <!-- /.card -->
+              </div>
+            </div>
+            <!-- /.row -->
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+      </main>
+      <!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <div th:replace="~{adminView/modules/footer}"></div>
+
+</div>
+<!--  ./wrapper -->
+
+<!-- OPTIONAL SCRIPTS -->
+
+<!-- jquery-3.7.1 -->
+<script src="http://code.jquery.com/jquery-3.7.1.js"></script>
+<!-- overlayScrollbars -->
+<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/js/OverlayScrollbars.min.js" integrity="sha256-7mHsZb07yMyUmZE5PP1ayiSGILxT6KyU+a/kTDCWHA8=" crossorigin="anonymous"></script>
+<!-- Bootstrap 5 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha256-9SEPo+fwJFpMUet/KACSwO+Z/dKMReF9q4zFhU/fT9M=" crossorigin="anonymous"></script>
+
+<!-- REQUIRED SCRIPTS -->
+
+<!-- AdminLTE App -->
+<script src="/adminAssets/js/adminlte.js"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+
+<script type="text/javascript" th:inline="javascript">
+  const SELECTOR_SIDEBAR = '.sidebar'
+  const Default = {
+    scrollbarTheme: 'os-theme-light',
+    scrollbarAutoHide: 'leave'
+  }
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof OverlayScrollbars !== 'undefined') {
+      OverlayScrollbars(document.querySelectorAll(SELECTOR_SIDEBAR), {
+        className: Default.scrollbarTheme,
+        sizeAutoCapable: true,
+        scrollbars: {
+          autoHide: Default.scrollbarAutoHide,
+          clickScrolling: true
+        }
+      })
+    }
+  })
+
+$(function () {
+  $('#cancel-btn').on('click', function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    location.href = "inquirylist";
+  });
+});
+</script>
+
+  </body>
+</html>

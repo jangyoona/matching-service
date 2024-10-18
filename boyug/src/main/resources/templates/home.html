@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Together</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
+
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet"> 
+
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link href="userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+        <link href="userAssets/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="userAssets/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="userAssets/css/homeStyle.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    </head>
+
+    <body>
+
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+        <!-- Navbar & Hero Start -->
+        <div class="container-fluid position-relative p-0">
+            <div id="nav-container-box"></div>
+<!--            <div th:replace="~{userView/modules/navbar}"></div>-->
+
+            <!-- Carousel Start -->
+            <div class="carousel-header">
+                <div id="carouselId" class="carousel slide" data-bs-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <li data-bs-target="#carouselId" data-bs-slide-to="0" class="active"></li>
+                        <li data-bs-target="#carouselId" data-bs-slide-to="1"></li>
+                        <li data-bs-target="#carouselId" data-bs-slide-to="2"></li>
+                    </ol>
+                    <div class="carousel-inner" role="listbox">
+                        <div class="carousel-item active">
+                            <img src="userAssets/img/image1.jpg" class="img-fluid" alt="Image">
+                            <div class="carousel-caption">
+                                <div class="p-3" style="max-width: 900px;">
+<!--                                    <h4 class="text-white text-uppercase fw-bold mb-4" style="letter-spacing: 3px;">Explore The World</h4>-->
+                                    <h1 class="display-2 text-capitalize text-white mb-4">Together</h1>
+
+                                    <th:block sec:authorize="isAuthenticated()">
+                                        <p class="mb-5 fs-5" th:text="|${#authentication.principal.user.userName}님 환영합니다|">
+                                        </p>
+                                    </th:block>
+                                    <th:block sec:authorize="isAnonymous()">
+                                        <div style="display: flex; column-gap: 2rem; justify-content: center;">
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" th:href="@{/userView/account/login}">로그인</a>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" th:href="@{/userView/account/form}">회원가입</a>
+                                            </div>
+                                        </div>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="userAssets/img/image2.jpg" class="img-fluid" alt="Image">
+                            <div class="carousel-caption">
+                                <div class="p-3" style="max-width: 900px;">
+<!--                                    <h4 class="text-white text-uppercase fw-bold mb-4" style="letter-spacing: 3px;">Explore The World</h4>-->
+                                    <h1 class="display-2 text-capitalize text-white mb-4">아이들과 함께 놀 수 있는</h1>
+<!--                                    <p class="mb-5 fs-5">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, -->
+<!--                                    </p>-->
+                                    <th:block sec:authorize="isAuthenticated()">
+                                        <p class="mb-5 fs-5" th:text="|${#authentication.principal.user.userName}님 환영합니다|">
+                                        </p>
+                                    </th:block>
+                                    <th:block sec:authorize="isAnonymous()">
+                                        <div style="display: flex; column-gap: 2rem; justify-content: center;">
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" th:href="@{/userView/account/login}">로그인</a>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" th:href="@{/userView/account/form}">회원가입</a>
+                                            </div>
+                                        </div>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <img src="userAssets/img/image3.jpg" class="img-fluid" alt="Image">
+                            <div class="carousel-caption">
+                                <div class="p-3" style="max-width: 900px;">
+<!--                                    <h4 class="text-white text-uppercase fw-bold mb-4" style="letter-spacing: 3px;">Explore The World</h4>-->
+                                    <h1 class="display-2 text-capitalize text-white mb-4">따뜻한 세상을 만들어가는</h1>
+<!--                                    <p class="mb-5 fs-5">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, -->
+<!--                                    </p>-->
+                                    <th:block sec:authorize="isAuthenticated()">
+                                        <p class="mb-5 fs-5" th:text="|${#authentication.principal.user.userName}님 환영합니다|">
+                                        </p>
+                                    </th:block>
+                                    <th:block sec:authorize="isAnonymous()">
+                                        <div style="display: flex; column-gap: 2rem; justify-content: center;">
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" th:href="@{/userView/account/login}">로그인</a>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <a class="btn-hover-bg btn btn-primary rounded-pill text-white py-3 px-5" th:href="@{/userView/account/form}">회원가입</a>
+                                            </div>
+                                        </div>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon btn bg-primary" aria-hidden="false"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
+                        <span class="carousel-control-next-icon btn bg-primary" aria-hidden="false"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Carousel End -->
+        </div>
+        <!-- Navbar & Hero End -->
+
+        <!-- About Start -->
+        <div class="container-fluid about py-5">
+            <div class="container py-5">
+                <div class="row g-5 align-items-center">
+                    <div class="col-lg-5">
+                        <div class="h-100" style="border: 50px solid; border-color: transparent #13357B transparent #13357B; text-align:center; color:black;">
+<!--                            <img src="img/about-img.jpg" class="img-fluid w-100 h-100" alt="">-->
+                            <i class="fa-solid fa-children" style="font-size:10rem; color:var(--bs-primary);"></i>
+                        </div>
+                    </div>
+                    <div class="col-lg-7" style="background: linear-gradient(rgba(255, 255, 255, .8), rgba(255, 255, 255, .8)), url(img/about-img-1.png);">
+                        <h5 class="section-about-title pe-3">반갑습니다</h5>
+                        <h1 class="mb-4">Welcome to <span class="text-primary">Together</span></h1>
+                        <p class="mb-4">일본 엔에이치케이(NHK) 방송국이 ‘건강 수명을 좌우하는 생활습관은 무엇인가’라는 질문으로, 노인 40만명을 대상으로 10년 이상 추적한 생활습관 등 다양한 빅데이터를 모아 분석했습니다. 조사 결과, 놀랍게도 건강한 노인들이 공통으로 가장 많이 가진 생활습관은 운동이나 좋은 식습관이 아닌 독서였습니다. 책을 가까이하는 사람은 인간관계가 풍부하고 심리적 안정감이 높았는데, 이것이 건강으로 이어진 것이죠. 또 책을 좋아하는 노인들은 책읽기 모임에 참석하느라 몸을 많이 움직이고 도서관에 드나들며 일정한 운동량을 유지했다 합니다. 또 일본에서 건강 수명이 가장 긴 지역은 야마나시라는 소도시였는데, 이 지역의 가장 눈에 띄는 점은 인구당 도서관 수와 학교 사서의 배치율이 전국 1위였다고 합니다.</p>
+                        <p class="mb-4">고대 그리스의 도시인 테베 도서관에는 ‘영혼을 치료하는 장소’라는 말이 새겨져 있었다고 합니다. 독서 치료의 역사는 장구하지만 20세기 중반 이후에 이르러서야 본격적으로 그 치료방법과 효과가 발표되었습니다. 독서 치료는 정해진 계획에 따라 책을 읽고 대화하는 과정에서 정신 질환을 치유하고 가치관 확립에 도움 받는 것을 일컫습니다. 특히, 독서 치료는 우울증과 나이 들면서 찾아오는 신체적, 인지적, 사회적 변화를 받아들이는 데 효과가 있습니다.</p>
+                        <small>[출처] 이호진기자</small>
+<!--                        <div class="row gy-2 gx-4 mb-4">-->
+<!--                            <div class="col-sm-6">-->
+<!--                                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>First Class Flights</p>-->
+<!--                            </div>-->
+<!--                            <div class="col-sm-6">-->
+<!--                                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Handpicked Hotels</p>-->
+<!--                            </div>-->
+<!--                            <div class="col-sm-6">-->
+<!--                                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>5 Star Accommodations</p>-->
+<!--                            </div>-->
+<!--                            <div class="col-sm-6">-->
+<!--                                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Latest Model Vehicles</p>-->
+<!--                            </div>-->
+<!--                            <div class="col-sm-6">-->
+<!--                                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>150 Premium City Tours</p>-->
+<!--                            </div>-->
+<!--                            <div class="col-sm-6">-->
+<!--                                <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>24/7 Service</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <a class="btn btn-primary rounded-pill py-3 px-5 mt-2" href="">Read More</a>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- About End -->
+
+        <!-- Services Start -->
+        <div class="container-fluid bg-light service py-5">
+            <div class="container py-5">
+                <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+                    <h5 class="section-title px-3">Together</h5>
+                    <h1 class="mb-0">Together의 서비스</h1>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="service-content-inner d-flex align-items-center bg-white border border-primary rounded p-4 pe-0">
+                                    <div class="service-content text-end">
+                                        <h5 class="mb-4">인공지능 서비스</h5>
+                                        <p class="mb-0">
+                                            저희 Together는 사용자의 편의성을 높이기 위해 Chat GPT 서비스를 제공하고 있습니다. 사용자분들에 맞게 Chat GPT가 추천을 하고 Chat GPT에게 궁금한 점을 물어볼 수 있습니다. Chat GPT를 활용해보세요!
+                                        </p>
+                                    </div>
+                                    <div class="service-icon p-4">
+                                        <i class="bi bi-cpu fa-4x text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="service-content-inner d-flex align-items-center bg-white border border-primary rounded p-4 pe-0">
+                                    <div class="service-content text-end">
+                                        <h5 class="mb-4">위치 서비스</h5>
+                                        <p class="mb-0">
+                                            Together는 보육원의 위치, 나의 위치를 지도를 통해 확인할 수 있습니다. 또한 전국 보육원의 위치를 지도를 통해 볼 수 있고, 원하는 보육원의 이름을 검색해서 위치를 찾을 수 있습니다!
+                                        </p>
+                                    </div>
+                                    <div class="service-icon p-4">
+                                        <i class="bi bi-geo fa-4x text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="service-content-inner d-flex align-items-center bg-white border border-primary rounded p-4 ps-0">
+                                    <div class="service-icon p-4">
+                                        <i class="fa-regular fa-comments fa-4x text-primary"></i>
+                                    </div>
+                                    <div class="service-content">
+                                        <h5 class="mb-4">채팅 서비스</h5>
+                                        <p class="mb-0">
+                                            보육원 담당자에게 궁금한 점이 있으신가요? 개인 사용자에게 궁금한 점이 있으신가요?
+                                            저희 Together는 서로 직접 대화할 수 있도록 채팅 서비스를 제공하고 있습니다.
+                                            참여 활동 리스트에서 원하는 활동과 참여자를 찾아보고 직접 대화를 나눌 수 있습니다!
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="service-content-inner d-flex align-items-center bg-white border border-primary rounded p-4 ps-0">
+                                    <div class="service-icon p-4">
+                                        <i class="fa fa-user fa-4x text-primary"></i>
+                                    </div>
+                                    <div class="service-content">
+                                        <h5 class="mb-4">매칭 서비스</h5>
+                                        <p class="mb-0">
+                                            아이들과 함께 공부, 놀이 등 활동을 같이 하고 싶다면 혹은 우리 아이들에게 뜻 깊은 시간을 선물해주고 싶다면 Together와 함께 하세요.
+                                            저희 Together는 보육기관과 사용자의 매칭을 도와드리고 있습니다.
+                                            지금 가입하고 활동 등록, 활동 신청을 해보세요!
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Services End -->
+
+        <!-- Packages Start -->
+        <div class="container-fluid packages py-5">
+            <div class="container py-5">
+                <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+                    <h5 class="section-title px-3">New</h5>
+                    <h1 class="mb-0">최신 모집글</h1>
+                </div>
+                <div class="packages-carousel owl-carousel">
+
+                    <!-- 윤아 -->
+                    <div class="packages-item" th:each="boyugProgram, boyugProgramStat : ${ boyugProgramList }">
+                        <div class="packages-img" style="height: 25rem; display:flex;">
+<!--                            <img th:if="${ programImages != null }"-->
+<!--                                 th:src="${programImages != null && boyugProgramStat.index < programImages.size() && programImages.get(boyugProgramStat.index) != null-->
+<!--                                       ? '/profile-image/' + programImages.get(boyugProgramStat.index).imgSavedName-->
+<!--                                       : '/profile-image/no_img.jpg'}" class="img-fluid w-100 rounded-top" alt="Image">-->
+                            <img th:if="${ boyugProgram.user.images != null }"
+                                 th:src="${ '/profile-image/' + boyugProgram.user.images.get(0).imgSavedName }" class="img-fluid w-100 rounded-top" alt="Image">
+                            <div class="packages-info d-flex border border-start-0 border-end-0 position-absolute" style="width: 100%; bottom: 0; left: 0; z-index: 5;">
+                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-map-marker-alt me-2"></i>[[${boyugProgram.user.userAddr2}]]</small>
+<!--                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt me-2"></i>날짜</small>-->
+<!--                                <small class="flex-fill text-center py-2"><i class="fa fa-user me-2"></i>모집인원(명수)</small>-->
+                            </div>
+                        </div>
+                        <div class="packages-content bg-light">
+                            <div class="p-4 pb-0">
+                                <h5 class="mb-0" style="font-weight:bold;"
+                                    th:text="${ #strings.length(boyugProgram.boyugProgramName) > 20 ? (#strings.substring(boyugProgram.boyugProgramName, 0, 20) + '...')
+                                              : boyugProgram.boyugProgramName }"></h5>
+                                <small class="text-uppercase" th:text="${ '[ ' + boyugProgram.boyugUserName + ' ]' }"></small>
+<!--                                <div class="mb-3"> 별 5개 -->
+<!--                                    <small class="fa fa-star text-primary"></small>-->
+<!--                                    <small class="fa fa-star text-primary"></small>-->
+<!--                                    <small class="fa fa-star text-primary"></small>-->
+<!--                                    <small class="fa fa-star text-primary"></small>-->
+<!--                                    <small class="fa fa-star text-primary"></small>-->
+<!--                                </div>-->
+                                <p class="mb-4">아래의 모집글 상세보기를 눌러<br>자세한 내용을 확인하세요.</p>
+                            </div>
+                            <div class="row bg-primary rounded-bottom mx-0">
+                                <a th:href="@{/userView/activityPages/boyugProgramDetail(boyugProgramId=${boyugProgram.boyugProgramId})}" class="btn-hover btn text-white py-2 px-4">모집글 상세보기</a>
+<!--                                <a th:href="@{/userView/activityPages/boyugProgramDetail/{boyugProgramId} (boyugProgramId=${boyugProgramId})}">-->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- -->
+                </div>
+            </div>
+        </div>
+        <!-- Packages End -->
+
+        <!-- Footer Start -->
+        <div th:replace="~{userView/modules/footer}"></div>
+        <!-- Footer End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
+        
+        <!-- JavaScript Libraries -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="userAssets/lib/easing/easing.min.js"></script>
+        <script src="userAssets/lib/waypoints/waypoints.min.js"></script>
+        <script src="userAssets/lib/owlcarousel/owl.carousel.min.js"></script>
+        <script src="userAssets/lib/lightbox/js/lightbox.min.js"></script>
+
+        <!-- React -->
+<!--        <script src="https://unpkg.com/react/umd/react.development.js"></script>-->
+<!--        <script src="https://unpkg.com/react-dom/umd/react-dom.development.js"></script>-->
+        
+
+        <!-- Template Javascript -->
+        <script src="userAssets/js/homeMain.js"></script>
+
+        <script type="text/javascript" th:inline="javascript">
+            $(function(){
+                $('.container-fluid #nav-container-box').load('/navbar');
+
+                 if (/*[[${ #ctx.param.chaterror }]]*/) {
+                    alert("종료된 채팅방 또는 잘못된 접근입니다");
+                    window.close();
+                 }
+            })
+        </script>
+    </body>
+
+</html>

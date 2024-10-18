@@ -1,0 +1,74 @@
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+            color: #000;
+            font-size: 1.25rem;
+        }
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+            text-align: center;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+            text-align: center;
+            color: #000;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .card-header {
+            background-color: #FFBB00;
+            color: #000;
+            padding: 15px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .card-body {
+            padding: 20px;
+        }
+
+        #writeProgram {
+            display: inline-block; /* 링크가 버튼처럼 보이도록 inline-block으로 설정 */
+                        padding: 10px 20px; /* 버튼의 내부 여백 설정 */
+                        font-size: 22px; /* 글자 크기 설정 */
+                        color: white; /* 글자 색상 설정 */
+                        background-color: #007BFF; /* 배경색 설정 (파란색) */
+                        text-align: center; /* 텍스트 가운데 정렬 */
+                        text-decoration: none; /* 링크의 기본 밑줄 제거 */
+                        border: none; /* 기본 테두리 제거 */
+                        border-radius: 5px; /* 버튼 모서리 둥글게 */
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 버튼에 그림자 추가 */
+                        transition: background-color 0.3s ease;
+                    margin-right: 70px; /* 오른쪽에서 20px 떨어지게 설정 */
+                    margin-top: 10px;
+                    width:10rem;
+        }
+
+        #wirteProgramContainer {
+            text-align: right;
+        }
+
+        .currentPage-active {
+            font-size: 24px;
+            text-decoration: underline;
+        }
+
+        .page {
+            text-align: center;
+            font-size: 22px;
+            color: #010101;
+        }

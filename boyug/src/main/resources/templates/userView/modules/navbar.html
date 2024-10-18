@@ -1,0 +1,146 @@
+<!--<nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0" xmlns:th="http://www.thymeleaf.org">-->
+<!--    <a th:href="@{/home}" class="navbar-brand p-0">-->
+<!--        <h1 class="m-0"><i class="fa fa-map-marker-alt me-3"></i>Travela</h1>-->
+<!--        &lt;!&ndash; <img src="img/logo.png" alt="Logo"> &ndash;&gt;-->
+<!--    </a>-->
+<!--    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">-->
+<!--        <span class="fa fa-bars"></span>-->
+<!--    </button>-->
+<!--    <div class="collapse navbar-collapse" id="navbarCollapse">-->
+<!--        <div class="navbar-nav ms-auto py-0">-->
+<!--            <a th:href="@{/home}" class="nav-item nav-link active">Home</a>-->
+<!--            <a href="userView/about.html" class="nav-item nav-link">About</a>-->
+<!--            <a href="userView/services.html" class="nav-item nav-link">Services</a>-->
+<!--            <a href="userView/packages.html" class="nav-item nav-link">Packages</a>-->
+<!--            <a href="userView/blog.html" class="nav-item nav-link">Blog</a>-->
+<!--            <div class="nav-item dropdown">-->
+<!--                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>-->
+<!--                <div class="dropdown-menu m-0">-->
+<!--                    <a href="userView/destination.html" class="dropdown-item">Destination</a>-->
+<!--                    <a href="userView/tour.html" class="dropdown-item">Explore Tour</a>-->
+<!--                    <a href="userView/booking.html" class="dropdown-item">Travel Booking</a>-->
+<!--                    <a href="userView/gallery.html" class="dropdown-item">Our Gallery</a>-->
+<!--                    <a href="userView/guides.html" class="dropdown-item">Travel Guides</a>-->
+<!--                    <a href="userView/testimonial.html" class="dropdown-item">Testimonial</a>-->
+<!--                    <a href="userView/404.html" class="dropdown-item">404 Page</a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <a href="userView/contact.html" class="nav-item nav-link">Contact</a>-->
+<!--        </div>-->
+<!--        <a href="" class="btn btn-primary rounded-pill py-2 px-4 ms-lg-4">Book Now</a>-->
+<!--    </div>-->
+<!--</nav>-->
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0" />
+<link href="/userAssets/css/chatbot.css" rel="stylesheet">
+<div>
+    <div xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" sec:authorize="isAuthenticated()" th:replace="~{userView/modules/chatbot}"></div>
+</div>
+<div id=""> <!-- load용 컨테이너 -->
+    <nav class="nav-container" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+        
+        
+
+        <a href="/home" class="nav-main-name">
+            <h1 class="m-0"><i class="fa-solid fa-children"></i> Together</h1>
+        </a>
+        <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="fa fa-bars"></span>
+        </button> -->
+        <div class="nav-item-container">
+            <!-- 관리자 유저만 보이는 버튼 -->
+            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                <a href="/admin/home" class="btn btn-outline-secondary">관리자</a>
+            </th:block>
+            <a href="/home">Home</a>
+            <a href="/board/list">문의/공지</a>
+            <a th:href="@{/userView/activityPages/boyugProgramList}" class="dropdown-item">보육원게시판</a>
+            <th:block sec:authorize="isAuthenticated()">
+                <a th:if="${#authentication.principal.user.userCategory == 2}"th:href="@{/userView/activityPages/noinRegisterList}" class="dropdown-item">노인리스트</a>
+            </th:block>
+            <th:block sec:authorize="isAuthenticated()">
+                <a th:if="${#authentication.principal.user.userCategory == 2}" href="/myPage/boyug-my-info">내정보</a>
+            </th:block>
+    <!--        <div>-->
+    <!--            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>-->
+    <!--            <div class="dropdown-menu m-0">-->
+    <!--                <a href="destination.html" class="dropdown-item">Destination</a>-->
+    <!--                <a href="tour.html" class="dropdown-item">Explore Tour</a>-->
+    <!--                <a href="booking.html" class="dropdown-item">Travel Booking</a>-->
+    <!--                <a href="gallery.html" class="dropdown-item">Our Gallery</a>-->
+    <!--                <a href="guides.html" class="dropdown-item">Travel Guides</a>-->
+    <!--                <a href="testimonial.html" class="dropdown-item">Testimonial</a>-->
+    <!--                <a href="404.html" class="dropdown-item">404 Page</a>-->
+    <!--            </div>-->
+    <!--        </div>-->
+            <th:block sec:authorize="isAnonymous()">
+                <a th:href="@{/userView/account/form}">회원가입</a>
+                <a th:href="@{/userView/account/login}">로그인</a>
+            </th:block>
+            <a sec:authorize="isAuthenticated()" th:href="@{/userView/account/logout}" class="dropdown-item">Log Out</a>
+            
+            <!-- Notification Dropdown Menu -->
+            <div class="dropdown" sec:authorize="isAuthenticated()">
+                <a href="#" class="dropdown-toggle text-light" data-bs-toggle="dropdown">
+                    <small>
+                        알림
+                        <i class="fas fa-bell me-2"></i>
+                        <span class="top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                              th:text="${ notifications != null ? (#lists.size(notifications) >= 5 ? '5+' : #lists.size(notifications)) : 0 }">
+<!--                        <span class="top-0 start-100 translate-middle badge rounded-pill bg-danger"-->
+<!--                              th:text="${ notifications != null ? #lists.size(notifications) : 0 }">-->
+<!--                            <span class="visually-hidden">unread messages</span>-->
+                        </span>
+                    </small>
+                </a>
+                <div class="dropdown-menu rounded" id="notification-tab" style="background-color:var(--bs-primary); max-height:25rem; overflow-y:scroll;">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3" th:if="${ notifications != null && !notifications.isEmpty() }">
+                        <button type="button" class="btn btn-light all-delete-btn" style="font-size:14px;"><i class="fa-solid fa-trash-can" style="margin-right:0.5rem;"></i>전체삭제</button>
+                    </div>
+                    <th:block th:each="noti, index : ${ notifications }">
+                            <div class="noti-container" style="display:flex; border-bottom:1px solid gray;">
+                                <a class="dropdown-item notification" th:if="${ noti.toUser.userId == #authentication.principal.user.userId }"
+                                    th:data-chatroom-id="${ noti.chatRoom.chatRoomId }" th:data-notification-id="${ noti.notificationId }"
+                                    th:data-chat-message="${ noti.message }"
+                                    style="font-size:1rem; margin:10px; cursor:pointer; color:white;">
+                                    <i class="fa-solid fa-comments" style="margin-left:0.5rem;"></i> [[${ noti.message }]] |
+                                    <span class="send-date" th:text="${#dates.format(noti.sendDate, 'a hh:mm')}"></span>
+                                    <input type="hidden" id="toUserId" th:value="${ noti.fromUser.userId }"> <!-- 여기 알림창에서는 to와 from을 반대로 해줘야함 계속 테스트하셈 -->
+                                </a>
+                                <span style="align-content:center; margin-right:1rem;">
+                                    <i class="fa-solid fa-square-xmark notification-delete-btn" th:data-notification-id="${ noti.notificationId }"
+                                       style="color:orange; margin-left:0.5rem; cursor:pointer;"></i>
+                                </span>
+                            </div>
+                    </th:block>
+                    <div class="noti-box">
+                    </div>
+                    <div class="d-grid gap-2 mt-5">
+                        <button class="btn btn-light" type="button" id="more-btn" style="font-size:14px;">더보기
+                            <i class="fa-solid fa-caret-down"></i>
+                        </button>
+                    </div>
+
+                    <input type="hidden" id="user-id" th:value="${ #authentication.principal.user.userId }">
+                    <a class="dropdown-item" th:if="${ #lists.isEmpty(notifications) }" style="font-size:1rem;">
+                        <i class="fas fa-bell me-2"></i>알림이 없습니다.
+                    </a>
+    <!--                <i class="fa-solid fa-check-to-slot" style="margin-left: 0.5rem;"></i>--> <!-- 신청건 상태 변경이나 수락 됐을 때? -->
+                </div>
+            </div>
+            <th:block sec:authorize="isAuthenticated()">
+                <input type="hidden" th:value="${ #authentication.principal.user.userId }" id="currentUserId" th:data-loginid="${ #authentication.principal.user.userId }">
+            </th:block>
+        </div>
+    </nav>
+    <div class="toast-container" style="position: fixed; right: 0px; bottom: 0px; z-index:999;"></div>
+<!--    <div id="navbar-react" style="position: fixed; right: 0px; bottom: 0px; z-index:999;"></div>-->
+
+</div>
+
+<script src="/userAssets/js/home-notification.js"></script>
+<!--<script src="http://code.jquery.com/jquery-3.7.1.js"></script>-->
+<script src="/userAssets/js/chatbot.js"></script>
+
+<!--<script src="/js/main.7776cca1.js"></script>-->

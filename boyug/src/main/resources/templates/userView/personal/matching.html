@@ -1,0 +1,21 @@
+<div class="my-session-item matching-container" xmlns:th="http://www.thymeleaf.org">
+    <h4>매칭 완료 리스트</h4>
+    <div th:if="${isHave == false || matchingDetailList.size() == 0}"
+         class="my-session-no-data">매칭된 내역이 없습니다</div>
+    <ul th:if="${isHave == true}" class="btp-ul">
+        <li th:each="programDetail : ${matchingDetailList}">
+            <span th:text="${programDetail.boyugProgram.boyugUserName}"></span>
+            <span th:text="${programDetail.boyugProgramDetailDate}"></span>
+            <div>
+                <span th:text="|${programDetail.boyugProgramDetailStartTime} ~ |"></span>
+                <span th:text="${programDetail.boyugProgramDetailEndTime}"></span>
+            </div>
+            <span th:text="${programDetail.sessionName}"></span>
+        </li>
+    </ul>
+    <nav th:if="${isHave == true}" aria-label="Page navigation example" id="navigation" class="my-session-pagination matching-pagination">
+        <ul class="pagination paging" th:data-pageno='${ pageNo }' th:data-datacount="${ dataCount }">
+            [(${ pager })]
+        </ul>
+    </nav>
+</div>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>게시판 리스트</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/userAssets/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/userAssets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/userAssets/css/style.css" rel="stylesheet">
+    <link href="/userAssets/css/home.css" rel="stylesheet">
+    <link href="/userAssets/css/noinHome.css" rel="stylesheet">
+
+    <!-- Custom Stylesheet for this page -->
+    <link href="/userAssets/css/boyugProgramList.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+</head>
+
+<body>
+
+<!-- Spinner Start -->
+<div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<!-- Spinner End -->
+
+<!-- Topbar Start -->
+<!--<div th:replace="~{userView/modules/topbar}"></div>-->
+<!-- Topbar End -->
+
+<!-- Navbar & Hero Start -->
+<div class="container-fluid position-relative p-0">
+<!--    <div th:replace="~{userView/modules/navbar}"></div>-->
+    <div id="nav-container-box"></div>
+</div>
+
+<div class="container-fluid about py-5">
+    <div class="container py-5 child-container">
+        <div class="login-box col-12">
+            <div class="card">
+                <div class="card-header">
+                    노인 리스트
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>사진</th>
+                            <th>성함</th>
+                            <th>선호 활동</th>
+                            <th>떨어진 거리</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="user, iterStat :${users}">
+                            <tr>
+                                <td th:text="${iterStat.index + 1}"></td>
+                                <td>
+                                    <img th:if="${user.images.size() == 0}" style="width:75px; height:75px" th:src="@{'/profile-image/no_img.jpg'}" id="selected-image" alt="image">
+                                    <img th:if="${user.images.size() != 0}"
+                                         style="width:75px; height:75px" th:src="@{'/profile-image/' + ${user.images.get(0).imgSavedName}}"
+                                         id="selected-image" alt="image">
+                                </td>
+                                <td><a th:text="${user.userName}" th:href="@{noinRegisterDetail(userId=${user.userId})}"></a></td>
+                                <td>
+                                    <div>
+                                        <th:block th:each="favorite, iterStat : ${user.favorites}">
+                                            <span th:text="${favorite.sessionName}"></span>
+                                            <span th:if="${!iterStat.last}">, </span>
+                                        </th:block>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="distance-span" th:attr="data-lat=${user.userLatitude}, data-lng=${user.userLongitude}"></span> km
+                                </td>
+                            </tr>
+                            </th:block>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="page">
+                    <a th:href="@{noinRegisterList(page=0)}">처음</a>
+                    <th:block th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+                        <a th:class="${pageNum == currentPage ? 'currentPage-active' : ''}"
+                           th:href="@{noinRegisterList(page=${pageNum})}"
+                           th:text="${pageNum + 1}">1</a>
+                    </th:block>
+                    <a th:href="@{noinRegisterList(page=${totalPages -1})}">마지막</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Start -->
+<div th:replace="~{userView/modules/footer}"></div>
+<!-- Footer End -->
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+
+<!-- JavaScript Libraries -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/userAssets/lib/easing/easing.min.js"></script>
+<script src="/userAssets/lib/waypoints/waypoints.min.js"></script>
+<script src="/userAssets/lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="/userAssets/lib/lightbox/js/lightbox.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="/userAssets/js/main.js"></script>
+<script src="/userAssets/js/account-login.js"></script>
+<script type="text/javascript" th:inline="javascript">
+// 거리 계산 함수
+function calculateDistance(lat1, lon1, lat2, lon2) {
+   const R = 6371; // 지구의 반지름(km)
+   const dLat = deg2rad(lat2 - lat1);
+   const dLon = deg2rad(lon2 - lon1);
+   const a =
+       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+       Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+       Math.sin(dLon / 2) * Math.sin(dLon / 2);
+   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+   const distance = R * c; // 거리(km)
+   return distance.toFixed(2); // 소수점 둘째 자리까지 반환
+}
+function deg2rad(deg) {
+   return deg * (Math.PI / 180);
+}
+
+$(function(){
+    // navbar load
+    $('.container-fluid #nav-container-box').load('/navbar');
+
+    /*<![CDATA[*/
+    var isAuthenticated = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
+    /*]]>*/
+    if (isAuthenticated) {
+        // console.log("User is authenticated");
+    } else {
+        // console.log("User is not authenticated");
+    }
+    /* 로그인한 유저의 좌표 */
+    var userLat = /*[[${#authorization.expression('isAuthenticated()') ? #authentication.principal.user.userLatitude : 0}]]*/ 0;
+    var userLng = /*[[${#authorization.expression('isAuthenticated()') ? #authentication.principal.user.userLongitude : 0}]]*/ 0;
+
+    if (userLat !== 0 && userLng !== 0) {
+
+       userLat = parseFloat(userLat);
+       userLng = parseFloat(userLng);
+    }
+
+    $('.distance-span').each(function(idx, span) {
+        if (userLat !== 0 && userLng !== 0) {
+               // 문자열로 되어 있는 위도와 경도를 숫자로 변환
+
+               programLat = parseFloat($(span).data('lat'));
+               programLng = parseFloat($(span).data('lng'));
+
+
+               // 거리 계산 후 표시
+               var distance = calculateDistance(userLat, userLng, programLat, programLng);
+               $(span).text(distance);
+        } else {
+            $(span).text('N/A');
+        }
+    });
+
+
+});
+
+</script>
+</body>
+
+</html>

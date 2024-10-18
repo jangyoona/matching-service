@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>회원 관리</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="title" content="관리자 페이지">
+    <meta name="author" content="ColorlibHQ">
+    <meta name="description" content="AdminLTE is a Free Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
+    <meta name="keywords" content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard" />
+
+    <meta name="color-scheme" content="light dark">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/css/OverlayScrollbars.min.css" integrity="sha256-WKijf8KI68sbq8Znd6yMepIuFF0wdWfIt6gk3JWcQfk=" crossorigin="anonymous">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href='@{/adminAssets/css/adminlte.css}'>
+    <!-- datatables 정렬 검색  -->
+    <link rel="stylesheet" th:href='@{/adminAssets/css/datatables.css}'>
+
+</head>
+<body class="layout-fixed">
+<div class="wrapper">
+
+    <!-- navbar -->
+    <div th:replace="~{adminView/modules/navbar}"></div>
+
+    <!-- Main Sidebar Container -->
+    <div th:replace="~{adminView/modules/sidebar}"></div>
+
+    <!-- Main content -->
+    <div class="content-wrapper">
+
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="fs-3">회원 리스트</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-end">
+                            <li class="breadcrumb-item"><a href="/admin/home">관리자Home</a></li>
+                            <li class="breadcrumb-item active">회원 리스트</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">일반 회원 리스트</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse" title="Collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-lte-dismiss="card-remove" title="Remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <table id="example2" class="table table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 2%">active</th>
+                                        <th style="width: 2%">회원</th>
+                                        <th>전화번호</th>
+                                        <th>이름</th>
+                                        <th>우편번호</th>
+                                        <th>주소</th>
+                                        <th>상세주소</th>
+                                        <th>등록일</th>
+                                        <th>생일</th>
+                                        <th style="width: 4%">성별</th>
+                                        <th>보호자연락처</th>
+                                        <th>건강상태</th>
+                                        <th>프로필</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="user:${userList}">
+                                        <td>
+                                            <input type="checkbox" class="form-check-input user-active-checkbox" th:data-user-id="${user.userId}" th:checked="${user.user.userActive == true}">
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/admin/userdo(userId=${user.userId})}"
+                                               th:text="${user.userId}"></a>
+                                        </td>
+                                        <td th:text="${user.user.userPhone}">전화번호</td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input th:text="${user.user.userName}" type="text" class="form-control user-name-input" th:data-user-id="${user.userId}" th:value="${user.user.userName}" />
+                                                <button class="btn btn-primary save-name-btn" th:data-user-id="${user.userId}">변경</button>
+                                            </div>
+                                        </td>
+                                        <td th:text="${user.user.userAddr1}">우편번호</td>
+                                        <td th:text="${user.user.userAddr2}">주소</td>
+                                        <td th:text="${user.user.userAddr3}">상세주소</td>
+                                        <td th:text='${ #dates.format(user.user.userRegDate, "yyyy-MM-dd") }'>등록일</td>
+<!--                                        <td th:text='${ #dates.format(user.userBirth, "yyyy-MM-dd") }'>생일-->
+<!--                                        </td>-->
+                                        <td>
+                                            <input type="date" class="form-control user-birth-input" th:data-user-id="${user.userId}" th:value="${#dates.format(user.userBirth, 'yyyy-MM-dd')}" />
+                                            <button class="btn btn-success user-birth-btn" th:data-user-id="${user.userId}">변경</button>
+                                        </td>
+                                        <td>
+                                            <select class="form-select gender-select" th:data-user-id="${user.userId}">
+                                                <option value="남자" th:selected="${user.userGender == '남자'}">남자</option>
+                                                <option value="여자" th:selected="${user.userGender == '여자'}">여자</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <div class="input-group-phone">
+                                                <input type="text" class="form-control protector-phone-input" th:data-user-id="${user.userId}" th:value="${user.protectorPhone}" />
+                                                <button class="btn btn-primary save-protector-phone-btn" th:data-user-id="${user.userId}">변경</button>
+<!--                                                0일때만 보호자연락처 넣는코드-->
+<!--                                                <span th:if="${user.protectorPhone != '0'}" th:text="${user.protectorPhone}"></span>-->
+<!--                                                <input th:if="${user.protectorPhone == '0'}" type="text" class="form-control protector-phone-input" th:data-user-id="${user.userId}" placeholder="보호자연락처 입력">-->
+<!--                                                <button th:if="${user.protectorPhone == '0'}" class="btn btn-primary save-protector-phone-btn" th:data-user-id="${user.userId}">저장</button>-->
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <select class="form-select health-status-select" th:data-user-id="${user.userId}">
+                                                <option value="좋음" th:selected="${user.userHealth == '좋음'}">좋음</option>
+                                                <option value="나쁨" th:selected="${user.userHealth == '나쁨'}">나쁨</option>
+                                                <option value="보통" th:selected="${user.userHealth == '보통'}">보통</option>
+                                            </select>
+                                        </td>
+                                        <td >
+                                            <div class="file-links">
+                                                <div th:if="${#lists.isEmpty(user.user.images)}">프로필 없음</div>
+                                                <div th:unless="${#lists.isEmpty(user.user.images)}"
+                                                     th:each="image : ${ user.user.images }">
+                                                    <div th:switch="${#strings.endsWith(image.imgSavedName, '.jpg') or #strings.endsWith(image.imgSavedName, '.png')
+                                or #strings.endsWith(image.imgSavedName, '.gif') or #strings.endsWith(image.imgSavedName, '.jpeg')}">
+                                                        <!-- Display image files directly -->
+                                                        <div th:case="true">
+                                                            <img th:src="@{/profile-image/{filename}(filename=${image.imgSavedName})}"
+                                                                 th:alt="${image.imgOriginName}"
+                                                                 class="img-thumbnail"/>
+                                                        </div>
+                                                        <!-- Display non-image files as links -->
+                                                        <div th:case="false">
+                                                            <a th:href="@{/profile-image/{filename}(filename=${image.imgSavedName})}"
+                                                               th:text="${image.imgOriginName}"></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th>active</th>
+                                        <th>회원</th>
+                                        <th>전화번호</th>
+                                        <th>이름</th>
+                                        <th>우편번호</th>
+                                        <th>주소</th>
+                                        <th>상세주소</th>
+                                        <th>등록일</th>
+                                        <th>생일</th>
+                                        <th>성별</th>
+                                        <th>보호자연락처</th>
+                                        <th>건강상태</th>
+                                        <th>프로필</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">보육원 회원 리스트</h3>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse" title="Collapse">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-tool" data-lte-dismiss="card-remove" title="Remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>인증</th>
+                                        <th>active</th>
+                                        <th>회원</th>
+                                        <th>전화번호</th>
+                                        <th>이름</th>
+                                        <th>우편번호</th>
+                                        <th>주소</th>
+                                        <th>상세주소</th>
+                                        <th>등록일</th>
+                                        <th>보육원이름</th>
+                                        <th>보육원이메일</th>
+                                        <th>아이수</th>
+                                        <th style="width: 9%">프로필</th>
+                                        <th style="width: 10%">첨부파일</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="boyug:${boyugList}">
+                                        <td th:if="${boyug.boyugUserConfirm == true}">인증완</td>
+                                        <td th:if="${boyug.boyugUserConfirm == false}">
+                                            <button class="btn btn-outline-success ConfirmBtn" th:data-confirm="${boyug.userId}">
+                                                미승인
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" class="form-check-input user-active-checkbox" th:data-user-id="${boyug.userId}" th:checked="${boyug.user.userActive == true}">
+                                        </td>
+<!--                                        <td th:text="${boyug.userId}">회원번호</td>-->
+                                        <td>
+                                            <a th:href="@{/admin/userboyugprogram(userId=${boyug.userId})}"
+                                               th:text="${boyug.userId}"></a>
+                                        </td>
+                                        <td th:text="${boyug.user.userPhone}">폰번호</td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input th:text="${boyug.user.userName}" type="text" class="form-control user-name-input" th:data-user-id="${boyug.userId}" th:value="${boyug.user.userName}" />
+                                                <button class="btn btn-primary save-name-btn" th:data-user-id="${boyug.userId}">변경</button>
+                                            </div>
+                                        </td>
+                                        <td th:text="${boyug.user.userAddr1}">우편번호</td>
+                                        <td th:text="${boyug.user.userAddr2}">주소</td>
+                                        <td th:text="${boyug.user.userAddr3}">상세주소</td>
+                                        <td th:text='${ #dates.format(boyug.user.userRegDate, "yyyy-MM-dd") }'>등록일</td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control boyug-name-input" th:data-user-id="${boyug.userId}" th:value="${boyug.boyugUserName}"  th:text="${boyug.boyugUserName}" />
+                                                <button class="btn btn-primary save-name-btn" th:data-user-id="${boyug.userId}">변경</button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input-group-email">
+                                                <input type="email" class="form-control boyug-email-input" th:data-user-id="${boyug.userId}" th:value="${boyug.boyugEmail}" />
+                                                <button class="btn btn-outline-info save-email-btn" th:data-user-id="${boyug.userId}">변경</button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="input-group-child">
+                                                <input type="number" class="form-control boyug-child-num-input" th:data-user-id="${boyug.userId}" th:value="${boyug.boyugChildNum}" />
+                                                <button class="btn btn-primary save-child-num-btn" th:data-user-id="${boyug.userId}">변경</button>
+                                            </div>
+                                        </td>
+
+                                        <th style="width: 9%">
+                                            <div class="file-links">
+                                                <div th:if="${#lists.isEmpty(boyug.user.images)}">프로필 없음</div>
+                                                <div th:unless="${#lists.isEmpty(boyug.user.images)}"
+                                                     th:each="image : ${ boyug.user.images }">
+                                                    <div th:switch="${#strings.endsWith(image.imgSavedName, '.jpg') or #strings.endsWith(image.imgSavedName, '.png')
+                                or #strings.endsWith(image.imgSavedName, '.gif') or #strings.endsWith(image.imgSavedName, '.jpeg')}">
+                                                        <!-- Display image files directly -->
+                                                        <div th:case="true">
+                                                            <img th:src="@{/profile-image/{filename}(filename=${image.imgSavedName})}"
+                                                                 th:alt="${image.imgOriginName}"
+                                                                 class="img-thumbnail"/>
+                                                        </div>
+                                                        <!-- Display non-image files as links -->
+                                                        <div th:case="false">
+                                                            <a th:href="@{/profile-image/{filename}(filename=${image.imgSavedName})}"
+                                                               th:text="${image.imgOriginName}"></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="file-links">
+                                                <div th:if="${#lists.isEmpty(boyug.boyugUserFiles)}">첨부파일 없음</div>
+                                                <div th:unless="${#lists.isEmpty(boyug.boyugUserFiles)}"
+                                                     th:each="image : ${ boyug.boyugUserFiles }">
+                                                    <div th:switch="${#strings.endsWith(image.fileSavedName, '.jpg') or #strings.endsWith(image.fileSavedName, '.png')
+                                or #strings.endsWith(image.fileSavedName, '.gif') or #strings.endsWith(image.fileSavedName, '.jpeg')}">
+                                                        <!-- Display image files directly -->
+                                                        <div th:case="true">
+                                                            <img th:src="@{/boyugUser-file/{filename}(filename=${image.fileSavedName})}"
+                                                                 th:alt="${image.fileOriginName}"
+                                                                 class="img-thumbnail"/>
+                                                        </div>
+                                                        <!-- Display non-image files as links -->
+                                                        <div th:case="false">
+                                                            <a th:href="@{/boyugUser-file/{filename}(filename=${image.fileSavedName})}"
+                                                               th:text="${image.fileOriginName}"></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th>
+                                    </tr>
+
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <th>인증</th>
+                                        <th>active</th>
+                                        <th>번호</th>
+                                        <th>전화번호</th>
+                                        <th>이름</th>
+                                        <th>우편번호</th>
+                                        <th>주소</th>
+                                        <th>상세주소</th>
+                                        <th>등록일</th>
+                                        <th>보육원이름</th>
+                                        <th>보육원이메일</th>
+                                        <th>아이수</th>
+                                        <th>프로필</th>
+                                        <th>첨부파일</th>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- Main Footer -->
+    <div th:replace="~{adminView/modules/footer}"></div>
+
+
+</div>
+
+<!-- jquery-3.7.1 -->
+<script src="http://code.jquery.com/jquery-3.7.1.js"></script>
+<!-- overlayScrollbars -->
+<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/js/OverlayScrollbars.min.js" integrity="sha256-7mHsZb07yMyUmZE5PP1ayiSGILxT6KyU+a/kTDCWHA8=" crossorigin="anonymous"></script>
+<!-- Bootstrap 5 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha256-9SEPo+fwJFpMUet/KACSwO+Z/dKMReF9q4zFhU/fT9M=" crossorigin="anonymous"></script>
+
+<!-- Address API -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<!-- AdminLTE App -->
+<script src="/adminAssets/js/adminlte.js"></script>
+<!-- datatables -->
+<script src="/adminAssets/js/datatables.js"></script>
+
+<script type="text/javascript" th:inline="javascript">
+$(function () {
+    //테이블 설정
+    $("#example1").DataTable({
+        "responsive": true, "lengthChange": true, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+        "paging": true,
+        "lengthChange": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+    });
+
+    //미승인버튼
+    $('.ConfirmBtn').on('click', function() {
+        const userId = $(this).data('confirm');
+        const ok = confirm(userId + '승인 하시겠습니까?');
+
+        if (ok) {
+            $.ajax({
+                "url": "boyug-confirm",
+                "method" : "POST", // POST 요청
+                "data": { userId: userId},  // 데이터를 객체로 전달
+                "success": function(result, status, xhr) {
+                    if (result === "success") {
+                        alert('승인되었습니다.');
+                        location.href = 'userlist';
+                    } else {
+                        alert('승인 실패 1');
+                    }
+                },
+                "error": function(xhr, status, err) {
+                    alert("승인 실패 2");
+                }
+            });
+        };
+    });
+
+    // 건강상태 변경
+    $('.health-status-select').on('change', function() {
+    const userId = $(this).data('user-id');
+    const userHealth = $(this).val();
+
+    // userId가 유효한 숫자인지 확인
+    if (isNaN(parseInt(userId, 10))) {
+            alert("유효하지 않은 userId입니다.");
+            return;
+    }
+
+    $.ajax({
+            "url": "update-healthstatus",
+            "method": "POST",
+            "data": { userId: parseInt(userId, 10), userHealth: userHealth }, // userId를 숫자로 변환
+            "success": function(result) {
+                if (result === "success") {
+                    alert('건강상태가 업데이트되었습니다.');
+                } else {
+                    alert('업데이트 실패 1');
+                }
+            },
+            "error": function(xhr, status, err) {
+                console.log(xhr.responseText);  // 응답 내용 로그
+                alert("업데이트 실패 2");
+            }
+        });
+    });
+
+    // 보호자 연락처 저장 버튼 클릭 이벤트 처리
+    $('.save-protector-phone-btn').on('click', function () {
+        const userId = $(this).data('user-id');
+        const protectorPhone = $(this).prev('.protector-phone-input').val();
+
+        if (!protectorPhone || protectorPhone.length < 10) {  // 연락처 유효성 검사
+            alert('유효한 보호자 연락처를 입력해 주세요.');
+            return;
+        }
+
+        $.ajax({
+            url: 'update-protector-phone',
+            method: 'POST',
+            data: { userId: userId, protectorPhone: protectorPhone },
+            success: function (result) {
+                if (result === 'success') {
+                    alert('보호자 연락처가 업데이트되었습니다.');
+                    location.reload();  // 업데이트 후 페이지 새로고침
+                } else {
+                    alert('업데이트 실패 1');
+                }
+            },
+            error: function (xhr, status, err) {
+                console.log(xhr.responseText);  // 응답 내용 로그
+                alert('업데이트 실패 2');
+            }
+        });
+    });
+
+    // 성별 변경 이벤트 처리
+    $('.gender-select').on('change', function() {
+        const userId = $(this).data('user-id');
+        const userGender = $(this).val();
+
+        // userId가 유효한지 확인
+        if (isNaN(parseInt(userId, 10))) {
+            alert("유효하지 않은 userId입니다.");
+            return;
+        }
+
+        $.ajax({
+            "url": "update-gender", // 서버에 보낼 요청 경로
+            "method": "POST",
+            "data": { userId: parseInt(userId, 10), userGender: userGender }, // userId와 userGender를 서버로 전달
+            "success": function(result) {
+                if (result === "success") {
+                    alert('성별이 업데이트되었습니다.');
+                } else {
+                    alert('성별 업데이트 실패 1');
+                }
+            },
+            "error": function(xhr, status, err) {
+                console.log(xhr.responseText);  // 응답 내용 로그
+                alert("성별 업데이트 실패 2");
+            }
+        });
+    });
+
+    // 이름 저장 버튼 클릭 이벤트 처리
+    $('.save-name-btn').on('click', function () {
+        const userId = $(this).data('user-id');
+        const userName = $(this).prev('.user-name-input').val();
+
+        if (!userName) {
+            alert('유효한 이름을 입력해 주세요.');
+            return;
+        }
+
+        $.ajax({
+            url: 'update-username',  // 서버에 보낼 요청 경로
+            method: 'POST',
+            data: { userId: userId, userName: userName }, // userId와 userName를 서버로 전달
+            success: function (result) {
+                if (result === 'success') {
+                    alert('이름이 업데이트되었습니다.');
+                    location.reload();  // 업데이트 후 페이지 새로고침
+                } else {
+                    alert('이름 업데이트 실패 1');
+                }
+            },
+            error: function (xhr, status, err) {
+                console.log(xhr.responseText);  // 응답 내용 로그
+                alert('이름 업데이트 실패 2');
+            }
+        });
+    });
+
+    // userActive 체크박스 변경 이벤트 처리
+    $('.user-active-checkbox').on('change', function () {
+        const userId = $(this).data('user-id');
+        const userActive = $(this).is(':checked'); // 체크 여부에 따라 true/false
+
+        // userId가 유효한지 확인
+        if (isNaN(parseInt(userId, 10))) {
+            alert("유효하지 않은 userId입니다.");
+            return;
+        }
+
+        $.ajax({
+            url: 'update-useractive',  // 서버에 보낼 요청 경로
+            method: 'POST',
+            data: { userId: parseInt(userId, 10), userActive: userActive }, // userId와 userActive 값을 서버로 전달
+            success: function (result) {
+                if (result === 'success') {
+                    alert('활성 상태가 업데이트되었습니다.');
+                } else {
+                    alert('활성 상태 업데이트 실패 1');
+                }
+            },
+            error: function (xhr, status, err) {
+                console.log(xhr.responseText);  // 응답 내용 로그
+                alert('활성 상태 업데이트 실패 2');
+            }
+        });
+    });
+
+    // 아이수 변경 버튼 클릭 이벤트 처리
+    $('.save-child-num-btn').on('click', function () {
+        const userId = $(this).data('user-id');
+        const boyugChildNum = $(this).prev('.boyug-child-num-input').val();
+
+        // 아이수가 유효한 숫자인지 확인 (0 이상의 숫자)
+        if (!boyugChildNum || isNaN(boyugChildNum) || boyugChildNum < 0) {
+            alert('유효한 아이 수를 입력해 주세요.');
+            return;
+        }
+
+        $.ajax({
+            url: 'update-boyug-childnum',  // 서버에 보낼 요청 경로
+            method: 'POST',
+            data: { userId: userId, boyugChildNum: boyugChildNum },
+            success: function (result) {
+                if (result === 'success') {
+                    alert('아이수가 업데이트되었습니다.');
+                    location.reload();  // 업데이트 후 페이지 새로고침
+                } else {
+                    alert('아이수 업데이트 실패 1');
+                }
+            },
+            error: function (xhr, status, err) {
+                console.log(xhr.responseText);  // 응답 내용 로그
+                alert('아이수 업데이트 실패 2');
+            }
+        });
+    });
+
+    // 보육원이메일 변경 버튼 클릭 이벤트 처리
+    $('.save-email-btn').on('click', function () {
+        const userId = $(this).data('user-id');
+        const boyugEmail = $(this).prev('.boyug-email-input').val();
+
+        // 이메일 유효성 검사
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(boyugEmail)) {
+            alert('유효한 이메일 주소를 입력해 주세요.');
+            return;
+        }
+
+        $.ajax({
+            url: 'update-boyug-email',  // 서버에 보낼 요청 경로
+            method: 'POST',
+            data: { userId: userId, boyugEmail: boyugEmail },
+            success: function (result) {
+                if (result === 'success') {
+                    alert('보육원이메일이 업데이트되었습니다.');
+                    location.reload();  // 업데이트 후 페이지 새로고침
+                } else {
+                    alert('보육원이메일 업데이트 실패 1');
+                }
+            },
+            error: function (xhr, status, err) {
+                console.log(xhr.responseText);  // 응답 내용 로그
+                alert('보육원이메일 업데이트 실패 2');
+            }
+        });
+    });
+
+    // 보육원이름 변경 버튼 클릭 이벤트 처리
+    $('.save-name-btn').on('click', function () {
+        const userId = $(this).data('user-id');
+        const boyugName = $(this).prev('.boyug-name-input').val();
+
+        // 보육원이름 유효성 검사 (빈 값 체크)
+        if (!boyugName || boyugName.trim() === '') {
+            alert('유효한 보육원이름을 입력해 주세요.');
+            return;
+        }
+
+        $.ajax({
+            url: 'update-boyug-name',  // 서버에 보낼 요청 경로
+            method: 'POST',
+            data: { userId: userId, boyugName: boyugName },
+            success: function (result) {
+                if (result === 'success') {
+                    alert('보육원이름이 업데이트되었습니다.');
+                    location.reload();  // 업데이트 후 페이지 새로고침
+                } else {
+                    alert('보육원이름 업데이트 실패 1');
+                }
+            },
+            error: function (xhr, status, err) {
+                alert('보육원이름 업데이트 실패 2');
+            }
+        });
+    });
+
+    // 생일 변경
+    $('.user-birth-btn').on('click', function() {
+        const userId = $(this).data('user-id'); // 버튼의 data-user-id 값을 가져옴
+        const input = $(this).siblings('.user-birth-input'); // 버튼과 연결된 input 필드
+        const newBirthDate = input.val(); // input 필드에서 새로운 생일 값 가져옴
+
+        // 유효성 검사 (옵션)
+        if (!newBirthDate) {
+            alert('생일을 입력해주세요.');
+            return;
+        }
+
+        // AJAX 요청
+        $.ajax({
+            url: 'updateUserBirth',
+            type: 'POST',
+            data: {
+                userId: userId,
+                userBirth: newBirthDate
+            },
+            success: function(response) {
+                if (response === "success") {
+                    alert('생일이 성공적으로 업데이트되었습니다.');
+                } else {
+                    alert('업데이트 중 오류가 발생했습니다.1: ' + response);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error:', errorThrown);
+                alert('업데이트 중 오류가 발생했습니다.2');
+            }
+        });
+    });
+
+
+
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<div class="my-session-item boyug-to-personal-container" xmlns:th="http://www.thymeleaf.org">
+    <h4>보육원이 나한테 참가 요청 리스트</h4>
+    <div th:if="${isHave == false || programDetails.size() == 0}"
+        class="my-session-no-data">요청 내역이 없습니다</div>
+    <ul th:if="${isHave == true}" class="btp-ul">
+        <li th:each="programDetail : ${ programDetails }">
+<!--            <span>맑은 보육원</span>-->
+            <span th:each="program : ${ programs }"
+                  th:if="${ programDetail.boyugProgramId == program.boyugProgramId }"
+                  th:text="${program.boyugUserName}"></span>
+            <span th:text="${programDetail.boyugProgramDetailDate}"></span>
+            <div>
+                <span th:text="|${programDetail.boyugProgramDetailStartTime} ~ |"></span>
+                <span th:text="${programDetail.boyugProgramDetailEndTime}"></span>
+            </div>
+            <span th:text="${programDetail.sessionName}"></span>
+            <div class="my-session-btn-container" th:data-detailid="${programDetail.boyugProgramDetailId}">
+                <button class="my-session-confirm-btn">수락</button>
+                <button class="my-session-refuse-btn">거절</button>
+            </div>
+        </li>
+    </ul>
+    <nav th:if="${isHave == true}" aria-label="Page navigation example" id="navigation" class="my-session-pagination btp-pagination">
+        <ul class="pagination paging" th:data-pageno='${ pageNo }' th:data-datacount="${ dataCount }">
+            [(${ pager })]
+        </ul>
+    </nav>
+</div>

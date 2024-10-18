@@ -1,0 +1,289 @@
+<button type="button" class="modal-previous-btn">
+    <span>일정</span>
+</button>
+<button type="button" class="modal-next-btn">
+    <span>신청 내역</span>
+</button>
+<div class="container-item my-page-container" xmlns:th="http://www.thymeleaf.org">
+    <form id="modifyMyInfoForm" action="/personal/modify-info" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="userId" th:value="${#authentication.principal.user.userId}">
+        <div class="my-info-container">
+            <div class="info-header-container">
+                <img th:if="${user.images.size() == 0}" th:src="@{'/profile-image/no_img.jpg'}" id="selected-image" alt="image">
+                <img th:if="${user.images.size() != 0}"
+                     th:src="@{'/profile-image/' + ${user.images.get(0).imgSavedName}}"
+                     id="selected-image" alt="image">
+                <label for="file-selector-btn" class="upload-img-btn">
+                    사진 바꾸기
+                </label>
+                <input type="file" id="file-selector-btn" name="attach" accept="image/*">
+                <input th:if="${user.images.size() != 0}" type="hidden" name="attachId" th:value="${user.images.get(0).imageId}">
+<!--                <input th:if="${user.images.size() == 0}" type="hidden" name="attachId">-->
+            </div>
+            <ul class="info-main-container">
+                <!-- 이름, 연락처, 생년월일, 보호자 연락처, 건강상태, 우편번호, 거주지, 상세주소, 가입일자 -->
+                <li class="info-item" data-index="0">
+                    <div class="info-category">이름</div>
+                    <div class="info-text" th:text="${ user.userName }"></div>
+                    <input class="info-modify-input user-name" type="text" name="userName" th:value="${ user.userName }">
+                    <button type="button" class="info-modify-btn">수정하기</button>
+                    <div class="info-change-btn-container">
+                        <button type="button" class="info-change-btn mypage-modify-btn">변경</button>
+                        <button type="button" class="info-cancel-btn">취소</button>
+                    </div>
+                </li>
+                <li class="info-item" data-index="1">
+                    <div class="info-category">연락처</div>
+                    <div class="info-text" th:text="${ user.userPhone }"></div>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="gray-background"></div>
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header modal-background">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">연락처 변경</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3 modal-phone-section">
+                                        <div for="recipient-name" class="col-form-label">변경할 번호</div>
+                                        <div class="modify-phone-container">
+                                            <input type="number" class="modify-phone"> -
+                                            <input type="number" class="modify-phone"> -
+                                            <input type="number" class="modify-phone">
+                                            <input type="hidden" name="userPhone" class="modify-phone" th:value="${user.userPhone}">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <button type="button" class="modify-take-auth-btn">인증번호 받기</button>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div>인증번호</div>
+                                        <input type="number" class="modify-auth-number" data-auth="false">
+                                    </div>
+                                    <div class="mb-3">
+                                        <button type="button" class="check-auth-btn">인증번호 확인</button>
+                                    </div>
+                                </div>
+                                <div class="modal-footer modal-background">
+                                    <button type="button" class="btn cancel-modify-btn" data-bs-dismiss="modal">취소</button>
+                                    <button type="button" class="btn modify-btn mypage-modify-btn">수정</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="info-modify-btn" data-bs-toggle="modal" data-bs-target="#exampleModal">수정하기</button>
+                    <div class="info-change-btn-container">
+                        <button type="button" class="info-change-btn">변경</button>
+                        <button type="button" class="info-cancel-btn">취소</button>
+                    </div>
+                </li>
+                <li class="info-item" data-index="2">
+                    <div class="info-category">생년월일</div>
+                    <div class="info-text" th:text="${#dates.format(userDetail.userBirth, 'yyyy-MM-dd')}"></div>
+                    <div class="info-modify-input">
+                        <div class="info" id="info__birth">
+                            <select class="box" id="birth-year">
+                                <option disabled selected>출생 연도</option>
+                            </select>
+                            <select class="box" id="birth-month">
+                                <option disabled selected>월</option>
+                            </select>
+                            <select class="box" id="birth-day">
+                                <option disabled selected>일</option>
+                            </select>
+                            <input type="hidden" name="birthDay" id="userBirth" th:value="${#dates.format(userDetail.userBirth, 'yyyy-MM-dd')}">
+                        </div>
+                    </div>
+                    <button type="button" class="info-modify-btn">수정하기</button>
+                    <div class="info-change-btn-container">
+                        <button type="button" class="info-change-btn mypage-modify-btn">변경</button>
+                        <button type="button" class="info-cancel-btn">취소</button>
+                    </div>
+                </li>
+                <li class="info-item" data-index="3">
+                    <div class="info-category">선호활동</div>
+                    <div class="info-text" th:if="${user.favorites == null}">등록한 선호활동이 없습니다</div>
+                    <div class="info-text mypage-session-text" th:if="${user.favorites != null}">
+                        <span th:each="favorite : ${user.favorites}" th:text="${favorite.sessionName}"></span>
+                    </div>
+                    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                        <div class="gray-background"></div>
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header modal-background">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel2">선호활동 수정</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3 session-select-container">
+                                        <div for="recipient-name" class="col-form-label">선호활동 목록</div>
+                                        <select class="session-select">
+                                            <option value="선택">선택</option>
+                                            <option th:each="sessionItem : ${sessionList}"
+                                                    th:value="${sessionItem.sessionName}"
+                                                    th:text="${sessionItem.sessionName}"></option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 mypage-session-list-container">
+                                        <div>내 선호활동</div>
+                                        <div class="session-list">
+                                            <input th:if="${user.favorites != null}"
+                                                   th:each="favorite : ${user.favorites}" type="hidden" name="sessionItemName" class="hidden-value"
+                                                   th:value="${favorite.sessionName}">
+                                            <!-- <div class="session-item">
+                                                <span>책 읽기</span>
+                                                <button type="button" class="remove-session-btn"><i class="fas fa-times"></i></button>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer modal-background">
+                                    <button type="button" class="btn cancel-modify-btn" data-bs-dismiss="modal">취소</button>
+                                    <button type="button" class="btn modify-btn mypage-modify-btn">수정</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="info-modify-btn" data-bs-toggle="modal" data-bs-target="#exampleModal2">수정하기</button>
+                    <div class="info-change-btn-container">
+                        <button type="button" class="info-change-btn">변경</button>
+                        <button type="button" class="info-cancel-btn">취소</button>
+                    </div>
+                </li>
+                <li class="info-item" data-index="4">
+                    <div class="info-category">보호자 연락처</div>
+                    <div class="info-text" th:if="${ userDetail.protectorPhone == '0' }">등록된 번호가 없습니다</div>
+                    <div class="info-text" th:if="${ userDetail.protectorPhone != '0' }" th:text="${ userDetail.protectorPhone }"></div>
+                    <div class="info-modify-input">
+                        <input type="number" class="modify-protector-phone"> -
+                        <input type="number" class="modify-protector-phone"> -
+                        <input type="number" class="modify-protector-phone">
+                        <input type="hidden" class="modify-protector-phone" name="protectorPhone" th:value="${userDetail.protectorPhone}">
+                    </div>
+                    <button type="button" class="info-modify-btn">수정하기</button>
+                    <div class="info-change-btn-container">
+                        <button type="button" class="info-change-btn protector-change-btn mypage-modify-btn">변경</button>
+                        <button type="button" class="info-cancel-btn">취소</button>
+                    </div>
+                </li>
+                <li class="info-item" data-index="5">
+                    <div class="info-category">건강상태</div>
+                    <div class="info-text" th:text="${ userDetail.userHealth }"></div>
+                    <div class="info-modify-input">
+                        <select class="health-select">
+                            <option value="선택">선택</option>
+                            <option value="나쁨">나쁨</option>
+                            <option value="보통">보통</option>
+                            <option value="좋음">좋음</option>
+                        </select>
+                        <input type="hidden" class="health-value" name="userHealth" th:value="${userDetail.userHealth}">
+                    </div>
+                    <button type="button" class="info-modify-btn">수정하기</button>
+                    <div class="info-change-btn-container">
+                        <button type="button" class="info-change-btn mypage-modify-btn">변경</button>
+                        <button type="button" class="info-cancel-btn">취소</button>
+                    </div>
+                </li>
+                <li class="info-item" data-index="6">
+                    <div class="info-category">우편번호</div>
+                    <div class="info-text" id="userAddr1-view" th:text="${ user.userAddr1 }"></div>
+                    <input class="info-modify-input" type="hidden" name="userAddr1" id="userAddr1" th:value="${ user.userAddr1 }">
+                    <button type="button" class="info-modify-btn">수정하기</button>
+                    <div class="info-change-btn-container">
+                        <button type="button" class="info-change-btn mypage-modify-btn">변경</button>
+                        <button type="button" class="info-cancel-btn">취소</button>
+                    </div>
+                </li>
+                <li class="info-item" data-index="7">
+                    <div class="info-category">거주지</div>
+                    <div class="info-text" id="userAddr2-view" th:text="${ user.userAddr2 }"></div>
+                    <input class="info-modify-input" type="hidden" name="userAddr2" id="userAddr2" th:value="${ user.userAddr2 }">
+                </li>
+                <li class="info-item" data-index="8">
+                    <div class="info-category">상세주소</div>
+                    <div class="info-text" th:text="${ user.userAddr3 }"></div>
+                    <input class="info-modify-input addr3" type="text" name="userAddr3" th:value="${ user.userAddr3 }">
+                    <button type="button" class="info-modify-btn">수정하기</button>
+                    <div class="info-change-btn-container">
+                        <button type="button" class="info-change-btn mypage-modify-btn">변경</button>
+                        <button type="button" class="info-cancel-btn">취소</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </form>
+</div>
+<div class="container-item mypage-session-container">
+    <div class="mypage-session-select-container">
+        <div class="mypage-session-btn btp-btn select-active">나에게 들어온 요청 보기</div>
+        <div class="mypage-session-btn ptb-btn">내가 신청한 요청 보기</div>
+        <div class="mypage-session-btn matching-btn">매칭 완료</div>
+    </div>
+    <div class="mypage-session-module speech-bubble-top">
+
+    </div>
+</div>
+<div class="container-item my-calendar-container">
+    <h4>내 일정</h4>
+    <div id="project-calendar"></div>
+</div>
+
+
+<script type="text/javascript" th:inline="javascript">
+$(() => {
+    // Canlendar
+    const Calendar = FullCalendar.Calendar;
+    const calendarEl = document.getElementById('project-calendar');
+
+    let serverArr = /*[[${ matchingList }]]*/
+    let eventArr = [];
+
+    for (let i = 0; i < serverArr.length; i++) {
+
+        const obj =
+        {
+            id: serverArr[i].boyugProgramDetailId
+            , title: serverArr[i].boyugProgram.boyugUserName
+            , start: serverArr[i].boyugProgramDetailDate + 'T' + serverArr[i].boyugProgramDetailStartTime
+            , end: serverArr[i].boyugProgramDetailDate + 'T' + serverArr[i].boyugProgramDetailEndTime
+            , content : serverArr[i].sessionName
+            , backgroundColor: '#dc3545'
+            , textColor: '#fff'
+            , borderColor: '#dc3545'
+            , allDay : false
+            , editable: false
+            , display: 'block'
+        }
+
+        eventArr.push(obj);
+    }
+
+
+    let calendar = new Calendar(calendarEl, {
+        locale: 'ko',
+        headerToolbar: {
+        left : 'today',
+        center: 'title',
+        right  : 'prevYear,prev,next,nextYear'
+        },
+        themeSystem: 'bootstrap',
+        contentHeight:"auto",
+        handleWindowResize:true,
+        events: eventArr,
+        editable  : false,
+        droppable : false,
+<!--        eventClick : function(info) {-->
+<!--            $('.modal-title').text(info.event.title);-->
+<!--            const formatStart = formatDate(info.event.start);-->
+<!--            const formatEnd = formatDate(info.event.end);-->
+<!--            $('.modal-start').text(formatStart);-->
+<!--            $('.modal-end').text(formatEnd);-->
+<!--            $('.modal-body-content').text(info.event.extendedProps.content);-->
+<!--            $('.link-button').attr('href', `project-detail?projectNo=${info.event.id}`);-->
+<!--            $('.modal').modal('show');-->
+<!--        }-->
+    });
+
+    calendar.render();
+});
+</script>

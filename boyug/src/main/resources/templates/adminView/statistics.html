@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!-- Primary Meta Tags -->
+  <title>상담</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="title" content="통계자료">
+  <meta name="author" content="ColorlibHQ">
+  <meta name="description" content="AdminLTE is a Free Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
+  <meta name="keywords" content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard" />
+
+  <meta name="color-scheme" content="light dark">
+
+  <!-- OPTIONAL LINKS -->
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/css/OverlayScrollbars.min.css" integrity="sha256-WKijf8KI68sbq8Znd6yMepIuFF0wdWfIt6gk3JWcQfk=" crossorigin="anonymous">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+
+  <!-- REQUIRED LINKS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- Theme style -->
+  <link rel="stylesheet" th:href='@{/adminAssets/css/adminlte.css}'>
+
+</head>
+<body class="layout-fixed">
+<div class="wrapper">
+  <!-- navbar -->
+  <div th:replace="~{adminView/modules/navbar}"></div>
+
+  <!-- Main Sidebar Container -->
+  <div th:replace="~{adminView/modules/sidebar}"></div>
+
+  <!-- Main content -->
+  <main class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <div class="fs-3">통계자료</div>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-end">
+              <li class="breadcrumb-item"><a href="/admin/home">관리자Home</a></li>
+              <li class="breadcrumb-item active" aria-current="page">통계자료</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">통계자료</h3>
+<!--                  <button type="button" class="btn btn-primary" id="getStatisticsButton">등록일자별 프로그램수 통계 가져오기</button>-->
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-lte-dismiss="card-remove" title="Remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-10">
+                    <h4>프로그램 이름별 조회수</h4>
+                    <canvas id="barChart"></canvas>
+<!--                    <h4>프로그램 날짜별 조회수 꺾은선 그래프</h4>-->
+<!--                    <canvas id="lineChart"></canvas>-->
+                  </div>
+                </div>
+              </div>
+              <div class="card-footer"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Main Footer -->
+  <div th:replace="~{adminView/modules/footer}"></div>
+</div>
+
+<<!-- jquery-3.7.1 -->
+<script src="http://code.jquery.com/jquery-3.7.1.js"></script>
+<!-- OPTIONAL SCRIPTS -->
+
+<!-- overlayScrollbars -->
+<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/js/OverlayScrollbars.min.js" integrity="sha256-7mHsZb07yMyUmZE5PP1ayiSGILxT6KyU+a/kTDCWHA8=" crossorigin="anonymous"></script>
+<!-- Bootstrap 5 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<!-- REQUIRED SCRIPTS -->
+
+<!-- AdminLTE App -->
+<script src="/adminAssets/js/adminlte.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js" integrity="sha256-7lWo7cjrrponRJcS6bc8isfsPDwSKoaYfGIHgSheQkk=" crossorigin="anonymous"></script>
+<script type="text/javascript" th:inline="javascript">
+  const SELECTOR_SIDEBAR = '.sidebar'
+  const Default = {
+    scrollbarTheme: 'os-theme-light',
+    scrollbarAutoHide: 'leave'
+  }
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof OverlayScrollbars !== 'undefined') {
+      OverlayScrollbars(document.querySelectorAll(SELECTOR_SIDEBAR), {
+        className: Default.scrollbarTheme,
+        sizeAutoCapable: true,
+        scrollbars: {
+          autoHide: Default.scrollbarAutoHide,
+          clickScrolling: true
+        }
+      })
+    }
+  })
+</script>
+
+<script type="text/javascript" th:inline="javascript">
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+      const dates = /*[[${dates}]]*/ '[]';
+      const programNames = /*[[${programNames}]]*/ '[]';
+      const programCounts = /*[[${programCounts}]]*/ '[]';
+
+<!--      const lineChartCanvas = document.getElementById('lineChart').getContext('2d');-->
+<!--      const lineChart = new Chart(lineChartCanvas, {-->
+<!--        type: 'line',-->
+<!--        data: {-->
+<!--          labels: JSON.parse(dates),-->
+<!--          datasets: [{-->
+<!--            label: '프로그램 조회수',-->
+<!--            data: JSON.parse(programCounts),-->
+<!--            borderColor: 'rgba(75, 192, 192, 1)',-->
+<!--            backgroundColor: 'rgba(75, 192, 192, 0.2)',-->
+<!--            fill: true-->
+<!--          }]-->
+<!--        },-->
+<!--        options: {-->
+<!--          responsive: true,-->
+<!--          scales: {-->
+<!--            x: { title: { display: true, text: '날짜' }},-->
+<!--            y: { title: { display: true, text: '조회수' }}-->
+<!--          }-->
+<!--        }-->
+<!--      });-->
+
+      const barChartCanvas = document.getElementById('barChart').getContext('2d');
+      const barChart = new Chart(barChartCanvas, {
+        type: 'bar',
+        data: {
+          labels: JSON.parse(programNames),
+          datasets: [{
+            label: '프로그램 조회수',
+            data: JSON.parse(programCounts),
+            backgroundColor: 'rgba(54, 162, 235, 1)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { title: { display: true, text: '프로그램명' }},
+            y: { beginAtZero: true, title: { display: true, text: '조회수' }}
+          }
+        }
+      });
+    });
+
+
+
+
+</script>
+
+
+
+</body>
+</html>

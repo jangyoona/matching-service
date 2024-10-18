@@ -1,0 +1,43 @@
+<div class="boyug-container" xmlns:th="http://www.thymeleaf.org">
+    <div class="boyug-request-header">
+        <h3>참가 확정 내역</h3>
+    </div>
+    <div class="boyug-request-main-container">
+        <div th:if="${isHave == false || matchings.size() == 0}"
+             class="my-session-no-data">매칭된 내역이 없습니다</div>
+        <ul th:if="${isHave == true}" class="boyug-request-ul matching-ul">
+<!--            <li th:each="detail, detailStat : ${ details }">-->
+<!--                <span th:text="${users.get(detailStat.index).userName}"></span>-->
+<!--                <span th:text="${detail.boyugProgramDetailDate}"></span>-->
+<!--                <div>-->
+<!--                    <span th:text="|${detail.boyugProgramDetailStartTime} ~ |"></span>-->
+<!--                    <span th:text="${detail.boyugProgramDetailEndTime}"></span>-->
+<!--                </div>-->
+<!--                <span th:text="${detail.sessionName}"></span>-->
+<!--            </li>-->
+<!--            <li th:each="btuDetail, btuDetailStat : ${ btuDetails }">-->
+<!--                <span th:text="${btuUsers.get(btuDetailStat.index).userName}"></span>-->
+<!--                <span th:text="${btuDetail.boyugProgramDetailDate}"></span>-->
+<!--                <div>-->
+<!--                    <span th:text="|${btuDetail.boyugProgramDetailStartTime} ~ |"></span>-->
+<!--                    <span th:text="${btuDetail.boyugProgramDetailEndTime}"></span>-->
+<!--                </div>-->
+<!--                <span th:text="${btuDetail.sessionName}"></span>-->
+<!--            </li>-->
+            <li th:each="matching : ${ matchings }">
+                <span th:text="${matching.userName}"></span>
+                <span th:text="${matching.date}"></span>
+                <div>
+                    <span th:text="|${matching.startTime} ~ |"></span>
+                    <span th:text="${matching.endTime}"></span>
+                </div>
+                <span th:text="${matching.sessionName}"></span>
+            </li>
+        </ul>
+        <nav th:if="${isHave == true}" aria-label="Page navigation example" id="navigation" class="my-session-pagination matching-pagination">
+            <ul class="pagination paging" th:data-pageno='${ pageNo }' th:data-datacount="${ dataCount }">
+                [(${ pager })]
+            </ul>
+        </nav>
+    </div>
+</div>

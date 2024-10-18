@@ -1,0 +1,39 @@
+<div class="my-session-item psersonal-to-boyug-container" xmlns:th="http://www.thymeleaf.org">
+    <h4>내가 신청한 요청</h4>
+    <div th:if="${isHave == false || programDetailList.size() == 0}"
+         class="my-session-no-data">신청한 내역이 없습니다</div>
+    <ul th:if="${isHave == true}" class="btp-ul">
+        <li th:each="programDetail : ${ programDetailList }">
+<!--        <li>-->
+<!--            <th:block th:each="program : ${ boyugPrograms }">-->
+                <span th:each="program : ${ boyugPrograms }"
+                      th:if="${ programDetail.boyugProgramId == program.boyugProgramId }"
+                      th:text="${program.boyugUserName}"></span>
+
+<!--            </th:block>-->
+<!--            <span>맑은 보육원</span>-->
+            <span th:text="${programDetail.boyugProgramDetailDate}"></span>
+            <div>
+                <span th:text="|${programDetail.boyugProgramDetailStartTime} ~ |"></span>
+                <span th:text="${programDetail.boyugProgramDetailEndTime}"></span>
+            </div>
+            <span th:text="${programDetail.sessionName}"></span>
+            <span class="badge text-bg-secondary">대기중</span>
+        </li>
+    </ul>
+<!--    <nav aria-label="Page navigation example" class="my-session-pagination">-->
+<!--        <ul class="pagination">-->
+<!--            <li class="page-item"><a class="page-link" href="#">Previous</a></li>-->
+<!--            <li class="page-item"><a class="page-link" href="#">1</a></li>-->
+<!--            <li class="page-item"><a class="page-link" href="#">2</a></li>-->
+<!--            <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+<!--            <li class="page-item"><a class="page-link" href="#">Next</a></li>-->
+<!--        </ul>-->
+<!--    </nav>-->
+
+    <nav th:if="${isHave == true}" aria-label="Page navigation example" id="navigation" class="my-session-pagination ptb-pagination">
+        <ul class="pagination paging" th:data-pageno='${ pageNo }' th:data-datacount="${ dataCount }">
+            [(${ pager })]
+        </ul>
+    </nav>
+</div>

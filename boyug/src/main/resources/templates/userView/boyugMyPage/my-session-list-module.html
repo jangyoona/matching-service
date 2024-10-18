@@ -1,0 +1,44 @@
+<div class="boyug-container" xmlns:th="http://www.thymeleaf.org">
+    <div class="boyug-request-header">
+        <h3>나의 활동 글 내역</h3>
+    </div>
+    <div class="boyug-request-main-container">
+        <div th:if="${isHave == false || programs.size() == 0}"
+             class="my-session-no-data">매칭된 내역이 없습니다</div>
+        <table th:if="${isHave == true}" class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">글제목</th>
+                <th scope="col">글내용</th>
+                <th scope="col">작성날짜</th>
+                <th scope="col">조회수</th>
+                <th scope="col">글 열림 상태</th>
+                <th scope="col">글 삭제 상태</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="program, programStat : ${ programs }">
+                <th th:text="${programStat.count}" scope="row"></th>
+                <td th:text="${program.boyugProgramName}"></td>
+                <td th:text="${program.boyugProgramDesc}"></td>
+                <td th:text="${#dates.format(program.boyugProgramModifydate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${program.boyugProgramCount}"></td>
+                <td>
+                    <span th:if="${program.boyugProgramIsOpen == true}" class="badge text-bg-primary">공개</span>
+                    <span th:if="${program.boyugProgramIsOpen == false}" class="badge text-bg-warning">비공개</span>
+                </td>
+                <td>
+                    <span th:if="${program.boyugProgramActive == true}" class="badge text-bg-success">활성화</span>
+                    <span th:if="${program.boyugProgramActive == false}" class="badge text-bg-danger">비활성화</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <nav th:if="${isHave == true}" aria-label="Page navigation example" id="navigation" class="boyug-pagination">
+            <ul class="pagination paging" th:data-pageno='${ pageNo }' th:data-datacount="${ dataCount }">
+                [(${ pager })]
+            </ul>
+        </nav>
+    </div>
+</div>

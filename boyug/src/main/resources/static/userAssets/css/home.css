@@ -1,0 +1,51 @@
+/*** Navbar ***/
+
+.nav-container {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    z-index: 9999;
+    border-bottom: 1px solid #b4b4b4;
+    border-radius: 20px;
+    padding: 0.5rem;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    column-gap: 5rem;
+    align-items: center;
+    background-color: #fff;
+    transition: all 0.3s;
+}
+
+.nav-item-container {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    column-gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-item-container a {
+    border: 1px solid transparent;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.nav-item-container a:hover {
+    border: 1px solid #fff;
+    border-radius: 20px;
+    color: #fff;
+    background-color: var(--bs-primary);
+}
+
+.nav-container h1, .nav-item-container a, .nav-item-container a small {
+    color: black;
+    transition: all 0.5s;
+}
+
+.dropdown-toggle:after {
+    color: black;
+}

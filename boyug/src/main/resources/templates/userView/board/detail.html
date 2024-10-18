@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>게시판</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+          integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/userAssets/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/userAssets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/userAssets/css/style.css" rel="stylesheet">
+    <link href="/userAssets/css/home.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+
+<body>
+
+<!-- Spinner Start -->
+<div id="spinner"
+     class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+<!-- Spinner End -->
+
+<!-- Topbar Start -->
+<!--        <div th:replace="~{userView/modules/topbar}"></div>-->
+<!-- Topbar End -->
+
+<!-- Navbar & Hero Start -->
+<div class="container-fluid position-relative p-0">
+<!--    <div th:replace="~{userView/modules/navbar}"></div>-->
+    <div id="nav-container-box"></div>
+</div>
+<!-- Header Start -->
+<div class="container-fluid bg-breadcrumb">
+    <div class="container text-center py-5" style="max-width: 900px;">
+        <h3 class="text-white display-3 mb-4">문의 게시판</h3>
+        <ol class="breadcrumb justify-content-center mb-0">
+            <li class="breadcrumb-item"><a href="/home">홈화면</a></li>
+            <!--                        <li class="breadcrumb-item"><a href="#">Pages</a></li>-->
+            <li class="breadcrumb-item active text-white">문의게시판</li>
+        </ol>
+    </div>
+</div>
+<!-- Header End -->
+<div class="container-fluid about py-5">
+    <div class="container py-5">
+        <div class="content-header">
+            <h2>문의글 상세</h2>
+        </div>
+        <div th:if="${#authentication.principal != null and #authentication.principal.Username == board.writer}">
+            <table class="table table-bordered">
+                <tbody>
+                <tr>
+                    <th>제 목</th>
+                    <td th:text="${ board.boardTitle }"></td>
+                    <th>작성일</th>
+                    <td th:text='${ #dates.format(board.boardRegdate, "yyyy-MM-dd hh:mm:ss") }'></td>
+                </tr>
+                <tr>
+                    <th>작성자</th>
+                    <td th:text="${ board.writer }"></td>
+                    <th>수정일</th>
+                    <td th:text='${ #dates.format(board.boardModifydate, "yyyy-MM-dd hh:mm:ss") }'></td>
+                </tr>
+                <tr>
+                    <th>첨부파일</th>
+                    <td colspan="3">
+                        <div class="file-links">
+                            <div th:if="${#lists.isEmpty(board.attachments)}">첨부파일 없음</div>
+                            <div th:unless="${#lists.isEmpty(board.attachments)}"
+                                 th:each="attach : ${ board.attachments }">
+                                <div th:switch="${#strings.endsWith(attach.boardAttachSaveName, '.jpg') or #strings.endsWith(attach.boardAttachSaveName, '.png')
+                                    or #strings.endsWith(attach.boardAttachSaveName, '.gif') or #strings.endsWith(attach.boardAttachSaveName, '.jpeg')}">
+                                    <!-- Display image files directly -->
+                                    <div th:case="true">
+                                        <img th:src="@{/board-attachments/{filename}(filename=${attach.boardAttachSaveName})}"
+                                             th:alt="${attach.boardAttachOriginName}"
+                                             class="img-thumbnail"/>
+                                    </div>
+                                    <!-- Display non-image files as links -->
+                                    <div th:case="false">
+                                        <a th:href="@{/board-attachments/{filename}(filename=${attach.boardAttachSaveName})}"
+                                           th:text="${attach.boardAttachOriginName}"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>내 용</th>
+                    <td colspan="3" style="white-space: pre-wrap;" th:utext="${ board.boardContent }"></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="buttons">
+                <th:block th:if="${ #authentication.principal != null and #authentication.principal.Username == board.writer}">
+                    <input type="button" id="edit_button" class="btn btn-outline-success" value="편집하기"/>
+                    <input type="button" id="delete_button" class="btn btn-outline-danger" value="삭제하기"/>
+                </th:block>
+                <a th:href="@{/board/list(pageNo=${pageNo})}" id="tolist_button"
+                   class="btn btn-outline-primary">목록보기</a>
+            </div>
+        </div>
+        <div th:unless="${#authentication.principal != null and #authentication.principal.Username == board.writer}">
+            <a th:href="@{/userView/account/login}">로그인</a>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Start -->
+<div th:replace="~{userView/modules/footer}"></div>
+<!-- Footer End -->
+
+<!-- Back to Top -->
+<a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+
+
+<!-- JavaScript Libraries -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/userAssets/lib/easing/easing.min.js"></script>
+<script src="/userAssets/lib/waypoints/waypoints.min.js"></script>
+<script src="/userAssets/lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="/userAssets/lib/lightbox/js/lightbox.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="/userAssets/js/main.js"></script>
+<script type="text/javascript" th:inline="javascript">
+    $(function() {
+        $('.container-fluid #nav-container-box').load('/navbar');
+
+        $('#delete_button').on('click', function(event) {
+            const boardId = [[${board.boardId}]];
+            const pageNo = [[${pageNo}]];
+            const ok = confirm(`${boardId}번 글을 삭제할까요?`);
+            if (ok) {
+                location.href = `/board/delete?boardId=${boardId}&pageNo=${pageNo}`;
+            }
+        });
+        $('#edit_button').on('click', function(event) {
+            const boardId = [[${board.boardId}]];
+            const pageNo = [[${pageNo}]];
+            location.href = '/board/edit?boardId=' + boardId + '&pageNo=' + pageNo;
+        });
+        $('#tolist_button').on('click', function(event) {
+            // location.href = 'list?pageNo=' + [[${ pageNo }]];
+            // location.href = [(|'list?pageNo=${ pageNo }'|)];
+            // location.href = /*[(|'list?pageNo=${ pageNo }'|)]*/ ''; /* 주석 블록 이후의 내용은 서버에서 무시 */
+            location.href = /*[[|list?pageNo=${ pageNo }|]]*/ ''; /* 주석 블록 이후의 내용은 서버에서 무시 */
+            // history.back();
+        });
+    });
+
+</script>
+</body>
+
+</html>

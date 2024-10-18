@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Travela - Tourism Website Template</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
+
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet"> 
+
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link href="/userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+        <link href="/userAssets/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="/userAssets/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="/userAssets/css/style.css" rel="stylesheet">
+        <link href="/userAssets/css/personalLogin.css" rel="stylesheet">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    </head>
+
+    <body>
+
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+        <!-- Navbar & Hero Start -->
+        <div class="container-fluid position-relative p-0">
+            <div id="nav-container-box"></div>
+<!--            <div th:replace="~{userView/modules/navbar}"></div>-->
+        </div>
+
+        <div class="progress-container">
+            <div class="steps-header">
+                <span class="header-item">연락처</span>
+                <span class="header-item">개인정보</span>
+                <span class="header-item">거주지</span>
+                <span class="header-item">프로필</span>
+                <span class="header-item">보호자</span>
+            </div>
+            <div class="custom-progress">
+                <div class="custom-percent"></div>
+            </div>
+            <div class="steps">
+                <div class="step selected" id="0">
+                    <i class="fa-solid fa-check show-icon"></i>
+                </div>
+                <div class="step" id="1">
+                    <i class="fa-solid fa-check show-icon"></i>
+                </div>
+                <div class="step" id="2">
+                    <i class="fa-solid fa-check show-icon"></i>
+                </div>
+                <div class="step" id="3">
+                    <i class="fa-solid fa-check show-icon"></i>
+                </div>
+                <div class="step" id="4">
+                    <i class="fa-solid fa-check show-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="main-container">
+            <form action="/personal/signup" method="POST" enctype="multipart/form-data" id="personal-register-form">
+                <input type="hidden" name="userType" value="ROLE_USER">
+                <input type="hidden" name="userCategory" value="3">
+                <div class="login-text-container">
+                    <div class="login-step login-stepOne-container">
+                        <div class="stepOne-phone-number">
+                            <label for="userPhone">연락처</label>
+                            <div class="message-container">
+                                <span class="info-msg">
+                                    <i class="fa-regular fa-circle-down"></i>
+                                    연락처를 먼저 입력해주세요
+                                </span>
+                            </div>
+                            <div class="phone-number-container">
+                                <input type="number" value="010">
+                                <span> - </span>
+                                <input type="number">
+                                <span> - </span>
+                                <input type="number">
+                                <input type="hidden" name="userPhone" id="userPhone">
+                            </div>
+                            <input type="hidden" th:value="${ oAuth2User != null ? oAuth2User.socialId : '' }" name="socialId">
+                            <div class="message-container">
+                                <span class="info-msg">
+                                    <i class="fa-regular fa-circle-down"></i>
+                                    연락처 입력 후 인증번호 받기 버튼을 눌러주세요
+                                </span>
+                            </div>
+                            <button type="button" class="take-auth-btn">인증번호 받기</button>
+                            <div class="warning-text">연락처 번호를 다시 한번 확인해주세요</div>
+                        </div>
+                        <div class="stepOne-auth-number">
+                            <span>인증번호</span>
+                            <div class="message-container">
+                                <span class="info-msg">
+                                    <i class="fa-regular fa-circle-down"></i>
+                                    인증번호를 입력 후 인증번호 확인 버튼을 눌러주세요
+                                </span>
+                            </div>
+                            <input type="text">
+                            <button type="button" class="confirm-auth-btn">인증번호 확인</button>
+                            <div class="warning-text">인증번호를 다시 한번 확인해주세요</div>
+                        </div>
+                        <div class="stepOne-pw-number">
+                            <span>비밀번호</span>
+                            <div class="message-container">
+                                <span class="info-msg">
+                                    <i class="fa-regular fa-circle-down"></i>
+                                    8자 이상, 특수문자를 포함해주세요
+                                </span>
+                            </div>
+                            <input type="password" class="pw-input" name="userPw" th:value="${ oAuth2User != null ? oAuth2User.userPw : '' }" th:attr="readonly=${oAuth2User != null}">
+                            <div class="see-pw-icon">
+                                <div class="see-pw">
+                                    <i class="fa-solid fa-eye"></i>
+                                    비밀번호 보기
+                                </div>
+                                <div class="hide-pw">
+                                    <i class="fa-regular fa-eye-slash"></i>
+                                    비밀번호 숨기기
+                                </div>
+                            </div>
+                            <div class="warning-text">8자 이상, 특수문자를 포함해주세요</div>
+                        </div>
+                        <div class="stepOne-pwCheck-number">
+                            <span>비밀번호 확인</span>
+                            <div class="message-container">
+                                <span class="info-msg">
+                                    <i class="fa-regular fa-circle-down"></i>
+                                    입력하신 비밀번호와 똑같이 작성해주세요
+                                </span>
+                            </div>
+                            <input type="password" class="pw-check-input" th:value="${ oAuth2User != null ? oAuth2User.userPw : ''}" th:attr="readonly=${oAuth2User != null}">
+                            <div class="see-pw-icon">
+                                <div class="see-check-pw">
+                                    <i class="fa-solid fa-eye"></i>
+                                    비밀번호 보기
+                                </div>
+                                <div class="hide-check-pw">
+                                    <i class="fa-regular fa-eye-slash"></i>
+                                    비밀번호 숨기기
+                                </div>
+                            </div>
+                            <div class="warning-text">입력하신 비밀번호와 일치하지 않습니다</div>
+                        </div>
+                        <div class="stepOne-btn-container" data-index="0">
+                            <button type="button" class="login-next-btn">다음</button>
+                        </div>
+                    </div>
+                    <div class="login-step login-stepTwo-container">
+                        <div class="stepTwo-info-container">
+                            <div class="info-item-container">
+                                <div class="message-container">
+                                    <span class="info-msg">
+                                        <i class="fa-regular fa-circle-down"></i>
+                                        이름을 입력해주세요
+                                    </span>
+                                </div>
+                                <label for="userName">이름</label>
+                                <input type="text" name="userName" id="userName">
+                                <div class="warning-text">입력하신 내용을 다시 확인해주세요</div>
+                            </div>
+                            <div class="info-item-container">
+                                <div class="message-container">
+                                    <span class="info-msg">
+                                        <i class="fa-regular fa-circle-down"></i>
+                                        생년월일을 입력해주세요
+                                    </span>
+                                </div>
+                                <label for="userBirth">생년월일</label>
+                                <div class="info" id="info__birth">
+                                    <select class="box" id="birth-year">
+                                        <option disabled selected>출생 연도</option>
+                                    </select>
+                                    <select class="box" id="birth-month">
+                                        <option disabled selected>월</option>
+                                    </select>
+                                    <select class="box" id="birth-day">
+                                        <option disabled selected>일</option>
+                                    </select>
+                                    <input type="hidden" name="birthDay" id="userBirth">
+                                </div>
+                                <div class="warning-text">입력하신 내용을 다시 확인해주세요</div>
+                            </div>
+                            <div class="info-item-container">
+                                <div class="message-container">
+                                    <span class="info-msg">
+                                        <i class="fa-regular fa-circle-down"></i>
+                                        성별을 선택해주세요
+                                    </span>
+                                </div>
+                                <label for="userGender">성별</label>
+                                <select name="userGender" id="userGender">
+                                    <option value="선택">선택</option>
+                                    <option value="남자">남자</option>
+                                    <option value="여자">여자</option>
+                                </select>
+                                <div class="warning-text">성별을 선택해주세요</div>
+                            </div>
+                            <div class="info-item-container">
+                                <div class="message-container">
+                                    <span class="info-msg">
+                                        <i class="fa-regular fa-circle-down"></i>
+                                        건강상태를 선택해주세요
+                                    </span>
+                                </div>
+                                <label for="userHealth">건강상태</label>
+                                <select name="userHealth" id="userHealth">
+                                    <option value="선택">선택</option>
+                                    <option value="나쁨">나쁨</option>
+                                    <option value="보통">보통</option>
+                                    <option value="좋음">좋음</option>
+                                </select>
+                                <div class="warning-text">건강상태를 선택해주세요</div>
+                            </div>
+                        </div>
+                        <div class="stepTwo-btn-container" data-index="1">
+                            <button type="button" class="login-previous-btn">이전</button>
+                            <button type="button" class="login-next-btn">다음</button>
+                        </div>
+                    </div>
+                    <div class="login-step login-stepThree-container">
+                        <div class="stepThree-info-container">
+                            <div class="info-item-container">
+                                <div class="message-container">
+                                    <span class="info-msg">
+                                        <i class="fa-regular fa-circle-down"></i>
+                                        우편번호 찾기를 눌러 입력해주세요
+                                    </span>
+                                </div>
+                                <label for="userAddr1">우편번호</label>
+                                <div class="addr1-info">
+                                    <input type="text" name="userAddr1" class="addr" id="userAddr1">
+                                    <button type="button" class="find-addr-btn">우편번호 찾기</button>
+                                </div>
+                                <div class="warning-text">입력하신 내용을 다시 확인해주세요</div>
+                            </div>
+                            <div class="info-item-container">
+                                <label for="userAddr2">거주지</label>
+                                <input type="text" name="userAddr2" class="user-addr addr" id="userAddr2">
+                                <div class="warning-text">입력하신 내용을 다시 확인해주세요</div>
+                            </div>
+                            <div class="info-item-container">
+                                <div class="message-container">
+                                    <span class="info-msg">
+                                        <i class="fa-regular fa-circle-down"></i>
+                                        상세주소를 입력해주세요
+                                    </span>
+                                </div>
+                                <label for="userAddr3">상세주소</label>
+                                <input type="text" name="userAddr3" class="user-addr addr" id="userAddr3">
+                                <div class="warning-text">입력하신 내용을 다시 확인해주세요</div>
+                            </div>
+                        </div>
+                        <div class="stepThree-btn-container" data-index="2">
+                            <button type="button" class="login-previous-btn">이전</button>
+                            <button type="button" class="login-next-btn">다음</button>
+                        </div>
+                    </div>
+                    <div class="login-step login-stepFour-container">
+                        <div class="stepFour-info-container">
+                            <div class="info-item-container">
+                                <label for="file-selector-btn" class="upload-img-btn">
+                                    프로필 사진 등록하기
+                                </label>
+                                <input type="file" id="file-selector-btn" name="attach" accept="image/*">
+                                <input type="hidden" th:value="${ oAuth2User != null && oAuth2User.images != null && oAuth2User.images.size() > 0 ? oAuth2User.images[0].imgOriginName : '' }" name="fileUrl">
+                            </div>
+                            <div class="info-item-container">
+                                <img id="selected-image" th:src="${ oAuth2User != null && oAuth2User.images != null && oAuth2User.images.size() > 0 ? oAuth2User.images[0].imgOriginName : ''}">
+                                <div class="image-info-text">
+                                    프로필 사진을 등록하시면 신뢰도를 높일 수 있습니다!
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stepFour-btn-container" data-index="3">
+                            <button type="button" class="login-previous-btn">이전</button>
+                            <button type="button" class="login-next-btn">다음</button>
+                        </div>
+                    </div>
+                    <div class="login-step login-stepFive-container">
+                        <div class="stepFive-info-container">
+                            <label for="protectorPhone">보호자 연락처 등록</label>
+                            <div>
+                                <input type="number" value="010">
+                                <span> - </span>
+                                <input type="number">
+                                <span> - </span>
+                                <input type="number">
+                                <input type="hidden" name="protectorPhone" id="protectorPhone">
+                            </div>
+                            <div class="warning-text">번호가 맞는지 다시 확인해주세요</div>
+                            <div class="protector-notice">
+                                등록할 보호자 번호가 없다면 적지 않으셔도 됩니다
+                            </div>
+                        </div>
+                        <div class="stepFive-btn-container" data-index="4">
+                            <button type="button" class="login-previous-btn">이전</button>
+                            <button type="button" class="login-submit-btn">가입하기</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="login-success-container">
+                    <div class="success-animation-container">
+                        <div class="firework"></div>
+                        <div class="firework"></div>
+                        <div class="firework"></div>
+                        <div class="firework"></div>
+                        <div class="firework"></div>
+                    </div>
+                    <div class="success-msg">
+                        가입이 완료되었습니다!
+                        <!-- 가입이 완료되면 선호하는 활동 등록하러 가기 버튼 추가해서
+                        마이페이지로 이동하고 마이페이지에서 선호하는 활동 추가할 수 있게 하기 -->
+                    </div>
+                    <a href="/userView/account/login" class="login-btn">로그인</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer Start -->
+<!--        <div th:replace="~{userView/modules/footer}"></div>-->
+        <!-- Footer End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
+        
+        <!-- JavaScript Libraries -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/userAssets/lib/easing/easing.min.js"></script>
+        <script src="/userAssets/lib/waypoints/waypoints.min.js"></script>
+        <script src="/userAssets/lib/owlcarousel/owl.carousel.min.js"></script>
+        <script src="/userAssets/lib/lightbox/js/lightbox.min.js"></script>
+
+        <!-- Address API -->
+        <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+        <!-- Template Javascript -->
+        <script src="/userAssets/js/main.js"></script>
+        <script src="/userAssets/js/personalLogin.js"></script>
+    </body>
+
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Travela - Tourism Website Template</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="" name="keywords">
+        <meta content="" name="description">
+
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet"> 
+
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link href="/userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+        <link href="/userAssets/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="/userAssets/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- fullCalendar -->
+        <link rel="stylesheet" href="/userAssets/plugins/fullcalendar/main.css">
+
+        <!-- Template Stylesheet -->
+        <link href="/userAssets/css/style.css" rel="stylesheet">
+        <link href="/userAssets/css/noinHome.css" rel="stylesheet">
+        <link href="/userAssets/css/noinRegister.css" rel="stylesheet">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    </head>
+
+    <body>
+
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+        <!-- Topbar Start -->
+<!--        <div th:replace="~{userView/modules/topbar}"></div>-->
+        <!-- Topbar End -->
+
+        <!-- Navbar & Hero Start -->
+        <div id="nav-container-box"></div>
+<!--        <div class="container-fluid position-relative p-0">-->
+<!--            <div th:replace="~{userView/modules/navbar}"></div>-->
+<!--        </div>-->
+
+        <!-- Main Start -->
+        <div class="main-container">
+            <div class="modal-container">
+<!--                <div th:replace="~{userView/personal/myPage}"></div>-->
+            </div>
+
+            <div class="main-item-container">
+                <div class="main-item" data-index="0">활동 보기</div>
+                <div class="main-item" data-index="1">활동 등록</div>
+                <div class="main-item" data-index="2">보육원 위치</div>
+                <div class="main-item" data-index="3">내 정보</div>
+                <div class="main-item" data-index="5">상담 요청</div>
+            </div>
+        </div>
+        <!-- Main End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
+        
+        <!-- JavaScript Libraries -->
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.js"></script>
+        <script src="/userAssets/lib/easing/easing.min.js"></script>
+        <script src="/userAssets/lib/waypoints/waypoints.min.js"></script>
+        <script src="/userAssets/lib/owlcarousel/owl.carousel.min.js"></script>
+        <script src="/userAssets/lib/lightbox/js/lightbox.min.js"></script>
+
+        <!-- fullCalendar 2.2.5 -->
+        <script src="/userAssets/plugins/moment/moment.min.js"></script>
+        <script src="/userAssets/plugins/fullcalendar/main.js"></script>
+        <script src="/userAssets/plugins/fullcalendar/locales/ko.js"></script>
+
+        <!-- KAKAO MAP API -->
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a9eb596c9794bb4e985c87dd1b91ebe2&libraries=clusterer"></script>
+
+        <!-- Address API -->
+        <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+        <!-- Template Javascript -->
+        <script src="/userAssets/js/noinRegister.js"></script>
+        <script src="/userAssets/js/main.js"></script>
+        <script src="/userAssets/js/noinHome.js"></script>
+        <script src="/userAssets/js/noinProgramList.js"></script>
+        <script src="/userAssets/js/personalMap.js"></script>
+        <script type="text/javascript" th:inline="javascript">
+        $(() => {
+            const modalContainer = $('.modal-container');
+
+            const serverUserArr = /*[[${users}]]*/
+            const serverBoyugArr = /*[[${boyugUsers}]]*/
+            const positionArr = [];
+            for (let i = 0; i < serverUserArr.length; i++) {
+                let obj = {
+                    title : serverBoyugArr[i].boyugUserName,
+                    "lat" : serverUserArr[i].userLatitude,
+                    "lng" : serverUserArr[i].userLongitude
+                }
+                positionArr.push(obj);
+            }
+            console.log(positionArr);
+
+            function panTo(userLat, userLng) {
+                // 이동할 위도 경도 위치를 생성합니다
+                var moveLatLon = new kakao.maps.LatLng(userLat, userLng);
+
+                // 지도 중심을 부드럽게 이동시킵니다
+                map.panTo(moveLatLon);
+            }
+
+            modalContainer.on('click', '.my-position-btn', (e) => {
+
+                const userLat = $('.user-lat').val();
+                const userLng = $('.user-lng').val();
+
+                panTo(userLat, userLng);
+
+            });
+
+            modalContainer.on('click', '.search-boyug-position-btn', (e) => {
+                const boyugName = $('.boyug-name-value').val();
+
+                const findIdx = positionArr.findIndex(v => v.title.includes(boyugName));
+                panTo(positionArr[findIdx].lat, positionArr[findIdx].lng);
+            });
+        });
+        </script>
+    </body>
+
+</html>

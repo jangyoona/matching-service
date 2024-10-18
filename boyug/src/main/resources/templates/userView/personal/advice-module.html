@@ -1,0 +1,85 @@
+
+<div class="advice-container" xmlns:th="http://www.thymeleaf.org">
+    <div class="advice-main-container">
+        <div class="login-logo">
+            <h2 class="main-title">무엇을 도와드릴까요?</h2>
+        </div>
+        <div class="register-box col-10 form-container advice-register-box">
+            <div class="card col-4 advice-box-item" data-toggle="modal" data-target="#information-modal">
+                <a id="information-btn">
+                    <div class="card-body login-card-body cursor-hover">
+                        <div class="logo-box box-txt">이용안내</div>
+                        <div class="row information">
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="card col-4 advice-box-item" data-toggle="modal" data-target="#adcive">
+                <a id="advice-btn">
+                    <div class="card-body login-card-body cursor-hover">
+                        <div class="logo-box box-txt">상담요청</div>
+                        <div class="row call-container">
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- information modal start -->
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" style="z-index:9999">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="col">
+                    <div class="card card-primary">
+                        <div class="card-body myModal-div">
+                            <!-- 사이트 이용 안내서 -->
+                            <div style="margin-top:3rem;"></div>
+                            <!--                            <a href="/userView/activityPages/boyugProgramList">신청 가능한 모집글 보러가기</a>-->
+                            <button class="btn btn-warning" type="button" id="programList-move">신청 가능한 모집글 보러가기</button>
+                            <img src="/userAssets/img/cite_information.jpg" style="width:100%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- information modal end -->
+
+
+<!-- advice modal start -->
+<div id="advice" class="modal fade" tabindex="-1" role="dialog" style="margin-top:10rem;">
+    <div class="modal-dialog modal-lg" role="document"> <!-- modal-lg로 변경 -->
+        <div class="modal-content">
+            <div class="modal-body" style="max-height:50rem; overflow-y:scroll;">
+                <div class="col">
+                    <div class="card card-primary">
+                        <div class="card-body card-call" style="text-align:center;">
+                            <span class="call-form" style="display: flex; gap: 5rem; justify-content: center;">
+                                <button type="button" class="btn btn-outline-primary modal-in-advice" id="board-move">문의글 작성</button>
+                                <button type="button" class="btn btn-outline-primary modal-in-advice" id="call-request">전화상담 요청</button>
+                            </span>
+
+                            <span class="select-call" style="display:flex; gap:5rem; justify-content: center; width:100%; display:none;">
+                                <button type="button" class="btn btn-outline-primary modal-in-advice select-option width30">이용안내</button>
+                                <button type="button" class="btn btn-outline-primary modal-in-advice select-option width30">불만신고</button>
+                                <button type="button" class="btn btn-outline-primary modal-in-advice select-option width30">피해신고</button>
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>

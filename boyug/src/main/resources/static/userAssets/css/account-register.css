@@ -1,0 +1,141 @@
+/* form css*/
+.main-title {
+    margin-top: 8rem;
+    margin-bottom: 6rem;
+    text-align: center;
+    color: #4f4f4f;
+}
+b {
+    color: #13357b;
+}
+.box-txt {
+    color: #13357b;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.form-container {
+    margin-top: 10rem;
+    display: flex;
+    flex-direction: row;
+    place-content: center;
+    gap: 10rem;
+}
+
+.cursor-hover:hover {
+    /*border: 3px solid rgba(0, 0, 0, .1);*/
+    .box-txt {
+        font-weight: bold;
+        font-size: 25px;
+        cursor: pointer;
+        transition: 0.1s;
+    }
+}
+
+.cursor-hover {
+  right: 0%;
+  cursor: pointer;
+}
+
+/**/
+
+
+/**/
+
+.child-container {
+    margin-top: 5vh;
+}
+.register-box {
+    margin: auto;
+}
+
+.logo-box {
+    margin: 10vh;
+    text-align: center;
+}
+
+.register-btn-div {
+    margin-top: 2vh;
+}
+
+.register-btn-child {
+    height: 3.5rem;
+}
+
+.register-input {
+    margin: 2rem 0 2rem;
+}
+
+.email-container {
+    display: inline-flex;
+}
+
+#boyugEmail, #email-domain, #domain {
+    width: 33%;
+}
+
+.dub-check-container {
+    display: -webkit-inline-box;
+}
+
+.dup-check-box {
+    display: initial;
+}
+
+#zipp_btn {
+    cursor: pointer;
+    width:50%;
+    height:3.4rem;
+    margin-left: 0.5rem;
+}
+
+#pw-message, #pw-message2 {
+    margin: 1rem 0.5rem;
+    color: red;
+}
+
+#sms-timer {
+    position: absolute;
+    top: 30%;
+    left: 80%;
+    color: red;
+    font-weight: bold;
+}
+
+#id-check-ok {
+    position: absolute;
+    top: 1.3rem;
+    right: 1rem;
+    color: green;
+    font-weight: bold;
+}
+
+#email-icon {
+    position: absolute;
+    top: 1.3rem;
+    right: 1rem;
+}
+
+
+.fade-out {
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+    opacity: 1;
+    visibility: visible;
+}
+
+.fade-out.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+
+@media(max-width: 991px) {
+    .register-box {
+        width: 100%;
+    }
+    .register-input {
+        width: 100%;
+    }
+    .register-id {
+        width: 80%;
+    }
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<!-- namespace : 패키지이름.클래스이름 ( 저장된 경로와 일치하도록 작성 ) -->
+<mapper namespace="com.boyug.mapper.BoardMapper">
+
+	<select id="selectAllBoard" resultType="BoardDto">
+		SELECT boardId, boardTitle, userId, boardCount, boardRegdate, boardModifyDate, boardAnswer, boardCategory, boardActive
+		FROM TBL_BOARD
+		ORDER BY boardId DESC
+	</select>
+	
+	<select id="selectBoardByRange" parameterType="hashmap" resultType="BoardDto">
+		<![CDATA[
+		SELECT *
+		FROM
+		(
+			SELECT ROWNUM idx, a.*
+			FROM
+			(
+				SELECT boardId, boardTitle, userId, boardCount, boardRegdate, boardModifyDate, boardAnswer, boardCategory, boardActive
+				FROM TBL_BOARD
+				ORDER BY boardId DESC
+			) a
+			WHERE ROWNUM < #{ to }
+		) b
+		WHERE b.idx >= #{ from }
+		]]>
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+

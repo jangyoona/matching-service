@@ -1,0 +1,78 @@
+<div class="container-item session-container" xmlns:th="http://www.thymeleaf.org">
+    <div class="left-container">
+        <div class="session-sort-btn-container">
+            <button id="distance">거리순</button>
+            <button id="chltlstns">최신순</button>
+            <button id="reroll">다른 활동보기</button>
+        </div>
+        <div class="session-list-container">
+            <div class="radio-container">
+                <th:block th:each="program, iterStat : ${boyugProgramList}">
+                    <button type="button"
+                            th:class="${iterStat.index == 0} ? 'radio-item radio-checked' : 'radio-item'"
+                            name="position"
+                            th:data-index="${iterStat.index}"></button>
+                </th:block>
+            </div>
+
+            <main id="carousel">
+                <th:block th:each="program:${boyugProgramList}">
+                    <div class="item">
+                        <img style="width: 80%; height: 50%;" th:if="${program.userImg == null or program.userImg.size() == 0}" th:src="@{'/profile-image/no_img.jpg'}" id="selected-image" alt="image">
+                        <img style="width: 80%; height: 50%;" th:if="${program.userImg != null and program.userImg.size() != 0}" th:src="@{'/profile-image/' + ${program.userImg.get(0).imgSavedName}}" alt="user image">
+                        <h3 class="name" th:text="${program.boyugUserName}"></h3>
+                        <p class="occupation" th:text="${program.boyugProgramName}"></p>
+                        <h1 class="distance" th:text='${program.formattedDistance + " KM"}'></h1>
+                    </div>
+                </th:block>
+            </main>
+        </div>
+    </div>
+    <div class="right-container">
+        <th:block th:each="program, iterStat : ${boyugProgramList}">
+            <div class="right-item" th:style="${iterStat.index == 0} ? 'display:block' : 'display:none'" th:id="'detailForm' + ${iterStat.index}">
+                <img style="width: 80%; height: 50%" th:if="${program.userImg == null or program.userImg.size() == 0}" th:src="@{'/profile-image/no_img.jpg'}" id="selected-image2" alt="image">
+                <img style="width: 80%; height: 50%" th:if="${program.userImg != null and program.userImg.size() != 0}" th:src="@{'/profile-image/' + ${program.userImg.get(0).imgSavedName}}" alt="user image">
+                <h3 class="right-name" th:text="${program.boyugUserName}"></h3>
+                <p class="right-occupation" th:text="${program.boyugProgramName}"></p>
+                <p class="right-testimonial" th:text="${program.boyugProgramDesc}"></p>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>활동</th>
+                            <th>활동 일자</th>
+                            <th>시작 시간</th>
+                            <th>종료 시간</th>
+                            <th>참여 인원</th>
+                            <th>모집 인원</th>
+                            <th>신청</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:each="programDetail:${program.programDetails}">
+                            <tr>
+                                <td th:text="${programDetail.sessionName}"></td>
+                                <td th:text="${programDetail.boyugProgramDetailDate}"></td>
+                                <td th:text="${programDetail.boyugProgramDetailStartTime}"></td>
+                                <td th:text="${programDetail.boyugProgramDetailEndTime}"></td>
+                                <td th:text="${programDetail.boyugProgramDetailChild}"></td>
+                                <td th:text="${programDetail.programDetailPerson}"></td>
+                                <td>
+                                    <th:block th:if="${programDetail.applied}">
+                                        <p>신청 완료</p>
+                                    </th:block>
+                                    <th:block th:unless="${programDetail.applied}">
+                                        <button class="apply-btn btn btn-warning" th:data-detailno="${programDetail.boyugProgramDetailId}">신청 하기</button>
+                                    </th:block>
+                                </td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+            </div>
+        </th:block>
+    </div>
+</div>
+<div class="container-item">
+    활동 내역 페이지
+</div>

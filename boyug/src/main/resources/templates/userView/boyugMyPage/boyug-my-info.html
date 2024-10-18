@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Travela - Tourism Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600&family=Roboto&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/userAssets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/userAssets/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/userAssets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/userAssets/css/style.css" rel="stylesheet">
+    <link href="/userAssets/css/boyug-my-page.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+    <!-- Navbar & Hero Start -->
+    <div class="container-fluid position-relative p-0">
+        <div th:replace="~{userView/modules/navbar}"></div>
+    </div>
+
+    <button type="button" class="open-nav-btn">>></button>
+    <div class="side-nav-container">
+        <button type="button" class="close-nav-btn"><<</button>
+        <a href="boyug-my-info" class="side-nav-item">내 정보 관리</a>
+        <a href="boyug-file-list" class="side-nav-item">사진 관리</a>
+        <a href="boyug-my-session-list" class="side-nav-item">활동 글 내역</a>
+        <a href="boyug-request" class="side-nav-item">신청 보낸 내역</a>
+        <a href="boyug-response" class="side-nav-item">신청 온 내역</a>
+        <a href="boyug-matching" class="side-nav-item">매칭 내역</a>
+        <a href="/userView/advice" class="side-nav-item">상담 요청</a>
+    </div>
+
+    <div class="main-container">
+        <div class="boyug-container">
+            <div class="boyug-request-header">
+                <h3>내 정보</h3>
+            </div>
+            <form id="modifyInfoForm" action="modify-boyug-info" method="POST">
+            <div class="boyug-info-main-container">
+                <input type="hidden" name="userCategory" th:value="${user.userCategory}">
+                <input type="hidden" name="userType" th:value="${user.userType}">
+                <input type="hidden" name="userId" th:value="${user.userId}">
+                <!-- 주소, 담당자이름, 보육원이름, 보육원아이수, 이메일 -->
+                <table class="table">
+                    <tbody>
+                    <tr class="boyug-info-item">
+                        <td>보육원 이름</td>
+                        <td>
+                            <span th:text="${userDetail.boyugUserName}"></span>
+                            <input type="text" class="modify-input" name="boyugUserName" th:value="${userDetail.boyugUserName}">
+                        </td>
+                        <td data-index="0">
+                            <button type="button" class="btn btn-primary info-change-btn">수정하기</button>
+                            <button type="button" class="btn btn-success info-modify-btn request-modify">수정</button>
+                            <button type="button" class="btn btn-warning info-cancel-btn">취소</button>
+                        </td>
+                    </tr>
+                    <tr class="boyug-info-item">
+                        <td>연락처</td>
+                        <td>
+                            <span th:text="${user.userPhone}"></span>
+                            <input type="hidden" class="modify-input" id="phoneValue" name="userPhone" th:value="${user.userPhone}">
+                        </td>
+                        <td data-index="1">
+                            <button type="button" class="btn btn-primary info-change-btn" data-bs-toggle="modal" data-bs-target="#exampleModal">수정하기</button>
+                            <button type="button" class="info-modify-btn" style="display: none;">수정</button>
+                            <button type="button" class="info-cancel-btn" style="display: none;">취소</button>
+                        </td>
+                    </tr>
+                    <tr class="boyug-info-item">
+                        <td>보육원 인원</td>
+                        <td>
+                            <span th:text="|${userDetail.boyugChildNum} 명|"></span>
+                            <input type="number" class="modify-input" name="boyugChildNum" th:value="${userDetail.boyugChildNum}">
+                        </td>
+                        <td data-index="2">
+                            <button type="button" class="btn btn-primary info-change-btn">수정하기</button>
+                            <button type="button" class="btn btn-success info-modify-btn request-modify">수정</button>
+                            <button type="button" class="btn btn-warning info-cancel-btn">취소</button>
+                        </td>
+                    </tr>
+                    <tr class="boyug-info-item">
+                        <td>우편번호</td>
+                        <td>
+                            <span class="addr1-text" th:text="${user.userAddr1}"></span>
+                            <input type="hidden" class="modify-input" id="userAddr1" name="userAddr1" th:value="${user.userAddr1}">
+                        </td>
+                        <td data-index="3">
+                            <button type="button" class="btn btn-primary info-change-btn">수정하기</button>
+                            <button class="info-modify-btn" style="display: none;">수정</button>
+                            <button class="info-cancel-btn" style="display: none;">취소</button>
+                        </td>
+                    </tr>
+                    <tr class="boyug-info-item">
+                        <td>보육원 주소</td>
+                        <td>
+                            <span class="addr2-text" th:text="${user.userAddr2}"></span>
+                            <input type="hidden" class="modify-input" id="userAddr2" name="userAddr2" th:value="${user.userAddr2}">
+                        </td>
+                        <td data-index="4">
+                            <button class="info-change-btn" style="display: none;">수정하기</button>
+                            <button class="info-modify-btn" style="display: none;">수정</button>
+                            <button class="info-cancel-btn" style="display: none;">취소</button>
+                        </td>
+                    </tr>
+                    <tr class="boyug-info-item">
+                        <td>보육원 상세주소</td>
+                        <td>
+                            <span th:text="${user.userAddr3}"></span>
+                            <input type="text" class="modify-input" id="userAddr3" name="userAddr3" th:value="${user.userAddr3}">
+                        </td>
+                        <td data-index="5">
+                            <button type="button" class="btn btn-primary info-change-btn">수정하기</button>
+                            <button type="button" class="btn btn-success info-modify-btn request-modify">수정</button>
+                            <button type="button" class="btn btn-warning info-cancel-btn">취소</button>
+                        </td>
+                    </tr>
+                    <tr class="boyug-info-item">
+                        <td>담당자 이름</td>
+                        <td>
+                            <span th:text="${user.userName}"></span>
+                            <input type="text" class="modify-input" name="userName" th:value="${user.userName}">
+                        </td>
+                        <td data-index="6">
+                            <button type="button" class="btn btn-primary info-change-btn">수정하기</button>
+                            <button type="button" class="btn btn-success info-modify-btn request-modify">수정</button>
+                            <button type="button" class="btn btn-warning info-cancel-btn">취소</button>
+                        </td>
+                    </tr>
+                    <tr class="boyug-info-item">
+                        <td>담당자 이메일</td>
+                        <td>
+                            <span th:text="${userDetail.boyugEmail}"></span>
+<!--                            <input type="text" class="modify-input" th:value="${userDetail.boyugEmail}">-->
+                            <input type="hidden" id="boyugEmail" name="boyugEmail" th:value="${userDetail.boyugEmail}">
+                        </td>
+                        <td data-index="7">
+                            <button type="button" class="btn btn-primary info-change-btn" data-bs-toggle="modal" data-bs-target="#exampleModal2">수정하기</button>
+                            <button class="btn btn-success info-modify-btn" style="display: none;">수정</button>
+                            <button class="btn btn-warning info-cancel-btn" style="display: none;">취소</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+<!--                <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-primary modify-info-btn">프로필 수정하기</button>-->
+                <!-- 전화번호 Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <form action="">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">연락처 수정하기</h1>
+                                    <button type="button" class="btn-close close-modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body custom-modal-body">
+                                    <!-- 번호 입력, 인증번호 보내기, 인증번호 입력, 인증번호 확인 -->
+                                    <div class="modal-label">수정할 전화번호</div>
+                                    <div>
+                                        <input type="number" class="phone-number"> -
+                                        <input type="number" class="phone-number"> -
+                                        <input type="number" class="phone-number">
+                                    </div>
+                                    <button type="button" class="btn btn-info take-auth-btn">인증번호 받기</button>
+                                    <div class="modal-label">인증번호</div>
+                                    <input type="number" class="auth-number">
+                                    <button type="button" class="btn btn-success confirm-auth-btn">인증번호 확인</button>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">닫기</button>
+                                    <button type="button" class="btn btn-primary request-modify">수정하기</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 이메일 Modal -->
+                <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <form action="">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel2">이메일 수정하기</h1>
+                                    <button type="button" class="btn-close close-modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body custom-modal-body">
+                                    <!-- 번호 입력, 인증번호 보내기, 인증번호 입력, 인증번호 확인 -->
+                                    <div class="modal-label">이메일</div>
+                                    <input type="text" id="emailValue" th:value="${userDetail.boyugEmail}">
+                                    <button type="button" class="btn btn-info take-emailAuth-btn">인증번호 받기</button>
+                                    <div class="modal-label">인증번호</div>
+                                    <input type="number" class="emailAuth-number">
+                                    <button type="button" class="btn btn-success confirm-emailAuth-btn">인증번호 확인</button>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">닫기</button>
+                                    <button type="button" class="btn btn-primary request-modify">수정하기</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/userAssets/lib/easing/easing.min.js"></script>
+    <script src="/userAssets/lib/waypoints/waypoints.min.js"></script>
+    <script src="/userAssets/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="/userAssets/lib/lightbox/js/lightbox.min.js"></script>
+
+    <!-- Address API -->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="/userAssets/js/main.js"></script>
+    <script src="/userAssets/js/boyug-my-page.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+
+<!--        $('.boyug-image-container').load('boyug-file-module');-->
+
+<!--        $('#file-selector-btn').on('change', function(e) {-->
+
+<!--            const fileSendForm = $('#fileSendForm');-->
+<!--            const formData = new FormData(fileSendForm[0]);-->
+
+<!--            $.ajax({-->
+
+<!--                url : fileSendForm.attr('action'),-->
+<!--                method : fileSendForm.attr('method'),-->
+<!--                data : formData,-->
+<!--                processData: false,-->
+<!--                contentType: false,-->
+<!--                dataType : "text",-->
+<!--                success : (response, status, xhr) => {-->
+<!--                    $('.boyug-image-container').load('boyug-file-module');-->
+<!--                },-->
+<!--                error : (xhr, status, err) => {-->
+<!--                    alert('ajax fail');-->
+<!--                }-->
+
+<!--            });-->
+
+
+<!--        });-->
+
+<!--        $('.boyug-image-container').on('click', '.delete-btn', (e) => {-->
+<!--            const imageId = $(e.target).data('imageid');-->
+
+<!--            $.ajax({-->
+
+<!--                url : "remove-file",-->
+<!--                method : "POST",-->
+<!--                data : "imageId=" + imageId,-->
+<!--                dataType : "text",-->
+<!--                success : (response, status, xhr) => {-->
+<!--                    $('.boyug-image-container').load('boyug-file-module');-->
+<!--                },-->
+<!--                error : (xhr, status, err) => {-->
+<!--                    alert('ajax fail');-->
+<!--                }-->
+
+<!--            });-->
+<!--        });-->
+
+
+    </script>
+</body>
+
+</html>

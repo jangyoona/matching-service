@@ -1,0 +1,722 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/*** Animation Start ***/
+@keyframes upAndDown {
+    0% { bottom: 0%; }
+    100% { bottom: 20% }
+}
+
+@keyframes fadeInAndOut{
+    0% { opacity: 0; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@keyframes firework {
+    0% { transform: translate(var(--x), var(--initialY)); width: var(--initialSize); opacity: 1; }
+    50% { width: 0.5vmin; opacity: 1; }
+    100% { width: var(--finalSize); opacity: 0; }
+}
+/*** Animation End ***/
+
+
+/*** Progress Start ***/
+.progress-container {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50%;
+}
+
+.steps, .steps-header {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.steps-header {
+    font-size: 1.5rem;
+}
+
+.step {
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border: 2px solid #ACACA6;
+    border-radius: 50%;
+    transition: background 1s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.step i {
+    text-align: center;
+    color: black;
+    transition: all 0.3s ease-in-out;
+}
+
+.show-icon {
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.step.selected {
+    border: 2px solid #4B81BD;
+}
+
+.step.completed {
+    border: 2px solid var(--bs-success);
+    background: var(--bs-success);
+}
+
+.custom-progress {
+    position: absolute;
+    width: 100%;
+    height: 30%;
+    background-color: #fff;
+    border-bottom: 2px solid #ACACA6;
+    z-index: -1;
+}
+
+.custom-percent {
+    position: absolute;
+    width: 0;
+    height: 100%;
+    border-bottom: 3px solid var(--bs-cyan);
+    z-index: 1;
+    transition: width 1s;
+}
+/*** Progress End ***/
+
+
+
+.main-container {
+    margin-top: 15rem;
+    margin-bottom: 5rem;
+}
+
+/*** Login Step One Start ***/
+.login-stepOne-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    padding-bottom: 5rem;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.stepOne-phone-number, .stepOne-auth-number,
+.stepOne-pw-number, .stepOne-pwCheck-number {
+    padding: 2rem 4rem 0 4rem;
+    display: grid;
+    row-gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: black;
+}
+
+.stepOne-phone-number label, .stepOne-auth-number span,
+.stepOne-pw-number span, .stepOne-pwCheck-number span {
+    text-align: center;
+    font-size: 2rem;
+    position: relative;
+}
+
+.info-msg {
+    font-size: 1.5rem;
+    color: var(--bs-cyan);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    animation-name: upAndDown;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.phone-number-container input, .stepFive-info-container input {
+    width: 10vw;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+.message-container {
+    margin-top: 1rem;
+    position: relative;
+    height: 2vh;
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.take-auth-btn, .confirm-auth-btn {
+    background-color: var(--bs-yellow);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    padding: 0.3rem;
+    transition: all 0.3s;
+}
+
+.take-auth-btn:hover, .confirm-auth-btn:hover {
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 1);
+}
+
+.login-next-btn:hover, .login-previous-btn:hover, .addr1-info button:hover,
+.upload-img-btn:hover, .login-submit-btn:hover, .login-btn:hover {
+    box-shadow: inset 0 0 10px #000000;
+}
+
+.warning-text {
+    text-align: center;
+    background-color: var(--bs-red);
+    border-radius: 10px;
+    padding: 0.3rem;
+    animation-name: fadeInAndOut;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.stepOne-auth-number input,
+.stepOne-pw-number input, .stepOne-pwCheck-number input {
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+.see-pw-icon {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.see-pw, .hide-pw, .see-check-pw, .hide-check-pw {
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    padding: 0.5rem;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.see-pw:hover, .hide-pw:hover, .see-check-pw:hover, .hide-check-pw:hover {
+    background-color: black;
+    color: white;
+}
+
+.login-stepOne-container .login-next-btn {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 20vw;
+    background-color: #4B81BD;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    padding: 0.3rem;
+    font-size: 1.5rem;
+    transition: all 0.3s;
+}
+
+
+/*** Login Step One End ***/
+
+.login-text-container {
+    position: relative;
+}
+.login-step {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100%;
+    transform: translateX(-50%);
+}
+
+
+/*** Login Step Two Start ***/
+.login-stepTwo-container, .login-stepThree-container, .login-stepFour-container,
+.login-stepFive-container {
+    display: grid;
+    row-gap: 4rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* .stepTwo-info-container, .stepTwo-btn-container {
+    border: 1px solid blue;
+} */
+
+.stepTwo-info-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 4rem 0 4rem;
+    row-gap: 2rem;
+}
+
+.stepTwo-info-container .info-item-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    text-align: center;
+    align-self: center;
+    justify-self: center;
+    font-size: 1.5rem;
+    color: black;
+    padding: 1rem;
+    border-radius: 20px;
+}
+
+/* .stepTwo-info-container .info-item-container:nth-child(2) {
+    background-color: #ACACA6;
+    z-index: 999;
+} */
+
+.info-item-container input, .info-item-container select {
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+    padding: 0.5rem;
+}
+
+.stepTwo-btn-container, .stepThree-btn-container,
+.stepFour-btn-container, .stepFive-btn-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.info#info__birth select::-webkit-scrollbar {
+    width: 10px;
+}
+
+.info#info__birth select::-webkit-scrollbar-thumb {
+    background-color: #b6b6b6;
+    border-radius: 3px;
+}
+
+.info#info__birth select::-webkit-scrollbar-track {
+    background-color: #ebe9e9;
+    border-radius: 6px;
+}
+
+.login-next-btn {
+    width: 20vw;
+    background-color: #4B81BD;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    padding: 0.3rem;
+    font-size: 1.5rem;
+    transition: all 0.3s;
+}
+
+.login-previous-btn {
+    width: 20vw;
+    background-color: var(--bs-orange);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    padding: 0.3rem;
+    font-size: 1.5rem;
+    transition: all 0.3s;
+}
+/*** Login Step Two End ***/
+
+/*** Login Step Three Start ***/
+.stepThree-info-container {
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    row-gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: black;
+}
+
+.addr1-info button {
+    background-color: var(--bs-cyan);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    padding: 0.3rem;
+    font-size: 1.5rem;
+    transition: all 0.3s;
+}
+
+.user-addr {
+    width: 100%;
+}
+/*** Login Step Three End ***/
+
+/*** Login Step Four Start ***/
+.stepFour-info-container {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    padding-top: 2rem;
+    row-gap: 2rem;
+}
+
+.stepFour-info-container .info-item-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.stepFour-info-container .info-item-container:nth-child(2) {
+    flex-direction: column;
+}
+
+.upload-img-btn {
+    border: 1px solid black;
+    border-radius: 10px;
+    font-size: 2rem;
+    background-color: var(--bs-yellow);
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    color: black;
+    padding: 0.5rem;
+}
+
+#file-selector-btn {
+    display: none;
+}
+
+#selected-image {
+    border: 1px solid var(--bs-orange);
+    padding: 0.5rem;
+    border-radius: 10px;
+    width: 50%;
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.stepFour-info-container .info-item-container .image-info-text {
+    font-size: 2rem;
+    color: black;
+}
+
+.hide {
+    opacity: 0;
+    transition: all 0.3s;
+}
+/*** Login Step Four End ***/
+
+/*** Login Step Five Start ***/
+/* .login-stepFour-container {
+    justify-content: center;
+    align-items: center;
+} */
+
+.stepFive-info-container {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    row-gap: 2rem;
+    font-size: 1.5rem;
+    color: black;
+}
+
+.stepFive-info-container label {
+    text-align: center;
+    font-size: 2rem;
+}
+
+.protector-notice {
+    background-color: var(--bs-yellow);
+    text-align: center;
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.login-submit-btn {
+    width: 20vw;
+    background-color: var(--bs-success);
+    border: none;
+    border-radius: 10px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    padding: 0.3rem;
+    font-size: 1.5rem;
+    transition: all 0.3s;
+}
+/*** Login Step Five End ***/
+
+/*** Login Success Start ***/
+.login-success-container {
+    background-color: var(--bs-yellow);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    height: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.success-animation-container {
+    position: relative;
+}
+
+.firework,
+.firework::before,
+.firework::after
+{
+  --initialSize: 0.5vmin;
+  --finalSize: 45vmin;
+  --particleSize: 0.2vmin;
+  --color1: yellow;
+  --color2: khaki;
+  --color3: white;
+  --color4: lime;
+  --color5: gold;
+  --color6: mediumseagreen;
+  --y: -15vmin;
+  --x: -50%;
+  --initialY: 60vmin;
+  content: "";
+  animation: firework 2s infinite;
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, var(--y));
+  width: var(--initialSize);
+  aspect-ratio: 1;
+  background:
+    /*
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 0% 0%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 100% 0%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 100% 100%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 0% 100%,
+    */
+
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 50% 0%,
+    radial-gradient(circle, var(--color2) var(--particleSize), #0000 0) 100% 50%,
+    radial-gradient(circle, var(--color3) var(--particleSize), #0000 0) 50% 100%,
+    radial-gradient(circle, var(--color4) var(--particleSize), #0000 0) 0% 50%,
+
+    /* bottom right */
+    radial-gradient(circle, var(--color5) var(--particleSize), #0000 0) 80% 90%,
+    radial-gradient(circle, var(--color6) var(--particleSize), #0000 0) 95% 90%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 90% 70%,
+    radial-gradient(circle, var(--color2) var(--particleSize), #0000 0) 100% 60%,
+    radial-gradient(circle, var(--color3) var(--particleSize), #0000 0) 55% 80%,
+    radial-gradient(circle, var(--color4) var(--particleSize), #0000 0) 70% 77%,
+
+    /* bottom left */
+    radial-gradient(circle, var(--color5) var(--particleSize), #0000 0) 22% 90%,
+    radial-gradient(circle, var(--color6) var(--particleSize), #0000 0) 45% 90%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 33% 70%,
+    radial-gradient(circle, var(--color2) var(--particleSize), #0000 0) 10% 60%,
+    radial-gradient(circle, var(--color3) var(--particleSize), #0000 0) 31% 80%,
+    radial-gradient(circle, var(--color4) var(--particleSize), #0000 0) 28% 77%,
+    radial-gradient(circle, var(--color5) var(--particleSize), #0000 0) 13% 72%,
+
+    /* top left */
+    radial-gradient(circle, var(--color6) var(--particleSize), #0000 0) 80% 10%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 95% 14%,
+    radial-gradient(circle, var(--color2) var(--particleSize), #0000 0) 90% 23%,
+    radial-gradient(circle, var(--color3) var(--particleSize), #0000 0) 100% 43%,
+    radial-gradient(circle, var(--color4) var(--particleSize), #0000 0) 85% 27%,
+    radial-gradient(circle, var(--color5) var(--particleSize), #0000 0) 77% 37%,
+    radial-gradient(circle, var(--color6) var(--particleSize), #0000 0) 60% 7%,
+
+    /* top right */
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 22% 14%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 45% 20%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 33% 34%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 10% 29%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 31% 37%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 28% 7%,
+    radial-gradient(circle, var(--color1) var(--particleSize), #0000 0) 13% 42%
+    ;
+  background-size: var(--initialSize) var(--initialSize);
+  background-repeat: no-repeat;
+}
+
+.firework::before {
+  --x: -50%;
+  --y: -15%;
+  --initialY: -25%;
+/*   transform: translate(-20vmin, -2vmin) rotate(40deg) scale(1.3) rotateY(40deg); */
+  transform: translate(-50%, -50%) rotate(40deg) scale(1.3) rotateY(40deg);
+/*   animation: fireworkPseudo 2s infinite; */
+}
+
+.firework::after {
+  --x: -50%;
+  --y: -15%;
+  --initialY: -25%;
+/*   transform: translate(44vmin, -50%) rotate(170deg) scale(1.15) rotateY(-30deg); */
+  transform: translate(-50%, -50%) rotate(170deg) scale(1.15) rotateY(-30deg);
+/*   animation: fireworkPseudo 2s infinite; */
+}
+
+.firework:nth-child(2) {
+  --x: 30vmin;
+}
+
+.firework:nth-child(2),
+.firework:nth-child(2)::before,
+.firework:nth-child(2)::after {
+  --color1: pink;
+  --color2: violet;
+  --color3: fuchsia;
+  --color4: orchid;
+  --color5: plum;
+  --color6: lavender;
+  --finalSize: 40vmin;
+  left: 30%;
+  top: 5%;
+  animation-delay: -0.25s;
+}
+
+.firework:nth-child(3) {
+  --x: -30vmin;
+  --y: -15vmin;
+}
+
+.firework:nth-child(3),
+.firework:nth-child(3)::before,
+.firework:nth-child(3)::after {
+  --color1: cyan;
+  --color2: lightcyan;
+  --color3: lightblue;
+  --color4: PaleTurquoise;
+  --color5: SkyBlue;
+  --color6: lavender;
+  --finalSize: 35vmin;
+  left: 70%;
+  top: 5%;
+  animation-delay: -0.4s;
+}
+
+.firework:nth-child(5) {
+    --x: -20vmin;
+    --y: -5vmin;
+}
+
+.firework:nth-child(5),
+.firework:nth-child(5)::before,
+.firework:nth-child(5)::after {
+    --color1: cyan;
+    --color2: lightcyan;
+    --color3: lightblue;
+    --color4: PaleTurquoise;
+    --color5: SkyBlue;
+    --color6: lavender;
+    --finalSize: 35vmin;
+    left: 40%;
+    top: 5%;
+    animation-delay: -0.4s;
+}
+
+.success-msg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    color: black;
+}
+
+.login-btn {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    background-color: #4B81BD;
+    border: 1px solid black;
+    border-radius: 20px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    padding: 0.5rem;
+}
+/*** Login Success End ***/
+
+
+
+/*** Login Step Controll Start ***/
+/* .login-stepOne-container {
+    display: none;
+} */
+
+/* .login-stepTwo-container {
+    display: none;
+}
+
+.login-stepThree-container {
+    display: none;
+}
+
+.login-stepFour-container {
+    display: none;
+}
+
+.login-success-container {
+    display: none;
+} */
+
+/* .progress-container {
+    display: none;
+} */
+/*** Login Step Controll End ***/
+
+/*** Login Step Controll Start ***/
+.login-stepOne-container {
+    z-index: 6;
+}
+
+.login-stepTwo-container {
+    z-index: 5;
+}
+
+.login-stepThree-container {
+    z-index: 4;
+}
+
+.login-stepFour-container {
+    z-index: 3;
+}
+
+.login-stepFive-container {
+    z-index: 2;
+}
+
+.login-success-container {
+    z-index: 1;
+}
+
+/* .progress-container {
+    display: none;
+} */
+/*** Login Step Controll End ***/
+
+
+
+
+
+

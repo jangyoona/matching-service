@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1:1채팅</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css"/>
+    <link href="userAssets/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="userAssets/css/user-boyug-chat.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <style>
+    </style>
+</head>
+<body>
+
+    <div class="user-title-container"
+         th:text="${ otherUserName } + '님과의 채팅방'">
+        <!--         th:text="${ toUserName } + '님과의 채팅방'">-->
+    </div>
+
+    <!-- bottom-container -->
+    <div class="outer" style="display: flex;">
+        <!-- chatting list -->
+        <div class="list-container">
+            <th:block th:if="${ userRoomList != null }">
+                <div>
+                    <!-- 톱니바퀴 icon -->
+                    <i class="fa-solid fa-gear" style="display:flex; flex-direction:row-reverse; margin:10px 15px 10px;"
+                       data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1"></i>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="collapse multi-collapse" id="multiCollapseExample1">
+                            <div class="card card-body setting-btn" style="padding:10px; border-radius:0;">
+                                <a class="cursor" id="edit-btn">편집</a>
+                                <a class="cursor" id="getOut-chatroom" style="display:none;">나가기</a>
+                                <span id="check-span" style="display:none;"><input type="checkbox" class="form-check-input" id="all-check"> 전체선택</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+
+            <th:block th:if="${ userRoomList == null }">
+                <span text="이 전 대화 목록이 없습니다."></span>
+            </th:block>
+            <th:block sec:authorize="isAuthenticated()">
+                <table class="table table-hover">
+                    <tbody>
+                        <tr th:each="list, idx : ${ userRoomList }" th:if="${ loginUser.userCategory == 2 ? list.boyugChatActive : list.userChatActive }">
+                            <td>
+                                <input type="checkbox" class="form-check-input select-box" name="select-box"
+                                       th:data-chatroom-id="${ list.chatRoomId }"  style="display:none; float:inline-start;">
+                                <a class="go-chatting" th:data-chatroom-id="${ list.chatRoomId }" style="cursor:pointer; color:black;">
+                                    <div class="testimonial-img p-1" style="display:flex;">
+                                        <!-- 프로필사진 미 등록시 기본 이미지 -->
+                                        <th:block th:if="${ list.chatMessages != null && list.chatMessages.size() > 0
+                                                         && ((loginUser.userId != list.chatMessages.get(0).fromUserId.userId &&
+                                                              (list.chatMessages.get(0).fromUserId.images == null || list.chatMessages.get(0).fromUserId.images.size() == 0))
+                                                         || (loginUser.userId != list.chatMessages.get(0).toUserId.userId &&
+                                                              (list.chatMessages.get(0).toUserId.images == null || list.chatMessages.get(0).toUserId.images.size() == 0))) }">
+                                            <img th:src="@{'/profile-image/no_img.jpg'}" class="img-fluid rounded-circle" alt="Image" style="width:60px;">
+                                        </th:block>
+
+                                        <!-- 프로필 사진 show -->
+                                        <img th:if="${ list.chatMessages != null && list.chatMessages.size() > 0
+                                                     && !(loginUser.userId != list.chatMessages.get(0).fromUserId.userId &&
+                                                          (list.chatMessages.get(0).fromUserId.images == null || list.chatMessages.get(0).fromUserId.images.size() == 0))
+                                                     && !(loginUser.userId != list.chatMessages.get(0).toUserId.userId &&
+                                                          (list.chatMessages.get(0).toUserId.images == null || list.chatMessages.get(0).toUserId.images.size() == 0)) }"
+                                             th:src="${'/profile-image/' + ( loginUser.userId != list.chatMessages.get(0).fromUserId.userId
+                                                        ? list.chatMessages.get(0).fromUserId.images.get(0).imgSavedName
+                                                        : list.chatMessages.get(0).toUserId.images.get(0).imgSavedName )}"
+                                             class="img-fluid rounded-circle" alt="Image" style="width:60px;">
+
+
+
+
+
+                                        <div class="room-container">
+                        <!--name-->         <span th:text="${list.chatMessages.get(list.chatMessages.size() - 1).fromUserId.userName == loginUser.userName ? list.chatMessages.get(list.chatMessages.size() - 1).toUserId.userName
+                                                        : list.chatMessages.get(list.chatMessages.size() - 1).fromUserId.userName}" style="font-weight:bold;"></span>
+                        <!--message-->      <span th:text="${#strings.length(list.chatMessages.get(list.chatMessages.size() - 1).chatContent) > 10 ? #strings.substring(list.chatMessages.get(list.chatMessages.size() - 1).chatContent, 0, 10) + '...'
+                                                       : list.chatMessages.get(list.chatMessages.size() - 1).chatContent}"></span>
+                                        </div>
+                                        <div class="room-container" style="margin-left:auto;">
+                        <!-- send-time -->  <span class="date-span" th:with="now=${#dates.format(new java.util.Date(), 'yyyy-MM-dd')},
+                                                chatDate=${#dates.format(list.chatMessages.get(list.chatMessages.size() - 1).chatSendTime, 'yyyy-MM-dd')},
+                                                diffDays=${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).parse(chatDate), T(java.time.LocalDate).parse(now))}"
+                                                th:text="${diffDays == 0 ? #dates.format(list.chatMessages.get(list.chatMessages.size() - 1).chatSendTime, 'a hh:mm') :
+                                                (diffDays == 1 ? '어제' : #dates.format(list.chatMessages.get(list.chatMessages.size() - 1).chatSendTime, 'MM-dd'))}"></span>
+                                            <span class="new-message-count" style="display:none;"></span>
+                                            <th:block th:each="message : ${ list.chatMessages }" th:if="${ message.toUserId.userId == loginUser.userId }">
+                                                <input type="hidden" class="toIsReadStatus" th:value="${message.toIsRead}">
+<!--                                                <input type="hidden" class="toIsReadStatus"-->
+<!--                                                       th:value="${ list.chatMessages.get(list.chatMessages.size() - 1).fromUserId.userId == loginUser.userId-->
+<!--                                                                  ? 0 : message.toIsRead }">-->
+                                            </th:block>
+                                        </div>
+                                    </div>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </th:block>
+        </div>
+
+        <!-- chatting -->
+        <div class="chat_wrap">
+            <div class="inner">
+                <!-- saved messages -->
+                <div id="messageContainer">
+<!--                    원본-->
+<!--                    <div class="inner">-->
+<!--                        &lt;!&ndash; 이전 메시지 표시 &ndash;&gt;-->
+<!--                        <div id="messageContainer">-->
+
+<!--                            <div th:each="message, idx : ${messages}"-->
+<!--                                 th:class="${message.fromUserId.userId == loginUser.userId} ? 'item mymsg on' : 'item yourmsg on'">-->
+
+<!--                                <div class="box">-->
+<!--                                    <p class="msg" th:text="${message.chatContent}"></p>-->
+<!--                                    <span class="time" th:text="${#dates.format(message.chatSendTime, 'a hh:mm')}"></span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <th:block sec:authorize="isAuthenticated()">
+                        <div th:each="message, idx : ${messages}"
+                             th:class="${message.fromUserId.userId == loginUser.userId ? 'item mymsg on' : 'item yourmsg on'}"
+                             th:style="${ message.fromUserId.userId != loginUser.userId ? 'margin-left:-9px;' : ''}">
+
+                            <!-- 여기 block if 조건부가 약간 이해가 안되는데 작동 하는중 주시할 것 -->
+                            <th:block th:if="${message.fromUserId.userId != loginUser.userId}">
+                                <!-- 프로필사진 미 등록시 기본 이미지 -->
+                                <img th:if="${ profileUrl == null }" th:src="@{'/profile-image/no_img.jpg'}" class="img-fluid rounded-circle" style="width:60px;">
+                                <!-- 프로필 사진 show -->
+                                <img th:if="${ profileUrl != null }"
+                                     th:src="${'/profile-image/' + profileUrl }"
+                                     class="img-fluid rounded-circle other-image" alt="Image" style="width:60px; background-color:white;">
+                            </th:block>
+
+                            <div class="box"
+                                 th:style="${message.fromUserId.userId == loginUser.userId ? 'margin-left: 0.5rem; position: relative; top:0.6rem' : 'margin-left: 0.5rem; margin-top:1.5rem; position:relative; top:0.6rem;'}">
+                                <p class="msg" th:text="${message.chatContent}" style="height:auto;"></p>
+                                <span class="time" th:text="${#dates.format(message.chatSendTime, 'a hh:mm')}" style="margin-bottom:1.2rem;"></span>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+
+            <input type="hidden" id="sessionId" name="sessionId" value="">
+            <input type="hidden" id="fromUserId" name="fromUserId" th:value="${ loginUser != null ? loginUser.userId : '' }">
+            <input type="hidden" id="toUserId" name="toUserId" th:value="${ toUserId }">
+            <input type="hidden" id="roomNumber" th:value="${roomNumber}">
+            <input type="hidden" id="login-user" th:value="${ loginUser }">
+
+            <!-- text-input -->
+            <div style="display:flex;">
+                <input type="text" class="mymsg" id="chatting" placeholder="내용 입력">
+                <button type="button" class="btn btn-primary" style="width:4rem; margin-top:5px;"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+<div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/userAssets/js/chat.js"></script>
+<script type="text/javascript" th:inline="javascript">
+    $(function() {
+        let loginUser = /*[[loginUser]]*/'';
+
+        // 페이지 로드 시 스크롤을 맨 아래로 이동
+        const size = document.querySelector('.inner').scrollHeight; // vanilla JS로 전체 높이 가져오기
+        $('.inner').scrollTop(size); // jQuery 문법 스크롤 조정
+    });
+
+</script>
+</body>
+</html>

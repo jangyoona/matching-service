@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <!-- Primary Meta Tags -->
+  <title>관리자 페이지</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="title" content="관리자 페이지">
+  <meta name="author" content="ColorlibHQ">
+  <meta name="description" content="AdminLTE is a Free Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
+  <meta name="keywords" content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard" />
+
+  <meta name="color-scheme" content="light dark">
+
+  <!-- OPTIONAL LINKS -->
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/css/OverlayScrollbars.min.css" integrity="sha256-WKijf8KI68sbq8Znd6yMepIuFF0wdWfIt6gk3JWcQfk=" crossorigin="anonymous">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+
+  <!-- REQUIRED LINKS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- Theme style -->
+  <link rel="stylesheet" th:href='@{/adminAssets/css/adminlte.css}'>
+
+
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+</head>
+  <body class="layout-fixed">
+    <div class="wrapper">
+      <!-- navbar -->
+      <div th:replace="~{adminView/modules/navbar}"></div>
+
+      <!-- Main Sidebar Container -->
+      <div th:replace="~{adminView/modules/sidebar}"></div>
+
+      <!-- Main content -->
+      <main class="content-wrapper">
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <div class="fs-3">관리자 페이지</div>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="/admin/home">관리자Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">관리자 페이지</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="content">
+          <div class="container-fluid">
+            <!-- Small boxes (Stat box) -->
+            <div class="row">
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-primary">
+                  <div class="inner">
+                    <h3 th:text="${boyugProgramCount}">17</h3>
+
+                    <p>프로그램 수</p>
+                  </div>
+                  <div class="icon">
+                    <i class="far fa-calendar"></i>
+                  </div>
+<!--                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>-->
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-success">
+                  <div class="inner">
+                    <h3 th:text="${boyugProgramDetailCount}">23<sup class="fs-5">%</sup></h3>
+
+                    <p>세부 프로그램</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-calendar-day"></i>
+                  </div>
+<!--                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>-->
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                  <div class="inner">
+                    <h3 th:text="${userDetailCount}">44</h3>
+
+                    <p>개인회원</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-user"></i>
+                  </div>
+<!--                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>-->
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box bg-danger">
+                  <div class="inner">
+                    <h3 th:text="${boyugUserCount}">15</h3>
+
+                    <p>보육원 회원</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-users"></i>
+                  </div>
+<!--                  <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>-->
+                </div>
+              </div>
+              <!-- ./col -->
+            </div>
+            <!-- /.row -->
+            <!-- Main row -->
+            <div class="row">
+              <!-- Start col -->
+              <div class="col-lg-6">
+                <!-- Custom tabs (Charts with tabs)-->
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">
+                      <i class="fas fa-chart-pie me-1"></i>
+                      회원 및 프로그램 현황
+                    </h3>
+                    <div class="card-tools">
+                      <ul class="nav nav-pills ms-auto">
+                        <li class="nav-item">
+                          <a class="nav-link active" href="#revenue-chart" data-bs-toggle="tab">막대그래프</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#sales-chart" data-bs-toggle="tab">도넛형</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div><!-- /.card-header -->
+                  <div class="card-body">
+                    <div class="tab-content p-0">
+                      <!-- Morris chart - Sales -->
+                      <div class="chart tab-pane active" id="revenue-chart"
+                          style="position: relative; height: 400px;">
+                          <canvas id="revenue-chart-canvas" height="400" style="height: 400px;"></canvas>
+                      </div>
+                      <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 400px;">
+                        <canvas id="sales-chart-canvas" height="400" style="height: 400px;"></canvas>
+                      </div>
+                    </div>
+                  </div><!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+
+
+              </div>
+              <!-- /.Start col -->
+
+              <div class="col-lg-6">
+                <!-- Custom tabs (Charts with tabs)-->
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">
+                      <i class="fas fa-chart-pie me-1"></i>
+                      연령별 회원수
+                    </h3>
+                    <div class="card-tools">
+                      <ul class="nav nav-pills ms-auto">
+                        <li class="nav-item">
+                          <a class="nav-link active" href="#revenue2-chart" data-bs-toggle="tab">막대그래프</a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="#sales2-chart" data-bs-toggle="tab">도넛형</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div><!-- /.card-header -->
+                  <div class="card-body">
+                    <div class="tab-content p-0">
+                      <!-- Morris chart - Sales -->
+                      <div class="chart tab-pane active" id="revenue2-chart"
+                           style="position: relative; height: 400px;">
+                        <canvas id="revenue2-chart-canvas" height="400" style="height: 400px;"></canvas>
+                      </div>
+                      <div class="chart tab-pane" id="sales2-chart" style="position: relative; height: 400px;">
+                        <canvas id="sales2-chart-canvas" height="400" style="height: 400px;"></canvas>
+                      </div>
+                    </div>
+                  </div><!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+
+
+              </div>
+              <!-- /.Start col -->
+            </div>
+            <!-- /.row (main row) -->
+          </div><!-- /.container-fluid -->
+        </div>
+      </main>
+      <!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <div th:replace="~{adminView/modules/footer}"></div>
+
+    </div>
+    <!--  ./wrapper -->
+
+<!-- jquery-3.7.1 -->
+<script src="http://code.jquery.com/jquery-3.7.1.js"></script>
+<!-- OPTIONAL SCRIPTS -->
+
+<!-- overlayScrollbars -->
+<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/js/OverlayScrollbars.min.js" integrity="sha256-7mHsZb07yMyUmZE5PP1ayiSGILxT6KyU+a/kTDCWHA8=" crossorigin="anonymous"></script>
+<!-- Bootstrap 5 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+<!-- REQUIRED SCRIPTS -->
+
+<!-- AdminLTE App -->
+<script src="/adminAssets/js/adminlte.js"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+
+<script type="text/javascript" th:inline="javascript">
+  const SELECTOR_SIDEBAR = '.sidebar'
+  const Default = {
+    scrollbarTheme: 'os-theme-light',
+    scrollbarAutoHide: 'leave'
+  }
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof OverlayScrollbars !== 'undefined') {
+      OverlayScrollbars(document.querySelectorAll(SELECTOR_SIDEBAR), {
+        className: Default.scrollbarTheme,
+        sizeAutoCapable: true,
+        scrollbars: {
+          autoHide: Default.scrollbarAutoHide,
+          clickScrolling: true
+        }
+      })
+    }
+  })
+</script>
+
+
+    <!-- OPTIONAL SCRIPTS -->
+
+<!-- ChartJS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.0/dist/chart.min.js" integrity="sha256-7lWo7cjrrponRJcS6bc8isfsPDwSKoaYfGIHgSheQkk=" crossorigin="anonymous"></script>
+<script type="text/javascript" th:inline="javascript">
+  (function () {
+      'use strict';
+
+      // 프로그램, 프로그램 디테일, 유저, 보육 유저 데이터를 가져옵니다.
+      var programCount = /*[[${boyugProgramCount}]]*/ '프로그램';
+      var programDetailCount = /*[[${boyugProgramDetailCount}]]*/ '세부프로그램';
+      var userDetailCount = /*[[${userDetailCount}]]*/ '개인회원';
+      var boyugUserCount = /*[[${boyugUserCount}]]*/ '보육원회원';
+
+      // Bootstrap 색상 정의
+      var primaryColor = 'rgba(0, 123, 255, 0.9)';
+      var successColor = 'rgba(40, 167, 69, 0.9)';
+      var warningColor = 'rgba(255, 193, 7, 0.9)';
+      var dangerColor = 'rgba(220, 53, 69, 0.9)';
+
+      // sales-chart-canvas에 표시할 데이터 (도넛형 차트)
+      var pieChartCanvas = document.querySelector('#sales-chart-canvas').getContext('2d');
+      var pieData = {
+        labels: [
+          '프로그램 수',
+          '프로그램 디테일 수',
+          '개인유저 수',
+          '보육원 유저 수'
+        ],
+        datasets: [
+          {
+            data: [programCount, programDetailCount, userDetailCount, boyugUserCount],
+            backgroundColor: [primaryColor, successColor, warningColor, dangerColor]
+          }
+        ]
+      };
+      var pieOptions = {
+        plugins: {
+          legend: {
+            display: true
+          }
+        },
+        maintainAspectRatio: false,
+        responsive: true
+      };
+      var pieChart = new Chart(pieChartCanvas, {
+        type: 'doughnut',
+        data: pieData,
+        options: pieOptions
+      });
+
+      // revenue-chart-canvas에 표시할 데이터 (막대 그래프)
+      var salesChartCanvas = document.querySelector('#revenue-chart-canvas').getContext('2d');
+      var salesChartData = {
+        labels: ['프로그램 수', '세부프로그램 수', '개인회원 수', '보육원회원 수'],
+        datasets: [
+          {
+            label: '회원 및 프로그램 현황',
+            backgroundColor: [primaryColor, successColor, warningColor, dangerColor],
+            borderColor: [primaryColor, successColor, warningColor, dangerColor],
+            fill: true,
+            data: [programCount, programDetailCount, userDetailCount, boyugUserCount]
+          }
+        ]
+      };
+      var salesChartOptions = {
+        maintainAspectRatio: false,
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: false
+            }
+          }
+        }
+      };
+      var salesChart = new Chart(salesChartCanvas, {
+        type: 'bar',
+        data: salesChartData,
+        options: salesChartOptions
+      });
+
+      var ages = /*[[${ages}]]*/ '[]';
+      var counts = /*[[${counts}]]*/ '[]';
+
+      // sales2-chart-canvas에 표시할 데이터 (도넛형 차트)
+      var pieChartCanvas2 = document.querySelector('#sales2-chart-canvas').getContext('2d');
+      var pieData2 = {
+        labels: JSON.parse(ages),
+        datasets: [{
+          label: '회원 수',
+          data: JSON.parse(counts),
+          backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(255, 159, 64, 0.2)',
+                  'rgba(255, 205, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(201, 203, 207, 0.2)',
+                  'rgba(0, 123, 255, 0.5)',
+                  'rgba(40, 167, 69, 0.5)',
+                  'rgba(255, 193, 7, 0.5)',
+                  'rgba(220, 53, 69, 0.5)'
+                ],
+          borderColor: [
+                  'rgb(255, 99, 132)',
+                  'rgb(255, 159, 64)',
+                  'rgb(255, 205, 86)',
+                  'rgb(75, 192, 192)',
+                  'rgb(54, 162, 235)',
+                  'rgb(153, 102, 255)',
+                  'rgb(201, 203, 207)',
+                  'rgba(0, 123, 255)',
+                  'rgba(40, 167, 69)',
+                  'rgba(255, 193, 7)',
+                  'rgba(220, 53, 69)'
+                ],
+          borderWidth: 1
+        }]
+      };
+      var pieOptions2 = {
+        plugins: {
+          legend: {
+            display: true
+          }
+        },
+        maintainAspectRatio: false,
+        responsive: true
+      };
+      var pieChart2 = new Chart(pieChartCanvas2, {
+        type: 'doughnut',
+        data: pieData2,
+        options: pieOptions2
+      });
+
+      // revenue2-chart-canvas에 표시할 데이터 (막대 그래프)
+      var salesChartCanvas2 = document.querySelector('#revenue2-chart-canvas').getContext('2d');
+      var salesChartData2 = {
+        labels: JSON.parse(ages),
+        datasets: [{
+          label: '회원 수',
+          data: JSON.parse(counts),
+          backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(255, 159, 64, 0.2)',
+                  'rgba(255, 205, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(201, 203, 207, 0.2)',
+                  'rgba(0, 123, 255, 0.5)',
+                  'rgba(40, 167, 69, 0.5)',
+                  'rgba(255, 193, 7, 0.5)',
+                  'rgba(220, 53, 69, 0.5)'
+                ],
+          borderColor: [
+                  'rgb(255, 99, 132)',
+                  'rgb(255, 159, 64)',
+                  'rgb(255, 205, 86)',
+                  'rgb(75, 192, 192)',
+                  'rgb(54, 162, 235)',
+                  'rgb(153, 102, 255)',
+                  'rgb(201, 203, 207)',
+                  'rgba(0, 123, 255)',
+                  'rgba(40, 167, 69)',
+                  'rgba(255, 193, 7)',
+                  'rgba(220, 53, 69)'
+                ],
+          borderWidth: 1
+        }]
+      };
+      var salesChartOptions2 = {
+        maintainAspectRatio: false,
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            beginAtZero: true,
+            grid: {
+              display: false
+            }
+          }
+        }
+      };
+      var salesChart2 = new Chart(salesChartCanvas2, {
+        type: 'bar',
+        data: salesChartData2,
+        options: salesChartOptions2
+      });
+
+
+  })();
+
+
+
+    </script>
+  </body>
+</html>

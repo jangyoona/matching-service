@@ -1,0 +1,117 @@
+/* Custom CSS to style labels and inputs */
+
+        .login-box {
+                    margin: auto;
+                }
+
+                .logo-box {
+                    margin: 10vh;
+                    text-align: center;
+                }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #343a40; /* Darker shade of black for labels */
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select,
+         .form-group option {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            border: 1px solid #ced4da;
+            color: #000000;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .form-group button {
+            padding: 0.25rem 1.25rem;
+            border-radius: 0.75rem;
+            color: black;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+
+        /* CSS for aligning elements in a row */
+        .inline-form-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .inline-form-group > .form-group {
+            flex: 1;
+            min-width: 90px; /* Reduced minimum width for compact layout */
+        }
+        .inline-form-group > .form-group.small-input {
+            flex: 0 0 80px; /* Smaller width for specific inputs */
+        }
+        .inline-form-group > .form-group.extra-small-input {
+            flex: 0 0 70px; /* Extra small width for specific inputs */
+        }
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+        }
+        .form-group input[type="number"] {
+            text-align: right;
+        }
+
+        /* Adjustments for input and select in the row */
+        .inline-form-group label {
+            font-size: 0.75rem; /* Reduced font size for labels in the row */
+        }
+        .inline-form-group input,
+        .inline-form-group select {
+            font-size: 0.75rem; /* Reduced font size for inputs and selects */
+            padding: 0.5rem; /* Reduced padding */
+        }
+
+        /* Adjustments for title, writer, content fields */
+        .form-group-title, .form-group-writer, .form-group-content {
+            margin-bottom: 1rem;
+        }
+        .form-group-title label,
+        .form-group-writer label,
+        .form-group-content label {
+            font-size: 0.875rem; /* Slightly smaller than normal */
+        }
+        .form-group-title input,
+        .form-group-writer input,
+        .form-group-content textarea {
+            font-size: 0.875rem; /* Slightly smaller than normal */
+            padding: 0.75rem; /* Slightly smaller padding */
+        }
+
+        /* Padding for card */
+        .card {
+            padding: 1rem; /* Added padding inside the card */
+            margin-bottom: 1rem; /* Margin to separate from other elements */
+        }
+
+        @media (max-width: 768px) {
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: 0.875rem;
+            }
+            .form-group button {
+                width: 100%;
+            }
+            .inline-form-group {
+                flex-direction: column;
+            }
+        }
+        

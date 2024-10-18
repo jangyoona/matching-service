@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko"  xmlns:th="http://www.thymeleaf.org">
+<!-- For RTL verison -->
+<!-- <html lang="en" dir="rtl"> -->
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- Primary Meta Tags -->
+<title>관리자 추가/제거</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="title" content="관리자 추가/제거">
+<meta name="author" content="ColorlibHQ">
+<meta name="description" content="">
+<meta name="keywords" content="" />
+
+<meta name="color-scheme" content="light dark">
+
+
+<!-- OPTIONAL LINKS -->
+
+<!-- Google Font: Source Sans Pro -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+<!-- overlayScrollbars -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/css/OverlayScrollbars.min.css" integrity="sha256-WKijf8KI68sbq8Znd6yMepIuFF0wdWfIt6gk3JWcQfk=" crossorigin="anonymous">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+
+<!-- REQUIRED LINKS -->
+
+<!-- Theme style -->
+<link rel="stylesheet" th:href='@{/adminAssets/css/adminlte.css}'>
+
+
+  </head>
+  <body class="layout-fixed">
+    <div class="wrapper">
+
+      <!-- navbar -->
+      <div th:replace="~{adminView/modules/navbar}"></div>
+
+      <!-- Main Sidebar Container -->
+      <div th:replace="~{adminView/modules/sidebar}"></div>
+
+      <!-- Main content -->
+      <main class="content-wrapper">
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <div class="fs-3">관리자 추가/제거</div>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="/admin/home">관리자Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">관리자 추가/제거</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Main content -->
+        <div class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <!-- Default box -->
+                <div class="card">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="card-title">관리자 추가/제거</h2>
+                    <div class="d-flex align-items-center">
+                      <input type="number" id="userId-input" class="me-2" placeholder="회원번호 입력" min="0" />
+                      <button class="btn btn-primary search-userId-btn">검색</button>
+                    </div>
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse" title="Collapse">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <button type="button" class="btn btn-tool" data-lte-dismiss="card-remove" title="Remove">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card-body">
+
+                    <div>
+                      <p>유저 이름: <span data-user-name th:text="${user.userName}"></span></p>
+                      <p>유저 전화번호: <span data-user-phone th:text="${user.userPhone}"></span></p>
+                      <p>유저 권한:
+                      <ul data-user-roles>
+                        <li th:each="role : ${user.roles}" th:text="${role.roleName}"></li>
+                      </ul>
+                      </p>
+
+                      <button id="toggleAdminButton" class="btn btn-primary"
+                              th:attr="data-user-id=${user.userId}">
+                        <span th:text="${isAdmin ? '관리자 제거' : '관리자 추가'}"></span>
+                      </button>
+
+                    </div>
+                  </div>
+                  <!-- /.card-body -->
+                  <div class="card-footer">
+
+                  </div>
+                  <!-- /.card-footer-->
+                </div>
+                <!-- /.card -->
+              </div>
+            </div>
+            <!-- /.row -->
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+      </main>
+      <!-- /.content-wrapper -->
+
+      <!-- Main Footer -->
+      <div th:replace="~{adminView/modules/footer}"></div>
+
+</div>
+<!--  ./wrapper -->
+
+<!-- OPTIONAL SCRIPTS -->
+
+<!-- jquery-3.7.1 -->
+<script src="http://code.jquery.com/jquery-3.7.1.js"></script>
+<!-- overlayScrollbars -->
+<script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@1.13.1/js/OverlayScrollbars.min.js" integrity="sha256-7mHsZb07yMyUmZE5PP1ayiSGILxT6KyU+a/kTDCWHA8=" crossorigin="anonymous"></script>
+<!-- Bootstrap 5 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha256-9SEPo+fwJFpMUet/KACSwO+Z/dKMReF9q4zFhU/fT9M=" crossorigin="anonymous"></script>
+
+<!-- REQUIRED SCRIPTS -->
+
+<!-- AdminLTE App -->
+<script src="/adminAssets/js/adminlte.js"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+
+<script type="text/javascript" th:inline="javascript">
+  const SELECTOR_SIDEBAR = '.sidebar'
+  const Default = {
+    scrollbarTheme: 'os-theme-light',
+    scrollbarAutoHide: 'leave'
+  }
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof OverlayScrollbars !== 'undefined') {
+      OverlayScrollbars(document.querySelectorAll(SELECTOR_SIDEBAR), {
+        className: Default.scrollbarTheme,
+        sizeAutoCapable: true,
+        scrollbars: {
+          autoHide: Default.scrollbarAutoHide,
+          clickScrolling: true
+        }
+      })
+    }
+  });
+
+</script>
+<script type="text/javascript" th:inline="javascript">
+  $(document).ready(function () {
+    // 관리자 추가/제거 버튼
+    $('#toggleAdminButton').click(function () {
+        var userId = $(this).data('user-id');
+        var action = $(this).text().includes('추가') ? 'add' : 'remove';
+
+        $.ajax({
+            url: '/admin/toggleAdmin',
+            method: 'POST',
+            data: { userId: userId, action: action },
+            success: function (response) {
+                alert(response.message);
+
+                // 버튼 텍스트 업데이트
+                $('#toggleAdminButton span').text(action === 'add' ? '관리자 제거' : '관리자 추가');
+
+                // 관리자 추가/제거 후 유저 정보 다시 가져오기
+                $.ajax({
+                    url: '/admin/administrator', // 유저 정보를 가져오는 URL
+                    method: 'POST',
+                    data: { userId: userId },
+                    success: function (userResponse) {
+                        // 유저 정보를 UI에 표시
+                        $('span[data-user-name]').text(userResponse.userName);
+                        $('span[data-user-phone]').text(userResponse.userPhone);
+
+                        // 유저 권한 리스트 업데이트
+                        var rolesList = '';
+                        userResponse.roles.forEach(function(role) {
+                            rolesList += '<li>' + role.roleName + '</li>';
+                        });
+                        $('ul[data-user-roles]').html(rolesList);
+
+                        // 버튼 상태 업데이트
+                        $('#toggleAdminButton')
+                            .attr('data-user-id', userResponse.userId)
+                            .find('span')
+                            .text(userResponse.roles.some(role => role.roleName === 'ROLE_ADMIN') ? '관리자 제거' : '관리자 추가');
+                    },
+                    error: function () {
+                        alert('유저 정보를 가져오는 중 오류가 발생했습니다.');
+                    }
+                });
+            },
+            error: function () {
+                alert('요청 처리 중 오류가 발생했습니다.');
+            }
+        });
+    });
+
+    // 회원번호 검색 버튼 클릭 시
+    $('.search-userId-btn').click(function () {
+        var userId = $('#userId-input').val(); // 입력된 회원번호 가져오기
+
+        $.ajax({
+            url: '/admin/administrator',
+            method: 'POST',
+            data: { userId: userId },
+            success: function (response) {
+                // 유저 정보를 UI에 표시
+                $('span[data-user-name]').text(response.userName);
+                $('span[data-user-phone]').text(response.userPhone);
+
+                // 유저 권한 리스트 업데이트
+                var rolesList = '';
+                response.roles.forEach(function(role) {
+                    rolesList += '<li>' + role.roleName + '</li>';
+                });
+                $('ul[data-user-roles]').html(rolesList);
+
+                // 버튼 상태 업데이트
+                $('#toggleAdminButton')
+                    .attr('data-user-id', response.userId)
+                    .find('span')
+                    .text(response.roles.some(role => role.roleName === 'ROLE_ADMIN') ? '관리자 제거' : '관리자 추가');
+            },
+            error: function () {
+                alert('유저 정보를 가져오는 중 오류가 발생했습니다.');
+            }
+        });
+    });
+
+  });
+</script>
+
+  </body>
+</html>
