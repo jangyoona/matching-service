@@ -10,7 +10,7 @@
 
 
 # 1️⃣ 1:N 매칭 서비스
-![main](https://github.com/user-attachments/assets/f174afb6-9608-40fd-b7db-82051fb0a3a2)
+![main](https://github.com/user-attachments/assets/5713c948-ce1c-411d-abdc-a2fa23c8cc25)
 
 # 서비스 소개
 > - 해당 프로젝트는 보육원의 아이들과 시니어를 매칭
@@ -44,9 +44,9 @@
 <br>
 
 # 데이터베이스 구조
-![database](https://github.com/user-attachments/assets/0830d794-9ddd-4e9b-8db5-289562deb1a8)
+![database](https://github.com/user-attachments/assets/abefaa23-8a15-49a4-afbc-6b9ca21f423f)
 🔽🔽`Notification(알림) 추가 테이블`🔽🔽<br>
-![database2](https://github.com/user-attachments/assets/fb66b1fb-c2b9-41f5-9b27-b64a52443b9c)
+![database2](https://github.com/user-attachments/assets/ed6db29a-fc88-4838-aa88-bce06370cf24)
 
 <br>
 <br>
@@ -66,7 +66,7 @@
 > * ### Cookie를 활용한 아이디 저장 기능
 <br>
 
-| ![로그인1](https://github.com/user-attachments/assets/95b9f9bc-47d4-47fb-b7fc-93d2b7709bea) | ![로그인2](https://github.com/user-attachments/assets/03e38332-e521-4cd1-8428-d9bf4d5e6192) |
+| ![로그인1](https://github.com/user-attachments/assets/8c3163c5-e417-4039-8a79-6263d083f643) | ![로그인2](https://github.com/user-attachments/assets/e46de3ae-7451-4fb7-83a9-a914bc19fca1) |
 |:--:|:--:|
 | <h3>로그인 페이지</h3> | <h3>일반회원 또는 소셜회원을 구분하여 사용자 안내</h3> |
 
@@ -81,7 +81,7 @@
 > * ### FileReader API 사용: 첨부한 이미지 미리보기
 <br>
 
-| ![회원가입](https://github.com/user-attachments/assets/214b9203-8164-4683-a2e6-c853e1a5a977) | ![회원가입2](https://github.com/user-attachments/assets/9bc12c94-b3c0-42f2-88d2-f17c3b4dab95) |
+| ![회원가입](https://github.com/user-attachments/assets/da3c4d86-73ba-4d57-b5f5-b3f2015471af) | ![회원가입2](https://github.com/user-attachments/assets/e9601fc1-0ed4-4244-a5a8-db6ee1fcaadf) |
 |:--:|:--:|
 | <h3>아이디 중복체크&문자인증 / 이미지 미리보기</h3> | <h3>첨부파일 / 필수약관</h3> |
 
@@ -95,7 +95,7 @@
 > * ### 기본적인 채팅방 목록, 삭제, 관리 기능
 <br>
 
-![채팅1](https://github.com/user-attachments/assets/f78e66ec-e8bd-4352-ae0c-31395b0a570a)
+![채팅1](https://github.com/user-attachments/assets/4f878316-9e53-458e-9b9b-bfd7df31b73f)
 
 <br>
 <br>
@@ -107,7 +107,7 @@
 > * ### 저장된 emitter를 조회, 상대방에게 즉시 알림 전송
 > * ### 상대방이 이미 채팅방에 있는 경우 알림 전송 ❌
 > * ### 상대방이 오프라인인 경우에도 알림 전송 ❌
-![채팅2](https://github.com/user-attachments/assets/95588859-fa34-4f4d-998a-9729c7b6dbdb)
+![채팅2](https://github.com/user-attachments/assets/b06c8659-2c80-4d56-a35b-d1376705e36a)
 
 <br>
 <br>
@@ -120,7 +120,7 @@
 > * ### 불필요한 알림을 최소화
 <br>
 
-![알림1](https://github.com/user-attachments/assets/9bbb848e-c388-4f40-899f-a21a3ef69630)  ⬅⬅⬅
+![알림1](https://github.com/user-attachments/assets/8caacaa2-6e6f-407d-be08-7bd21415fad4)  ⬅⬅⬅
 
 <br>
 <br>
