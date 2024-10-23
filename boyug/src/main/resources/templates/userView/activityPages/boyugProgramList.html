@@ -81,20 +81,22 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <th:block th:each="boyugProgram : ${boyugProgramList}">
-                            <tr>
-                                <td th:text="${boyugProgram.boyugProgramId}"></td>
-                                <td>
-                                    <a th:text="${boyugProgram.boyugProgramName}"
-                                       th:href="@{boyugProgramDetail(boyugProgramId=${boyugProgram.boyugProgramId})}"></a>
-                                </td>
-                                <td th:text="${boyugProgram.boyugUserName}"></td>
-                                <td>
-                                    <span class="distance-span" th:attr="data-lat=${boyugProgram.userLatitude}, data-lng=${boyugProgram.userLongitude}"></span> km
-                                </td>
-                                <td th:text="${#dates.format(boyugProgram.boyugProgramRegdate, 'yyyy-MM-dd')}"></td>
-                                <td th:text="${boyugProgram.boyugProgramCount}"></td>
-                            </tr>
+                        <th:block th:if="${boyugProgramList != null && !boyugProgramList.isEmpty()}">
+                            <th:block th:each="boyugProgram : ${boyugProgramList}">
+                                <tr>
+                                    <td th:text="${boyugProgram.boyugProgramId}"></td>
+                                    <td>
+                                        <a th:text="${boyugProgram.boyugProgramName}"
+                                           th:href="@{boyugProgramDetail(boyugProgramId=${boyugProgram.boyugProgramId})}"></a>
+                                    </td>
+                                    <td th:text="${boyugProgram.boyugUserName}"></td>
+                                    <td>
+                                        <span class="distance-span" th:attr="data-lat=${boyugProgram.userLatitude}, data-lng=${boyugProgram.userLongitude}"></span> km
+                                    </td>
+                                    <td th:text="${#dates.format(boyugProgram.boyugProgramRegdate, 'yyyy-MM-dd')}"></td>
+                                    <td th:text="${boyugProgram.boyugProgramCount}"></td>
+                                </tr>
+                            </th:block>
                         </th:block>
                         </tbody>
                     </table>

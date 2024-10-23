@@ -17,7 +17,6 @@
 
     <div class="user-title-container"
          th:text="${ otherUserName } + '님과의 채팅방'">
-        <!--         th:text="${ toUserName } + '님과의 채팅방'">-->
     </div>
 
     <!-- bottom-container -->
@@ -95,9 +94,6 @@
                                             <span class="new-message-count" style="display:none;"></span>
                                             <th:block th:each="message : ${ list.chatMessages }" th:if="${ message.toUserId.userId == loginUser.userId }">
                                                 <input type="hidden" class="toIsReadStatus" th:value="${message.toIsRead}">
-<!--                                                <input type="hidden" class="toIsReadStatus"-->
-<!--                                                       th:value="${ list.chatMessages.get(list.chatMessages.size() - 1).fromUserId.userId == loginUser.userId-->
-<!--                                                                  ? 0 : message.toIsRead }">-->
                                             </th:block>
                                         </div>
                                     </div>
@@ -134,7 +130,6 @@
                              th:class="${message.fromUserId.userId == loginUser.userId ? 'item mymsg on' : 'item yourmsg on'}"
                              th:style="${ message.fromUserId.userId != loginUser.userId ? 'margin-left:-9px;' : ''}">
 
-                            <!-- 여기 block if 조건부가 약간 이해가 안되는데 작동 하는중 주시할 것 -->
                             <th:block th:if="${message.fromUserId.userId != loginUser.userId}">
                                 <!-- 프로필사진 미 등록시 기본 이미지 -->
                                 <img th:if="${ profileUrl == null }" th:src="@{'/profile-image/no_img.jpg'}" class="img-fluid rounded-circle" style="width:60px;">
