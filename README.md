@@ -85,14 +85,34 @@
 > * ### MAP API 사용: 정확성 및 사용자 편의성 제공
 > * ### FileReader API 사용: 첨부한 이미지 미리보기
 <br>
+<br>
 
-| ![회원가입](https://github.com/user-attachments/assets/da3c4d86-73ba-4d57-b5f5-b3f2015471af) | ![회원가입2](https://github.com/user-attachments/assets/e9601fc1-0ed4-4244-a5a8-db6ee1fcaadf) |
+
+|![회원가입1](https://github.com/user-attachments/assets/fe916e42-f5fe-4843-b993-30fd8fafc872)| ![회원가입2](https://github.com/user-attachments/assets/d8e4f1cc-da2f-4aed-954b-115f4456e833)|
 |:--:|:--:|
-| <h3>아이디 중복체크&문자인증 / 이미지 미리보기</h3> | <h3>첨부파일 / 필수약관</h3> |
+|<h3>아이디 중복체크&문자인증</h3>|<h3>비밀번호 유효성 검사</h3>|
 
 <br>
 <br>
 <br>
+
+|![회원가입4](https://github.com/user-attachments/assets/3c7fa300-963c-4871-940f-7d2265d91da0)|
+|:--:|
+|<h3>Map Api</h3>|
+
+<br>
+<br>
+<br>
+
+|![회원가입5](https://github.com/user-attachments/assets/0f39b4bb-1f08-4be0-ad9d-cb3fd731bc27)|
+|:--:|
+|<h3>FileReader Api_이미지 미리보기</h3>|
+
+<br>
+<br>
+<br>
+<br>
+
 
 # ✅ 1:1 채팅
 > * ### WebSocket을 활용한 1:1 채팅 구현
