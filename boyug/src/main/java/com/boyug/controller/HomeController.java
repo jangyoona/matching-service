@@ -104,9 +104,9 @@ public class HomeController {
     }
 
     // Admin Page 접근시 권한없으면 return
-    @GetMapping("/admin/adminView/login-denied")
+    @GetMapping("/login-denied")
     public String loginDeniedShow() {
-        return "adminView/login-denied";
+        return "userView/login-denied";
     }
 
 

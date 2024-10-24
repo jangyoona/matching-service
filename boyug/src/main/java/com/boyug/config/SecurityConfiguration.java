@@ -51,10 +51,10 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/static/**").permitAll()
-                        .requestMatchers("/admin/adminView/login-denied").permitAll()
+                        .requestMatchers("/login-denied").permitAll()
                         .requestMatchers("/board/*list*","/board/*write*", "/board/*edit*", "/board/*delete*","/board/*detail*").authenticated() // authenticated? 로그인한 사용자만 허용 설정
-                        .requestMatchers("/chat/**", "/moveChatting/**").authenticated() // authenticated? 로그인한 사용자만 허용 설정
-                        .requestMatchers("/userView/activityPages/*noinRegisterDetail*").hasAnyRole("BOYUG", "ADMIN") // authenticated? 로그인한 사용자만 허용 설정
+                        .requestMatchers("/chat/**", "/moveChatting/**").authenticated()
+                        .requestMatchers("/userView/activityPages/*noinRegisterDetail*").hasAnyRole("BOYUG", "ADMIN")
                         .requestMatchers("/myPage/**").hasRole("BOYUG")
                         .requestMatchers("/adminView/**", "/admin/**").hasRole("ADMIN")
                         .requestMatchers("/personal/personalHome").hasRole("USER")
@@ -62,7 +62,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session
                         .maximumSessions(2)) // 동시 세션 제어
                                 .exceptionHandling(exception -> exception
-                                        .accessDeniedPage("/admin/adminView/login-denied")
+                                        .accessDeniedPage("/login-denied") // 권한 부족시 404 페이지
 //                        .maxSessionsPreventsLogin(true) // 동시 로그인 차단
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -72,12 +72,7 @@ public class SecurityConfiguration {
                         .passwordParameter("userPw")
                         .successHandler(loginSuccessHandler())
                         .loginProcessingUrl("/userView/account/process-login")
-//                        .failureHandler(loginFailHandler())
                 )
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .accessDeniedPage("/admin/adminView/login-denied")) // ADMIN 아닐 경우 리다이렉트 URL
-                         // 로그인 실패 시 보낼 경로
-//                        .loginProcessingUrl("/userView/account/process-login").defaultSuccessUrl("/home",true))
 
                 .logout((logout) -> logout
                         .logoutUrl("/userView/account/logout")
@@ -100,9 +95,8 @@ public class SecurityConfiguration {
                 .authenticationSuccessHandler(loginSuccessHandler())
                 .alwaysRemember(false)
                 .userDetailsService(userDetailsService())
-        )
-                // 주로 인증 실패나 권한이 없는 접근 시에 호출되는 핸들러
-                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(customAuthenticationEntryPoint()));
+        );
+
         return http.build();
     }
 

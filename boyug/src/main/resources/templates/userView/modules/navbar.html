@@ -33,10 +33,10 @@
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0" />
-<link href="/userAssets/css/chatbot.css" rel="stylesheet">
-<div>
-    <div xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" sec:authorize="isAuthenticated()" th:replace="~{userView/modules/chatbot}"></div>
-</div>
+<!--<link href="/userAssets/css/chatbot.css" rel="stylesheet">-->
+<!--<div>-->
+<!--    <div xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" sec:authorize="isAuthenticated()" th:replace="~{userView/modules/chatbot}"></div>-->
+<!--</div>-->
 <div id=""> <!-- load용 컨테이너 -->
     <nav class="nav-container" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
         
@@ -54,8 +54,10 @@
                 <a href="/admin/home" class="btn btn-outline-secondary">관리자</a>
             </th:block>
             <a href="/home">Home</a>
-            <a href="/board/list">문의/공지</a>
-            <a th:href="@{/userView/activityPages/boyugProgramList}" class="dropdown-item">보육원게시판</a>
+            <a href="/board/list" th:if="${ loginUserId != null }">문의/공지</a>
+            <a href="/userView/account/login" th:if="${ loginUserId == null }">문의/공지</a>
+<!--            <a th:href="@{/userView/activityPages/boyugProgramList}" class="dropdown-item">보육원게시판</a>-->
+            <a href="/userView/activityPages/boyugProgramList" class="dropdown-item">보육원게시판</a>
             <th:block sec:authorize="isAuthenticated()">
                 <a th:if="${#authentication.principal.user.userCategory == 2}"th:href="@{/userView/activityPages/noinRegisterList}" class="dropdown-item">노인리스트</a>
             </th:block>
@@ -141,6 +143,6 @@
 
 <script src="/userAssets/js/home-notification.js"></script>
 <!--<script src="http://code.jquery.com/jquery-3.7.1.js"></script>-->
-<script src="/userAssets/js/chatbot.js"></script>
+<!--<script src="/userAssets/js/chatbot.js"></script>-->
 
 <!--<script src="/js/main.7776cca1.js"></script>-->

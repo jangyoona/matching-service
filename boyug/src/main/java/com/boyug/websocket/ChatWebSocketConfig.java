@@ -25,8 +25,7 @@ public class ChatWebSocketConfig implements WebSocketConfigurer {
 //        registry.addHandler(socketHandler, "/ws/chating")
         registry.addHandler(socketHandler, "/chatting/{roomNumber}") // roomNumber? 방을 구분하는 값
                 .addInterceptors(new HttpSessionHandshakeInterceptor(), new CustomHandshakeInterceptor())
-//                .setAllowedOrigins("http://localhost:8081/chat");
-                .setAllowedOrigins("http://152.67.211.254:8080//chat");
+                .setAllowedOrigins("http://152.67.211.254:8080");
     }
     // 만약 CORS때문에 origin에서 403에러가 뜬다면
     // String[] origins = {"https://www.url1.com", "https://m.url2.com", "https://url3.com"}; 배열로 여러개를 대입해도 됨

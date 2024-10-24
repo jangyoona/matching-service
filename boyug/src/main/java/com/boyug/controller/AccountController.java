@@ -51,6 +51,12 @@ public class AccountController {
     @Setter(onMethod_ = { @Autowired })
     private SmsApi smsApi;
 
+    @Value("${file.profile-dir}")
+    private String profileDir;
+
+    @Value("${file.boyugfile-dir}")
+    private String boyugFileDir;
+
     @GetMapping("/privacy-policy")
     public String privacyPolicyShow() {
         return "userView/account/privacy-policy";
@@ -166,7 +172,10 @@ public class AccountController {
         if (attach.length > 0 ) {
             try {
                 // 업체 첨부파일
-                String dir = req.getServletContext().getRealPath("/boyugUser-file");
+//                String dir = "/home/ubuntu/boyugUser-file";
+
+                // 디렉토리가 없으면 생성
+                createDirectoryIfNotExists(boyugFileDir);
 
                 for (MultipartFile file : attach) {
                     String userFileName = file.getOriginalFilename();
@@ -176,7 +185,7 @@ public class AccountController {
                     userFile.setUserId(savedUser.getUserId());
                     userFile.setFileOriginName(userFileName);
                     userFile.setFileSavedName(savedFileName);
-                    file.transferTo(new File(dir, savedFileName)); // 파일 저장
+                    file.transferTo(new File(boyugFileDir, savedFileName)); // 파일 저장
                     boyugUserFileList.add(userFile);
                 }
             } catch (Exception ex) {
@@ -187,7 +196,10 @@ public class AccountController {
                     // 프로필 사진
                     String profileUserFileName = attachProfile.getOriginalFilename();
                     String profileSavedFileName = Util.makeUniqueFileName(profileUserFileName);
-                    String profileDir = req.getServletContext().getRealPath("/profile-image");
+//                    String profileDir = "/home/ubuntu/profile-image";
+
+                    // 디렉토리가 없으면 생성
+                    createDirectoryIfNotExists(profileDir);
 
                     profileImage.setUser(savedUser);
                     profileImage.setImgOriginName(profileUserFileName);
@@ -205,6 +217,14 @@ public class AccountController {
             }
         }
         return "redirect:/userView/account/success";
+    }
+
+    // 디렉터리 확인 후 없으면 생성
+    private void createDirectoryIfNotExists(String dirName) {
+        File directory = new File(dirName);
+        if (!directory.exists()) {
+            directory.mkdirs(); // 디렉토리 생성
+        }
     }
 
     @PostMapping("/reset-passwd")

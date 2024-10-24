@@ -53,7 +53,7 @@ public class ActivityPagesController {
         model.addAttribute("totalElements", boyugProgramList.getTotalElements());
 
 
-        return "/userView/activityPages/boyugProgramList";
+        return "userView/activityPages/boyugProgramList";
     }
 
 
@@ -65,7 +65,7 @@ public class ActivityPagesController {
         List<SessionDto> sessions = activityService.findAllSessions();
         model.addAttribute("sessions", sessions);
 
-        return "/userView/activityPages/boyugProgram";
+        return "userView/activityPages/boyugProgram";
     }
 
     @PostMapping(path = { "/boyugProgramWrite" })
@@ -144,7 +144,7 @@ public class ActivityPagesController {
         model.addAttribute("boyugProgram", boyugProgram);
         model.addAttribute("isAuthor", isAuthor);
 
-        return "/userView/activityPages/boyugProgramDetail";
+        return "userView/activityPages/boyugProgramDetail";
     }
 
     @GetMapping(path = { "/boyugProgramEdit" })
@@ -179,7 +179,7 @@ public class ActivityPagesController {
         model.addAttribute("sessions", sessions);
 
         if (isAuthor) {
-            return "/userView/activityPages/boyugProgramEdit";
+            return "userView/activityPages/boyugProgramEdit";
         } else {
             return "redirect:/userView/activityPages/boyugProgramList";
         }
@@ -261,7 +261,7 @@ public class ActivityPagesController {
         model.addAttribute("active", active);
         model.addAttribute("profile", profile);
 
-        return "/userView/activityPages/noinRegister";
+        return "userView/activityPages/noinRegister";
     }
 
     @ResponseBody
@@ -364,7 +364,7 @@ public class ActivityPagesController {
         model.addAttribute("currentPage", users.getNumber());
         model.addAttribute("totalPages", users.getTotalPages());
 
-        return "/userView/activityPages/noinRegisterList";
+        return "userView/activityPages/noinRegisterList";
     }
 
     @GetMapping(path = { "/noinRegisterDetail" })
@@ -394,7 +394,7 @@ public class ActivityPagesController {
         List<BoyugProgramDetailDto> programDetails = activityService.findBoyugProgramDetails(loginUserId, userId);
         model.addAttribute("programDetails", programDetails);
 
-        return "/userView/activityPages/noinRegisterDetail";
+        return "userView/activityPages/noinRegisterDetail";
     }
 
     @PostMapping(path = { "/boyugToUser" })

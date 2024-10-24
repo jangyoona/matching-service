@@ -78,7 +78,7 @@ public class BoardController {
         model.addAttribute("pager", pager);
         model.addAttribute("pageNo", pageNo);
 
-        return "/userView/board/list";    //  board/list
+        return "userView/board/list";    //  board/list
     }
 
     @GetMapping(path = {"/write"})
@@ -92,7 +92,7 @@ public class BoardController {
         WebUserDetails userDetails = (WebUserDetails)  authentication.getPrincipal();
         model.addAttribute("userId", userDetails.getUser().getUserId());
         model.addAttribute("username", userDetails.getUsername());
-        return "/userView/board/write";
+        return "userView/board/write";
     }
 
     @PostMapping(path = {"/write"})
@@ -193,7 +193,7 @@ public class BoardController {
         model.addAttribute("pageNo", pageNo);
         model.addAttribute("enter", "\n");
 
-        return "/userView/board/detail";
+        return "userView/board/detail";
     }
     @GetMapping(path = {"/notice"}) // 주소?d1=v1&d2=v2
     public String noticeWithQueryString(
@@ -216,7 +216,7 @@ public class BoardController {
         model.addAttribute("pageNo", pageNo);
         model.addAttribute("enter", "\n");
 
-        return "/userView/board/notice";
+        return "userView/board/notice";
     }
 
     @GetMapping(path = {"/detail/{boardId}"}) // 주소/data
@@ -225,7 +225,7 @@ public class BoardController {
         BoardDto board = boardService.findBoardByBoardId(boardId);
         model.addAttribute("board", board);
 
-        return "/userView/board/detail";
+        return "userView/board/detail";
     }
 
     @GetMapping(path = {"/download"})
@@ -265,7 +265,7 @@ public class BoardController {
         model.addAttribute("board", board);
         model.addAttribute("pageNo", pageNo);
 
-        return "/userView/board/edit";
+        return "userView/board/edit";
     }
 
     @PostMapping(path = {"/edit"})
@@ -353,7 +353,7 @@ public class BoardController {
         BoardAttachDto boardAttach = boardService.findBoardAttachByAttachNo(attachNo);
         model.addAttribute("attach", boardAttach);
 
-        return "/userView/board/show-img";
+        return "userView/board/show-img";
     }
     @GetMapping(path = {"/download-img/{fileName}"})
     public ResponseEntity<Resource> showImageFile(@PathVariable("fileName")String fileName) {

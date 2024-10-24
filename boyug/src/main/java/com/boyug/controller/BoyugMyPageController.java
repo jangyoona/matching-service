@@ -306,7 +306,14 @@ public class BoyugMyPageController {
                 String userFileName = attach.getOriginalFilename();
                 String savedFileName = Util.makeUniqueFileName(userFileName);
 
-                String dir = req.getServletContext().getRealPath("/profile-image");
+//                String dir = req.getServletContext().getRealPath("/profile-image");
+                String dir = "/home/ubuntu/profile-image";
+
+                // 디렉토리 없다면 생성
+                File directory = new File(dir);
+                if (!directory.exists()) {
+                    directory.mkdirs(); // 디렉토리 생성
+                }
                 attach.transferTo(new File(dir, savedFileName)); // 파일 저장
 
                 userFile.setImgOriginName(userFileName);

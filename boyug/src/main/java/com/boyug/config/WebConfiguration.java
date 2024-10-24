@@ -64,6 +64,10 @@ public class WebConfiguration implements WebMvcConfigurer {
 				.addResourceHandler("/board/uploads/**") // 웹 요청 경로
 				.addResourceLocations(uploadDir.toURI().toString()); // static 경로
 		// D:\abc\def -> file:D:\abc\def
+
+		registry
+				.addResourceHandler("/profile-image/**") // 웹 요청 경로
+				.addResourceLocations("file:/home/ubuntu/profile-image/"); // 실제 파일 경로
 	}
 
 }

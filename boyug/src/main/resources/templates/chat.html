@@ -65,15 +65,14 @@
                                         </th:block>
 
                                         <!-- 프로필 사진 show -->
-                                        <img th:if="${ list.chatMessages != null && list.chatMessages.size() > 0
-                                                     && !(loginUser.userId != list.chatMessages.get(0).fromUserId.userId &&
-                                                          (list.chatMessages.get(0).fromUserId.images == null || list.chatMessages.get(0).fromUserId.images.size() == 0))
-                                                     && !(loginUser.userId != list.chatMessages.get(0).toUserId.userId &&
-                                                          (list.chatMessages.get(0).toUserId.images == null || list.chatMessages.get(0).toUserId.images.size() == 0)) }"
-                                             th:src="${'/profile-image/' + ( loginUser.userId != list.chatMessages.get(0).fromUserId.userId
-                                                        ? list.chatMessages.get(0).fromUserId.images.get(0).imgSavedName
-                                                        : list.chatMessages.get(0).toUserId.images.get(0).imgSavedName )}"
-                                             class="img-fluid rounded-circle" alt="Image" style="width:60px;">
+                                        <th:block th:if="${list.chatMessages != null && list.chatMessages.size() > 0}">
+                                            <img th:if="${list.chatMessages.get(0).fromUserId != null && list.chatMessages.get(0).fromUserId.images != null && list.chatMessages.get(0).fromUserId.images.size() > 0}"
+                                                 th:src="${'/profile-image/' + ( loginUser.userId != list.chatMessages.get(0).fromUserId.userId
+                                                         ? list.chatMessages.get(0).fromUserId.images.get(0).imgSavedName
+                                                         : (list.chatMessages.get(0).toUserId != null && list.chatMessages.get(0).toUserId.images != null && list.chatMessages.get(0).toUserId.images.size() > 0
+                                                         ? list.chatMessages.get(0).toUserId.images.get(0).imgSavedName : 'no_img.jpg'))}"
+                                                 class="img-fluid rounded-circle" alt="Image" style="width:60px; aspect-ratio : 1 / 1;">
+                                        </th:block>
 
 
 
@@ -136,7 +135,7 @@
                                 <!-- 프로필 사진 show -->
                                 <img th:if="${ profileUrl != null }"
                                      th:src="${'/profile-image/' + profileUrl }"
-                                     class="img-fluid rounded-circle other-image" alt="Image" style="width:60px; background-color:white;">
+                                     class="img-fluid rounded-circle other-image" alt="Image" style="width:60px; background-color:white; aspect-ratio : 1 / 1;">
                             </th:block>
 
                             <div class="box"

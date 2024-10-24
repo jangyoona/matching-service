@@ -40,11 +40,6 @@ public class ChattingController {
     @Setter(onMethod_ = { @Autowired })
     AccountService accountService;
 
-//    static List<ChatRoomDto> roomList = new ArrayList<>();
-//    public static List<ChatRoomDto> getRoomList() {
-//        return roomList;
-//    }
-
     // 생성된 방 번호에 들어온 유저 = roomNumber+f  OR  roomNumber+t
     static Map<String, Object> roomUser = new HashMap<>();
 
@@ -203,14 +198,6 @@ public class ChattingController {
     @ResponseBody
     public String sendMessage(String message, String roomNumber, String uri, Model model) {
 
-        try {
-            // URL 디코딩 => 이거 수신자한테 이 링크로 접속하게 하면됨
-            String decodedUrl = URLDecoder.decode(uri, "UTF-8");
-//            System.out.println(decodedUrl);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
         // 현재 로그인 사용자
         WebUserDetails userDetails = getUserDetails();
 
@@ -289,19 +276,5 @@ public class ChattingController {
         }
         return userDetails;
     }
-
-
-//    private void sendNotificationToChatting1(String notificationMessage, String fromUserName, int toUserId, String roomNumber) {
-//        // JSON 객체로 알림 메시지 생성
-//        JSONObject notification = new JSONObject();
-//        notification.put("type", "notification");
-//        notification.put("message", notificationMessage);
-//        notification.put("fromUserName", fromUserName);
-//        notification.put("toUserId", toUserId);
-//        notification.put("roomNumber", roomNumber);
-//
-//        // chatting/1 방에 연결된 모든 WebSocket 세션에 알림 전송
-//        webSocketSessionHandler.sendMessageToRoom("1", notification.toJSONString(), toUserId);
-//    }
 
 }
