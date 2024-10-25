@@ -113,6 +113,29 @@
 <br>
 <br>
 
+# ✅ 비밀번호 재설정
+> * ### Ajax를 활용한 아이디 존재유무 검사
+> * ### 비밀번호 유효성 검사
+<br>
+<br>
+<br>
+<hr>
+
+![비번찾기1_cropped](https://github.com/user-attachments/assets/7aee4869-ac96-483f-bb45-963b9523a4a7)
+
+<hr>
+
+|![비밀번호재설정1](https://github.com/user-attachments/assets/661f4340-a378-4f27-a040-cde8a7fe0b57)|![비밀번호재설정2](https://github.com/user-attachments/assets/705f5998-55de-4ad1-8648-85f66b95b553)|
+|:--:|:--:|
+|<h3>비밀번호/비밀번호확인 검사</h3>|<h3>비밀번호의 유효성 검사</h3>|
+
+<br>
+<br>
+<br>
+
+
+
+
 
 # ✅ 1:1 채팅
 > * ### WebSocket을 활용한 1:1 채팅 구현
@@ -152,6 +175,11 @@
 <br>
 
 
+# ✅ 최신 모집글
+> * ### 작성일 기준 최신 글 20개 진열
+> * ### 도/시 구 까지 주소 간략 표시
+
+<br>
 
 
 
