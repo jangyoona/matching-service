@@ -181,6 +181,9 @@
 
 <br>
 
+![main_최신모집글](https://github.com/user-attachments/assets/85aa76ba-717f-4d5d-a247-adb2ebc0034d)
+
+
 
 
 
