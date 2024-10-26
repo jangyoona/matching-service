@@ -47,6 +47,21 @@
   
 <br>
 <br>
+<br>
+
+# 아키텍처
+
+<br>
+<br>
+
+![제목 없는 다이어그램 drawio](https://github.com/user-attachments/assets/e9d55f22-7f9a-480e-8050-8cf628904296)
+
+<br>
+<br>
+
+<br>
+<br>
+<br>
 
 # 데이터베이스 구조
 ![database](https://github.com/user-attachments/assets/abefaa23-8a15-49a4-afbc-6b9ca21f423f)
