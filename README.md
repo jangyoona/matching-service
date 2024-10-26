@@ -47,6 +47,21 @@
   
 <br>
 <br>
+<br>
+
+# 아키텍처
+
+<br>
+<br>
+
+![제목 없는 다이어그램 drawio](https://github.com/user-attachments/assets/150cc59d-a66a-42dc-bece-be7c93b95133)
+
+<br>
+<br>
+
+<br>
+<br>
+<br>
 
 # 데이터베이스 구조
 ![database](https://github.com/user-attachments/assets/abefaa23-8a15-49a4-afbc-6b9ca21f423f)
@@ -55,12 +70,14 @@
 
 <br>
 <br>
+<br>
+<hr>
+<br>
 
-# 구현기능
+![무제(1)](https://github.com/user-attachments/assets/372b233f-8c15-4438-8634-61601ce47000)
+
 <br>
 <br>
-<hr>
-<hr>
 
 
 # ✅ 로그인
@@ -111,7 +128,39 @@
 <br>
 <br>
 <br>
+
+# ✅ 카카오 소셜 회원가입
+OAuth2 인증 요청 -> 응답객체 도착 -> 객체에서 'Profile Image Url' 추출 -> register Controller로 Url 및 필요 데이터 HttpSession을 통해 보내기
+-> 받은 데이터를 기반으로 회원가입 진행 -> 'Profile Image Url'로 'Get' 요청 -> Image 다운로드 + 서버에 저장 로직 실행
+
+
 <br>
+<br>
+<br>
+<br>
+
+# ✅ 비밀번호 재설정
+> * ### Ajax를 활용한 아이디 존재유무 검사
+> * ### 비밀번호 유효성 검사
+<br>
+<br>
+<br>
+<hr>
+
+![비번찾기1_cropped](https://github.com/user-attachments/assets/7aee4869-ac96-483f-bb45-963b9523a4a7)
+
+<hr>
+
+|![비밀번호재설정1](https://github.com/user-attachments/assets/661f4340-a378-4f27-a040-cde8a7fe0b57)|![비밀번호재설정2](https://github.com/user-attachments/assets/705f5998-55de-4ad1-8648-85f66b95b553)|
+|:--:|:--:|
+|<h3>비밀번호/비밀번호확인 검사</h3>|<h3>비밀번호의 유효성 검사</h3>|
+
+<br>
+<br>
+<br>
+
+
+
 
 
 # ✅ 1:1 채팅
@@ -132,6 +181,25 @@
 > * ### 저장된 emitter를 조회, 상대방에게 즉시 알림 전송
 > * ### 상대방이 이미 채팅방에 있는 경우 알림 전송 ❌
 > * ### 상대방이 오프라인인 경우에도 알림 전송 ❌
+
+<br>
+<h3>채팅방 생성</h3>
+  ⭐ 사용자는 상대방에게 채팅 상담을 요청할 시, 그 즉시 채팅방을 생성합니다.
+
+<br>
+
+1. 새로운 채팅방일 경우 상대방의 welcome message가 자동 발송됩니다.
+2. 기존 채팅방이 존재하는 경우 해당 채팅방으로 자동 입장하게 됩니다.
+
+<br>
+
+<h3>채팅방 나가기</h3>
+  ⭐ 사용자가 채팅방 나가기를 실행할 경우, 채팅방의 active를 변경하여 사용자에게 노출되지 않도록 합니다.
+
+<br>
+<br>
+<br>
+
 ![채팅2](https://github.com/user-attachments/assets/b06c8659-2c80-4d56-a35b-d1376705e36a)
 
 <br>
@@ -145,12 +213,32 @@
 > * ### 불필요한 알림을 최소화
 <br>
 
+<h3>채팅방 생성</h3>
+  ⭐ 사용자는 상대방에게 채팅 상담을 요청할 시, 그 즉시 채팅방을 생성합니다.
+
+<br>
+
+1. 상대방이 채팅방에 입장한 상태라면, 상대방에게 불필요한 알림을 보내지 않습니다.
+2. 채팅방에 접속한 상태인 경우, 이를 구분하여 알림과 메세지 읽음 처리가 실시간으로 가능하게 구현하였습니다.
+
+<br>
+<br>
+<br>
+
 ![알림1](https://github.com/user-attachments/assets/8caacaa2-6e6f-407d-be08-7bd21415fad4)  ⬅⬅⬅
 
 <br>
 <br>
 <br>
 
+
+# ✅ 최신 모집글
+> * ### 최신 글 순으로 20개 진열
+> * ### 도/시 구 까지 주소 간략 표시
+
+<br>
+
+![main_최근모집글](https://github.com/user-attachments/assets/1e44fa08-7d3f-49b9-861c-acd83adf8459)
 
 
 
