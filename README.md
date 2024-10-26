@@ -128,6 +128,15 @@
 <br>
 <br>
 <br>
+
+# ✅ 카카오 소셜 회원가입
+OAuth2 인증 요청 -> 응답객체 도착 -> 객체에서 'Profile Image Url' 추출 -> register Controller로 Url 및 필요 데이터 HttpSession을 통해 보내기
+-> 받은 데이터를 기반으로 회원가입 진행 -> 'Profile Image Url'로 'Get' 요청 -> Image 다운로드 + 서버에 저장 로직 실행
+
+
+<br>
+<br>
+<br>
 <br>
 
 # ✅ 비밀번호 재설정
