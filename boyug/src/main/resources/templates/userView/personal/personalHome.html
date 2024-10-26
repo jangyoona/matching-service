@@ -90,7 +90,8 @@
         <script src="/userAssets/plugins/fullcalendar/locales/ko.js"></script>
 
         <!-- KAKAO MAP API -->
-        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a9eb596c9794bb4e985c87dd1b91ebe2&libraries=clusterer"></script>
+<!--        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a9eb596c9794bb4e985c87dd1b91ebe2&libraries=clusterer"></script>-->
+        <script th:src="|//dapi.kakao.com/v2/maps/sdk.js?appkey=${mapKey}&libraries=clusterer|"></script>
 
         <!-- Address API -->
         <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
@@ -103,6 +104,7 @@
         <script src="/userAssets/js/personalMap.js"></script>
         <script type="text/javascript" th:inline="javascript">
         $(() => {
+
             const modalContainer = $('.modal-container');
 
             const serverUserArr = /*[[${users}]]*/

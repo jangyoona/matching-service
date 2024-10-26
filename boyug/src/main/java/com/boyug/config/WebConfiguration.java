@@ -68,6 +68,10 @@ public class WebConfiguration implements WebMvcConfigurer {
 		registry
 				.addResourceHandler("/profile-image/**") // 웹 요청 경로
 				.addResourceLocations("file:/home/ubuntu/profile-image/"); // 실제 파일 경로
+
+		registry
+				.addResourceHandler("/mapImage/**") // 웹 요청 경로
+				.addResourceLocations("file:/home/ubuntu/mapImage/"); // 실제 파일 경로
 	}
 
 }

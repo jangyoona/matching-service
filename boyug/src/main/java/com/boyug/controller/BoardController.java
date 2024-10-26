@@ -4,6 +4,7 @@ import com.boyug.common.Util;
 import com.boyug.dto.BoardAttachDto;
 import com.boyug.dto.BoardDto;
 import com.boyug.dto.UserDto;
+import com.boyug.oauth2.CustomOAuth2User;
 import com.boyug.security.WebUserDetails;
 import com.boyug.service.BoardService;
 import com.boyug.ui.ProjectPager;
@@ -19,9 +20,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -51,11 +54,26 @@ public class BoardController {
     @Value("${upload.path}") // application.properties 파일의 upload.path 속성의 값 injection
     private String uploadPath;
 
+    @Value("${file.boardattach-dir}")
+    private String boardAttachDir;
+
     @GetMapping(path = {"/list"})
     public String listRange(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo,
                             HttpServletRequest req, Model model) {
+        // 로그인한 유저의 정보 갖고오기
+        WebUserDetails userDetails = null;
+        // 로그인한 유저의 정보 갖고오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        WebUserDetails userDetails = (WebUserDetails)  authentication.getPrincipal();
+        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+
+            // OAuth2AuthenticationToken인 경우 변환, 아니면 WebUserDetails를 직접 할당
+            if (authentication instanceof OAuth2AuthenticationToken) {
+                userDetails = WebUserDetails.of((CustomOAuth2User) authentication.getPrincipal());
+            } else if (authentication.getPrincipal() instanceof WebUserDetails) {
+                userDetails = (WebUserDetails) authentication.getPrincipal();
+            }
+        }
+
         model.addAttribute("userId", userDetails.getUser().getUserId());
         int userId = userDetails.getUser().getUserId();
         int pageSize = 5;        // 한 페이지에 표시하는 데이터 갯수
@@ -88,8 +106,20 @@ public class BoardController {
 //        if (loginUser == null) {
 //            return "redirect:/userView/account/login";
 //        }
+        // 로그인한 유저의 정보 갖고오기
+        WebUserDetails userDetails = null;
+        // 로그인한 유저의 정보 갖고오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        WebUserDetails userDetails = (WebUserDetails)  authentication.getPrincipal();
+        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+
+            // OAuth2AuthenticationToken인 경우 변환, 아니면 WebUserDetails를 직접 할당
+            if (authentication instanceof OAuth2AuthenticationToken) {
+                userDetails = WebUserDetails.of((CustomOAuth2User) authentication.getPrincipal());
+            } else if (authentication.getPrincipal() instanceof WebUserDetails) {
+                userDetails = (WebUserDetails) authentication.getPrincipal();
+            }
+        }
+
         model.addAttribute("userId", userDetails.getUser().getUserId());
         model.addAttribute("username", userDetails.getUsername());
         return "userView/board/write";
@@ -108,8 +138,8 @@ public class BoardController {
                 String savedFileName = Util.makeUniqueFileName(userFileName);
 
                 // static 경로에 파일 저장 (예: /src/main/resources/static/uploads)
-                String uploadDir = req.getServletContext().getRealPath("/board-attachments");
-                File uploadDirectory = new File(uploadDir);
+//                String uploadDir = req.getServletContext().getRealPath("/board-attachments");
+                File uploadDirectory = new File(boardAttachDir);
                 if (!uploadDirectory.exists()) {
                     uploadDirectory.mkdirs(); // 디렉토리가 없으면 생성
                 }
@@ -280,10 +310,10 @@ public class BoardController {
             BoardAttachDto attachment = new BoardAttachDto();
             ArrayList<BoardAttachDto> attachments = new ArrayList<>();
             try {
-                String dir = req.getServletContext().getRealPath("/board-attachments");
+//                String dir = req.getServletContext().getRealPath("/board-attachments");
                 String userFileName = attach.getOriginalFilename();
                 String savedFileName = Util.makeUniqueFileName(userFileName);
-                attach.transferTo(new File(dir, savedFileName)); // 파일 저장
+                attach.transferTo(new File(boardAttachDir, savedFileName)); // 파일 저장
 
                 attachment.setBoardId(board.getBoardId());
                 attachment.setBoardAttachOriginName(userFileName);

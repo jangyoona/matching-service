@@ -53,8 +53,14 @@ public class PersonalController {
     @Value("${kakao.rest-api-key}")
     private String kakaoMapApiKey;
 
+    @Value("${kakao.map-key}")
+    private String kakaoMapKey;
+
     @Setter(onMethod_ = { @Autowired })
     private SmsApi smsApi;
+
+    @Value("${file.profile-dir}")
+    private String profileDir;
 
     @GetMapping(path = {"/personalHome"})
     public String personalHome(Model model) {
@@ -81,6 +87,7 @@ public class PersonalController {
         model.addAttribute("users", users);
         model.addAttribute("boyugUsers", boyugUsers);
         model.addAttribute("personalUser", personalUser);
+        model.addAttribute("mapKey", kakaoMapKey);
 
         return "userView/personal/personalHome";
     }
@@ -373,8 +380,9 @@ public class PersonalController {
                 String userFileName = attach.getOriginalFilename();
                 String savedFileName = Util.makeUniqueFileName(userFileName);
 
-                String dir = req.getServletContext().getRealPath("/profile-image");
-                attach.transferTo(new File(dir, savedFileName)); // 파일 저장
+//                String dir = req.getServletContext().getRealPath("/profile-image");
+                createDirectoryIfNotExists(profileDir);
+                attach.transferTo(new File(profileDir, savedFileName)); // 파일 저장
 
                 userFile.setImgOriginName(userFileName);
                 userFile.setImgSavedName(savedFileName);
@@ -456,10 +464,11 @@ public class PersonalController {
             ProfileImageDto profileImage = new ProfileImageDto();
             ArrayList<ProfileImageDto> profileImages = new ArrayList<>();
             try {
-                String dir = req.getServletContext().getRealPath("/profile-image");
+//                String dir = req.getServletContext().getRealPath("/profile-image");
+                createDirectoryIfNotExists(profileDir);
                 String userFileName = attach.getOriginalFilename();
                 String savedFileName = Util.makeUniqueFileName(userFileName);
-                attach.transferTo(new File(dir, savedFileName));  // 파일 저장
+                attach.transferTo(new File(profileDir, savedFileName));  // 파일 저장
 
                 if (attachId != null) {
                     profileImage.setImageId(attachId);
@@ -523,8 +532,9 @@ public class PersonalController {
                 // 입력 스트림 생성
                 InputStream inputStream = connection.getInputStream();
                 // 파일 저장 경로 설정
-                String targetPath = req.getServletContext().getRealPath("/profile-image");
-                Path targetFilePath = Path.of(targetPath, savedFileName); // 경로, 파일이름
+//                String targetPath = req.getServletContext().getRealPath("/profile-image");
+                createDirectoryIfNotExists(profileDir);
+                Path targetFilePath = Path.of(profileDir, savedFileName); // 경로, 파일이름
                 // 파일 다운로드 및 저장
                 Files.copy(inputStream, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
                 inputStream.close();
@@ -560,5 +570,13 @@ public class PersonalController {
             }
         }
         return userDetails;
+    }
+
+    // 디렉터리 확인 후 없으면 생성
+    private void createDirectoryIfNotExists(String dirName) {
+        File directory = new File(dirName);
+        if (!directory.exists()) {
+            directory.mkdirs(); // 디렉토리 생성
+        }
     }
 }

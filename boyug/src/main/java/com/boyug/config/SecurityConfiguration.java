@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
@@ -61,10 +62,11 @@ public class SecurityConfiguration {
                         .anyRequest().permitAll()) // 그 외 모든 요청은 허용
                 .sessionManagement(session -> session
                         .maximumSessions(2)) // 동시 세션 제어
-                                .exceptionHandling(exception -> exception
-                                        .accessDeniedPage("/login-denied") // 권한 부족시 404 페이지
-//                        .maxSessionsPreventsLogin(true) // 동시 로그인 차단
-                )
+//                                .exceptionHandling(exception -> exception
+//                                        .accessDeniedPage("/login-denied") // 권한 부족시 404 페이지
+////                        .maxSessionsPreventsLogin(true) // 동시 로그인 차단
+//                )
+                                .exceptionHandling(configurer -> configurer.accessDeniedHandler(accessDeniedHandler())) // 권한 부족시 404 페이지
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin((login) -> login
                         .loginPage("/userView/account/login")
@@ -96,6 +98,8 @@ public class SecurityConfiguration {
                 .alwaysRemember(false)
                 .userDetailsService(userDetailsService())
         );
+//        // 주로 인증 실패나 권한이 없는 접근 시에 호출되는 핸들러
+//                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(customAuthenticationEntryPoint()))
 
         return http.build();
     }
@@ -105,6 +109,15 @@ public class SecurityConfiguration {
             response.sendRedirect("/home"); // Redirect to your custom URL
         };
     }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            // 권한 부족 시 리다이렉트
+            response.sendRedirect("/login-denied");
+        };
+    }
+
 
     // Custom Encoder
     @Bean
