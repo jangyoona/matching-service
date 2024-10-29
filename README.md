@@ -14,7 +14,7 @@
 <br>
 
 
-# 1️⃣ 1:N 매칭 서비스
+# 🚩 1:N 매칭 서비스
 ![main](https://github.com/user-attachments/assets/5713c948-ce1c-411d-abdc-a2fa23c8cc25)
 
 # 서비스 소개
