@@ -54,7 +54,7 @@
 <br>
 <br>
 
-![제목 없는 다이어그램 drawio](https://github.com/user-attachments/assets/150cc59d-a66a-42dc-bece-be7c93b95133)
+![제목 없는 다이어그램 drawio](https://github.com/user-attachments/assets/019a4af0-2582-40ab-9906-119d55435c15)
 
 <br>
 <br>
