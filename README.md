@@ -14,7 +14,7 @@
 <br>
 
 
-# 1️⃣ 1:N 매칭 서비스
+# 🚩 1:N 매칭 서비스
 ![main](https://github.com/user-attachments/assets/5713c948-ce1c-411d-abdc-a2fa23c8cc25)
 
 # 서비스 소개
@@ -54,7 +54,7 @@
 <br>
 <br>
 
-![제목 없는 다이어그램 drawio](https://github.com/user-attachments/assets/150cc59d-a66a-42dc-bece-be7c93b95133)
+![제목 없는 다이어그램 drawio](https://github.com/user-attachments/assets/4e514d62-c3ae-43af-8e16-0c7a0529f4a6)
 
 <br>
 <br>
@@ -97,6 +97,7 @@
 <br>
 
 # ✅ 회원가입
+> * 해당 프로젝트는 개인회원과, 업체회원, 어드민회원 세 가지 유형이 존재 아래 구현 설명은 <b>[업체회원]</b>
 > * ### Ajax를 활용한 아이디 중복체크 및 전체 유효성 검사 실시
 > * ### SMS API 사용: 문자인증 구현
 > * ### MAP API 사용: 정확성 및 사용자 편의성 제공
@@ -130,11 +131,45 @@
 <br>
 
 # ✅ 카카오 소셜 회원가입
-OAuth2 인증 요청 -> 응답객체 도착 -> 객체에서 'Profile Image Url' 추출 -> register Controller로 Url 및 필요 데이터 HttpSession을 통해 보내기
--> 받은 데이터를 기반으로 회원가입 진행 -> 'Profile Image Url'로 'Get' 요청 -> Image 다운로드 + 서버에 저장 로직 실행
-
+1. OAuth2 인증 요청
+2. 응답객체 도착
+3. 객체에서 'Profile Image Url' 추출
+4. Register Controller로 Url 및 필요 데이터 HttpSession을 통해 전달
+5. 받은 데이터를 기반으로 회원가입 진행
+6. 'Profile Image Url'로 'Get' 요청
+7. Image 프로필 이미지 다운로드 + 서버에 저장 로직 실행 (이 이미지는 자사 사이트 프로필 이미지로 사용)
+8. 제공자측 Id는 자사 일반회원과 소셜 로그인 회원을 구분할 목적으로 데이터베이스에 저장
 
 <br>
+<br>
+<hr>
+
+![소셜로그인3](https://github.com/user-attachments/assets/5d71fd58-c3fd-4295-9ba4-5d9356f8c285)
+
+<hr>
+<br>
+<br>
+<br>
+
+## 소셜 로그인 시도
+### DB에 저장되지 않은 신규 회원일 경우
+* 회원가입 페이지로 유도하기 위해 예외 발생 -> AuthenticationFailureHandler에서 Register Controller로 Redirect하여 회원가입 진행
+
+### 기존 회원일 경우
+* 로그인 실행
+* OAuth2 객체 -> userDetails 객체 변환 메서드를 만들어 통합 관리를 가능하도록 함
+* Spring-Security를 사용하고 있는 관계로 CustomOAuth2User 클래스는 OAuth2User, UserDetails 인터페이스를 동시에 구현하여 인증된 사용자 정보에 접근 시 일관성 있게 접근(관리)할 수 있도록 함
+  
+<br>
+<br>
+<br>
+
+
+
+| ![소셜로그인1](https://github.com/user-attachments/assets/a96e72ff-a7cf-40ea-aacc-4f2860e53615) | ![소셜로그인2](https://github.com/user-attachments/assets/ab0b45fa-16d2-4c6a-84a8-4ad9058d48e3) |
+|:--:|:--:|
+| <h3>OAuth2기반 소셜 로그인</h3> | <h3>제공자측에서 넘어온 데이터 기반으로 최초 1회 회원가입 진행</h3> |
+
 <br>
 <br>
 <br>
@@ -184,17 +219,17 @@ OAuth2 인증 요청 -> 응답객체 도착 -> 객체에서 'Profile Image Url' 
 
 <br>
 <h3>채팅방 생성</h3>
-  ⭐ 사용자는 상대방에게 채팅 상담을 요청할 시, 그 즉시 채팅방을 생성합니다.
+  ⭐ 사용자는 상대방에게 채팅 상담을 요청할 시, 그 즉시 채팅방을 생성
 
 <br>
 
-1. 새로운 채팅방일 경우 상대방의 welcome message가 자동 발송됩니다.
-2. 기존 채팅방이 존재하는 경우 해당 채팅방으로 자동 입장하게 됩니다.
+1. 새로운 채팅방일 경우 상대방의 welcome message가 자동 발송
+2. 기존 채팅방이 존재하는 경우 해당 채팅방으로 자동 입장
 
 <br>
 
 <h3>채팅방 나가기</h3>
-  ⭐ 사용자가 채팅방 나가기를 실행할 경우, 채팅방의 active를 변경하여 사용자에게 노출되지 않도록 합니다.
+  ⭐ 사용자가 채팅방 나가기를 실행할 경우, 채팅방의 active를 변경하여 사용자에게 노출되지 않도록 설정
 
 <br>
 <br>
@@ -211,15 +246,13 @@ OAuth2 인증 요청 -> 응답객체 도착 -> 객체에서 'Profile Image Url' 
 > * ### 사이트 전역에서 toast 알림 전송
 > * ### 채팅방에 같이 있다면 알림 ❌
 > * ### 불필요한 알림을 최소화
-<br>
-
-<h3>채팅방 생성</h3>
-  ⭐ 사용자는 상대방에게 채팅 상담을 요청할 시, 그 즉시 채팅방을 생성합니다.
 
 <br>
+<br>
 
-1. 상대방이 채팅방에 입장한 상태라면, 상대방에게 불필요한 알림을 보내지 않습니다.
-2. 채팅방에 접속한 상태인 경우, 이를 구분하여 알림과 메세지 읽음 처리가 실시간으로 가능하게 구현하였습니다.
+⭐ 상대방이 채팅방에 입장한 상태라면, 알림기능 중지! => 상대방에게 불필요한 알림을 보내지 않기 위함
+<br>
+⭐ 채팅방에 접속한 상태인 경우, 이를 구분하여 알림과 메세지 읽음 처리가 실시간으로 가능하게 구현
 
 <br>
 <br>
