@@ -46,12 +46,12 @@
 <!-- Spinner End -->
 
 <!-- Topbar Start -->
-<!--<div th:replace="~{userView/modules/topbar}"></div>-->
+<!--/* <div th:replace="~{userView/modules/topbar}"></div> */-->
 <!-- Topbar End -->
 
 <!-- Navbar & Hero Start -->
 <div class="container-fluid position-relative p-0">
-<!--    <div th:replace="~{userView/modules/navbar}"></div>-->
+<!--/*    <div th:replace="~{userView/modules/navbar}"></div> */-->
     <div id="nav-container-box"></div>
 </div>
 
@@ -86,7 +86,7 @@
                             </div>
                             <div id="id-ok" style="color:green; margin-top:-20px;"></div>
 
-<!--                            <div class="col-md-12 login-input sms-container" style="display: none;">-->
+<!--/*                            <div class="col-md-12 login-input sms-container" style="display: none;"> */-->
                             <div class="col-md-12 login-input dub-check-container sms-container" style="margin-top: -1rem; display: none;">
                                 <div class="form-floating">
                                     <input type="text" class="form-control bg-white" id="smsCode" name="smsCode" placeholder="인증번호를 입력해 주세요" minlength="4" maxlength="4"
@@ -106,7 +106,6 @@
 
                             <div class="col-md-12 register-input">
                                 <div class="form-floating">
-                                    <!-- 영문자와 숫자 특수문자 중 3가지 이상으로 조합하여 8자~20자 이내로 입력해 주세요 를 빨간글씨로 띄워-->
                                     <input type="password" class="form-control bg-white" name="userPw" id="userPw" placeholder="비밀번호" minlength="8" maxlength="20">
                                     <label for="userPw">비밀번호</label>
                                 </div>
@@ -114,7 +113,6 @@
 
                             <div class="col-md-12 register-input" style="margin-top: -1rem;">
                                 <div class="form-floating">
-                                    <!-- 영문자와 숫자 특수문자 중 3가지 이상으로 조합하여 8자~20자 이내로 입력해 주세요 를 빨간글씨로 띄워-->
                                     <input type="password" class="form-control bg-white" name="userPw-confirm" id="userPw-confirm" placeholder="비밀번호 확인" minlength="8" maxlength="20">
                                     <label for="userPw">비밀번호 확인</label>
                                 </div>
@@ -217,39 +215,10 @@
                                 <div class="form-floating" id="privacy-container">
                                 </div>
                             </div>
-
-<!--                            <div class="col-md-12 register-input">-->
-<!--                                <div class="form-floating">-->
-<!--                                    <input type="date" class="form-control bg-white" name="userBirth" id="userBirth" placeholder="생년월일" required>-->
-<!--                                    <label for="userBirth">생년월일</label>-->
-<!--                                </div>-->
-<!--                               <input type="text" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');">-->
-<!--                            </div>-->
-
-<!--                            <div class="col-md-12 register-input">-->
-<!--                                <div class="form-floating" style="margin-left: 30%;">-->
-<!--                                    <div class="form-control bg-white">-->
-<!--                                        <span>성별</span>-->
-<!--                                        <input type="radio" name="userGender" value="male" checked>남성-->
-<!--                                        <input type="radio" name="userGender" value="female" style="margin-left: 3rem;">여성-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-
-<!--                            <div class="col-md-12">-->
-<!--                                <div class="form-floating">-->
-<!--                                    <span style="margin-right: 2rem;">건강체크 | </span>-->
-<!--                                    <input type="radio" class="bg-white" name="userHealth" value="bed"> 나쁨-->
-<!--                                    <input type="radio" class="bg-white" name="userHealth" value="normal" style="margin-left: 3rem;" checked> 보통-->
-<!--                                    <input type="radio" class="bg-white" name="userHealth" value="good" style="margin-left: 3rem;"> 좋음-->
-<!--                                </div>-->
-<!--                            </div>-->
-
-
-                            <!--              <div class="input-group-text">-->
-                            <!--                <span class="fas fa-envelope"></span>-->
-                            <!--                <span class="fas fa-lock"></span>-->
-                            <!--              </div>-->
+                      <!--/* <div class="input-group-text">
+                                <span class="fas fa-envelope"></span>
+                                <span class="fas fa-lock"></span>
+                             </div> */-->
                         </div>
 
                         <div class="row">
@@ -285,7 +254,7 @@
 <script src="/userAssets/lib/owlcarousel/owl.carousel.min.js"></script>
 <script src="/userAssets/lib/lightbox/js/lightbox.min.js"></script>
 
-<!-- 지도 -->
+<!-- map api -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
 <!-- Template Javascript -->

@@ -81,25 +81,3 @@ $(function(){
         });
     }
 });
-//$('#kakao-logout').on('click', function(e) {
-//
-//    $.ajax({
-//        url : "logout/oauth/code/kakao",
-//        data : 1,
-//        success : function(result){
-//            alert("test: 200 로그아웃 성공 / 401 카톡로그인 안한사람")
-//            location.href = "/home";
-//        },
-//        error : function(err) {
-//            alert('로그아웃이 실패하였습니다');
-//        }
-//    });
-//});
-
-//function wsOpen() {
-//    const sessionId = localStorage.getItem('sessionId');
-//    if (sessionId) {
-//        const ws = new WebSocket("ws://" + location.host + "/chatting/" + 1);
-////        wsEvt(ws); // 웹 소켓 이벤트 핸들러 호출
-//    }
-//}

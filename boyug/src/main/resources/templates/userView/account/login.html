@@ -100,7 +100,7 @@
                                     <div style="display:flex;">
                                         <input class="form-check-input" type="checkbox" id="remember-me" name="remember-me"
                                                style="margin-right:5px;">
-                                        <label class="form-check-label" for="id-save-checkbox">자동로그인</label>
+                                        <label class="form-check-label" for="remember-me">자동로그인</label>
                                     </div>
 
                                 </div>
@@ -124,19 +124,18 @@
                     </p>
 
                     <div class="social-auth-links text-center mb-3 d-grid gap-2">
-<!--                        <hr style="border:1px solid gray; border-bottom-style:hidden; margin:3.5vh 0 3.5vh; !important; display: block !important; width: 98% !important;"/>-->
+<!--/*                        <hr style="border:1px solid gray; border-bottom-style:hidden; margin:3.5vh 0 3.5vh; !important; display: block !important; width: 98% !important;"/> */-->
                         <div class="sns-txt-line">
-<!--                            <p class="mb-2 sns-txt">또는 SNS 계정으로 시작하기</p>-->
                             또는 SNS 계정으로 시작하기
                         </div>
-<!--                        <a id="kakao-btn"-->
-<!--                           th:href="@{https://kauth.kakao.com/oauth/authorize(client_id=${kakaoApiKey}, redirect_uri=${redirectUri}, response_type='code')}">-->
-<!--                            <img src="/userAssets/img/kakao-login-btn-large.png" class="mb-4" style="width:100%">-->
-<!--                        </a>-->
-<!--                        <h3 style="color:blue;">개인 회원가입 완성시 회원가입 연동 예정</h3>-->
+                        <!--/* <a id="kakao-btn"
+                           th:href="@{https://kauth.kakao.com/oauth/authorize(client_id=${kakaoApiKey}, redirect_uri=${redirectUri}, response_type='code')}">
+                            <img src="/userAssets/img/kakao-login-btn-large.png" class="mb-4" style="width:100%">
+                        </a>
+                        <h3 style="color:blue;">개인 회원가입 완성시 회원가입 연동 예정</h3>
 
-<!--                        <a href="https://kapi.kakao.com/v1/user/logout"-->
-<!--                           th:href="@{https://kapi.kakao.com/v1/user/logout(client_id=${kakaoApiKey}, logout_redirect_uri=${logoutUri}, response_type='code')}">                       -->
+                        <a href="https://kapi.kakao.com/v1/user/logout"
+                           th:href="@{https://kapi.kakao.com/v1/user/logout(client_id=${kakaoApiKey}, logout_redirect_uri=${logoutUri}, response_type='code')}"> */-->
 
                         <!-- 카카오 oauth2-login -->
                         <a id="kakao-oauth2-btn" href="/oauth2/authorization/kakao">

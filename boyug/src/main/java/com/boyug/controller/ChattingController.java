@@ -75,7 +75,7 @@ public class ChattingController {
             room.setFromUserId(userDetails.getUser().getUserId());
             roomList.add(room);
 
-            // 강제 메세지 발송
+            // 웰컴 메세지 발송
             UserDto toUser = accountService.getUserInfo(Integer.parseInt((String) params.get("userId")));
             ChatRoomDto chatRoom = chattingService.getChatRoom(savedId);
 
@@ -89,7 +89,6 @@ public class ChattingController {
             chattingService.insertChatMessage(sendMessage);
         } else {
             // Active가 살아있는 방이 있다면
-//            ChatRoomDto chatRoom = chattingService.getChatRoom(Integer.parseInt(chatRoomId));
             ChatRoomDto chatRoom = chattingService.getChatRoom(existingRoom);
             chatRoom.setRoomNumber(existingRoom);
             roomList.add(chatRoom);

@@ -46,22 +46,18 @@
 <!-- Spinner End -->
 
 <!-- Topbar Start -->
-<!--<div th:replace="~{userView/modules/topbar}"></div>-->
+<!--/* <div th:replace="~{userView/modules/topbar}"></div> */-->
 <!-- Topbar End -->
 
 <!-- Navbar & Hero Start -->
 <div class="container-fluid position-relative p-0">
-<!--    <div th:replace="~{userView/modules/navbar}"></div>-->
+<!--/*    <div th:replace="~{userView/modules/navbar}"></div> */-->
     <div id="nav-container-box"></div>
 </div>
 
 <div class="container-fluid about py-5">
     <div class="container py-5 child-container">
         <div class="register-box col-4" style="margin-top: 10rem;">
-<!--            <div class="login-logo">-->
-<!--                <a href="#"><b>비밀번호</b>재설정</a>-->
-<!--            </div>-->
-            <!-- /.login-logo -->
             <div class="card">
                 <div class="card-body login-card-body">
                     <div class="logo-box"> <h1 class="m-0"><i class="fa-solid fa-children"></i> Together</h1> </div>
@@ -107,7 +103,6 @@
 
                             <div class="col-md-12 register-input new-passwd" style="display: none;">
                                 <div class="form-floating">
-                                    <!-- 영문자와 숫자 특수문자 중 3가지 이상으로 조합하여 8자~20자 이내로 입력해 주세요 를 빨간글씨로 띄워-->
                                     <input type="password" class="form-control bg-white" name="userPw" id="userPw" placeholder="비밀번호" minlength="8" maxlength="20">
                                     <label for="userPw">새로운 비밀번호</label>
                                 </div>
@@ -121,48 +116,14 @@
                                 <div id="pw-message"></div>
                                 <div id="pw-message2"></div>
                             </div>
-<!--                            <div class="col-md-12 register-input">-->
-<!--                                <div class="form-floating">-->
-<!--                                    <input type="date" class="form-control bg-white" name="userBirth" id="userBirth" placeholder="생년월일" required>-->
-<!--                                    <label for="userBirth">생년월일</label>-->
-<!--                                </div>-->
-<!--                               <input type="text" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');">-->
-<!--                            </div>-->
-
-<!--                            <div class="col-md-12 register-input">-->
-<!--                                <div class="form-floating" style="margin-left: 30%;">-->
-<!--                                    <div class="form-control bg-white">-->
-<!--                                        <span>성별</span>-->
-<!--                                        <input type="radio" name="userGender" value="male" checked>남성-->
-<!--                                        <input type="radio" name="userGender" value="female" style="margin-left: 3rem;">여성-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-
-<!--                            <div class="col-md-12">-->
-<!--                                <div class="form-floating">-->
-<!--                                    <span style="margin-right: 2rem;">건강체크 | </span>-->
-<!--                                    <input type="radio" class="bg-white" name="userHealth" value="bed"> 나쁨-->
-<!--                                    <input type="radio" class="bg-white" name="userHealth" value="normal" style="margin-left: 3rem;" checked> 보통-->
-<!--                                    <input type="radio" class="bg-white" name="userHealth" value="good" style="margin-left: 3rem;"> 좋음-->
-<!--                                </div>-->
-<!--                            </div>-->
-
-
-                            <!--              <div class="input-group-text">-->
-                            <!--                <span class="fas fa-envelope"></span>-->
-                            <!--                <span class="fas fa-lock"></span>-->
-                            <!--              </div>-->
                         </div>
 
                         <div class="row">
-                            <!-- /.col -->
                             <div class="col-12 register-btn-div">
                                 <div class="d-grid gap-2 register-btn-child">
                                     <button type="submit" id="submit-btn" class="btn btn-primary">변경하기</button>
                                 </div>
                             </div>
-                            <!-- /.col -->
                         </div>
                     </form>
                 </div>
@@ -187,7 +148,7 @@
 <script src="/userAssets/lib/owlcarousel/owl.carousel.min.js"></script>
 <script src="/userAssets/lib/lightbox/js/lightbox.min.js"></script>
 
-<!-- 지도 -->
+<!-- map api -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
 <!-- Template Javascript -->

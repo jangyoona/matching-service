@@ -25,7 +25,7 @@
         <div class="list-container">
             <th:block th:if="${ userRoomList != null }">
                 <div>
-                    <!-- 톱니바퀴 icon -->
+                    <!-- setting icon -->
                     <i class="fa-solid fa-gear" style="display:flex; flex-direction:row-reverse; margin:10px 15px 10px;"
                        data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1"></i>
                 </div>
@@ -55,7 +55,7 @@
                                        th:data-chatroom-id="${ list.chatRoomId }"  style="display:none; float:inline-start;">
                                 <a class="go-chatting" th:data-chatroom-id="${ list.chatRoomId }" style="cursor:pointer; color:black;">
                                     <div class="testimonial-img p-1" style="display:flex;">
-                                        <!-- 프로필사진 미 등록시 기본 이미지 -->
+                                        <!--/* 프로필사진 미 등록시 기본 이미지 */-->
                                         <th:block th:if="${ list.chatMessages != null && list.chatMessages.size() > 0
                                                          && ((loginUser.userId != list.chatMessages.get(0).fromUserId.userId &&
                                                               (list.chatMessages.get(0).fromUserId.images == null || list.chatMessages.get(0).fromUserId.images.size() == 0))
@@ -64,7 +64,7 @@
                                             <img th:src="@{'/profile-image/no_img.jpg'}" class="img-fluid rounded-circle" alt="Image" style="width:60px;">
                                         </th:block>
 
-                                        <!-- 프로필 사진 show -->
+                                        <!--/* 프로필 사진 show */-->
                                         <th:block th:if="${list.chatMessages != null && list.chatMessages.size() > 0}">
                                             <img th:if="${list.chatMessages.get(0).fromUserId != null && list.chatMessages.get(0).fromUserId.images != null && list.chatMessages.get(0).fromUserId.images.size() > 0}"
                                                  th:src="${'/profile-image/' + ( loginUser.userId != list.chatMessages.get(0).fromUserId.userId
@@ -109,30 +109,30 @@
             <div class="inner">
                 <!-- saved messages -->
                 <div id="messageContainer">
-<!--                    원본-->
-<!--                    <div class="inner">-->
-<!--                        &lt;!&ndash; 이전 메시지 표시 &ndash;&gt;-->
-<!--                        <div id="messageContainer">-->
+<!--/*                    원본
+                    <div class="inner">
+                         이전 메시지 표시
+                        <div id="messageContainer">
 
-<!--                            <div th:each="message, idx : ${messages}"-->
-<!--                                 th:class="${message.fromUserId.userId == loginUser.userId} ? 'item mymsg on' : 'item yourmsg on'">-->
+                            <div th:each="message, idx : ${messages}"
+                                 th:class="${message.fromUserId.userId == loginUser.userId} ? 'item mymsg on' : 'item yourmsg on'">
 
-<!--                                <div class="box">-->
-<!--                                    <p class="msg" th:text="${message.chatContent}"></p>-->
-<!--                                    <span class="time" th:text="${#dates.format(message.chatSendTime, 'a hh:mm')}"></span>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
+                                <div class="box">
+                                    <p class="msg" th:text="${message.chatContent}"></p>
+                                    <span class="time" th:text="${#dates.format(message.chatSendTime, 'a hh:mm')}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div> */-->
                     <th:block sec:authorize="isAuthenticated()">
                         <div th:each="message, idx : ${messages}"
                              th:class="${message.fromUserId.userId == loginUser.userId ? 'item mymsg on' : 'item yourmsg on'}"
                              th:style="${ message.fromUserId.userId != loginUser.userId ? 'margin-left:-9px;' : ''}">
 
                             <th:block th:if="${message.fromUserId.userId != loginUser.userId}">
-                                <!-- 프로필사진 미 등록시 기본 이미지 -->
+                                <!--/* 프로필사진 미 등록시 기본 이미지 */-->
                                 <img th:if="${ profileUrl == null }" th:src="@{'/profile-image/no_img.jpg'}" class="img-fluid rounded-circle" style="width:60px;">
-                                <!-- 프로필 사진 show -->
+                                <!--/* 프로필 사진 show */-->
                                 <img th:if="${ profileUrl != null }"
                                      th:src="${'/profile-image/' + profileUrl }"
                                      class="img-fluid rounded-circle other-image" alt="Image" style="width:60px; background-color:white; aspect-ratio : 1 / 1;">
@@ -169,8 +169,8 @@
         let loginUser = /*[[loginUser]]*/'';
 
         // 페이지 로드 시 스크롤을 맨 아래로 이동
-        const size = document.querySelector('.inner').scrollHeight; // vanilla JS로 전체 높이 가져오기
-        $('.inner').scrollTop(size); // jQuery 문법 스크롤 조정
+        const size = document.querySelector('.inner').scrollHeight; // 전체 높이
+        $('.inner').scrollTop(size); // 스크롤 조정
     });
 
 </script>
