@@ -58,42 +58,12 @@ public class ChattingController {
     @ResponseBody
     public List<ChatRoomDto> createRoom(@RequestParam HashMap<Object, Object> params, HttpSession session) {
 //                                        @RequestParam(value = "chatRoomId", required = false)String chatRoomId) {
-        List<ChatRoomDto> roomList = new ArrayList<>();
         WebUserDetails userDetails = getUserDetails();
+        int toUserId = Integer.parseInt((String) params.get("userId"));
 
-        // 생성한 or 기존 방 번호
+        List<ChatRoomDto> roomList = chattingService.createOrGetChatRoom(userDetails, toUserId);
 
-        Integer existingRoom = chattingService.getRoomDupCheck(userDetails.getUser(), Integer.parseInt((String) params.get("userId")));
-        if (existingRoom == null) {
-            // 최초 방 생성 (기존)
-            ChatRoomDto room = new ChatRoomDto();
-            int savedId = chattingService.insetChatRoom(room);
-
-            room.setChatRoomId(savedId);
-            room.setRoomNumber(savedId);
-            room.setToUserId(Integer.parseInt((String) params.get("userId")));
-            room.setFromUserId(userDetails.getUser().getUserId());
-            roomList.add(room);
-
-            // 웰컴 메세지 발송
-            UserDto toUser = accountService.getUserInfo(Integer.parseInt((String) params.get("userId")));
-            ChatRoomDto chatRoom = chattingService.getChatRoom(savedId);
-
-            ChatMessageDto sendMessage = new ChatMessageDto();
-            sendMessage.setChatRoomId(chatRoom);
-            sendMessage.setToUserId(userDetails.getUser());
-            sendMessage.setFromUserId(toUser);
-            sendMessage.setChatContent("안녕하세요 문의사항을 남겨주시면 확인 후 답변드리겠습니다.");
-
-            // 메세지 발송
-            chattingService.insertChatMessage(sendMessage);
-        } else {
-            // Active가 살아있는 방이 있다면
-            ChatRoomDto chatRoom = chattingService.getChatRoom(existingRoom);
-            chatRoom.setRoomNumber(existingRoom);
-            roomList.add(chatRoom);
-        }
-        session.setAttribute("toUserId", params.get("userId")); // 채팅방 초대? 받아서 가면 toUserId 확인 불가.. 최초 방 여는사람이 to 저장 필요함
+        session.setAttribute("toUserId", toUserId);
         return roomList;
     }
 
@@ -193,6 +163,8 @@ public class ChattingController {
         return mv;
     }
 
+
+
     @GetMapping("sendMessage")
     @ResponseBody
     public String sendMessage(String message, String roomNumber, String uri, Model model) {
@@ -201,6 +173,14 @@ public class ChattingController {
         WebUserDetails userDetails = getUserDetails();
 
         // 받는사람 추출
+        int toUserId = getToUserId(roomNumber, userDetails);
+        model.addAttribute("toUserId", toUserId);
+
+        chattingService.sendMessage(userDetails, roomNumber, message, toUserId);
+        return "success";
+    }
+
+    private int getToUserId(String roomNumber, WebUserDetails userDetails) {
         int toUserId = 0;
 
         String fromUserIdStr = roomUser.get(roomNumber + "f").toString();
@@ -211,40 +191,14 @@ public class ChattingController {
         } else {
             toUserId = Integer.parseInt(fromUserIdStr);
         }
-        UserDto toUser = accountService.getUserInfo(toUserId);
-
-        ChatRoomDto chatRoom = chattingService.getChatRoom(Integer.parseInt(roomNumber));
-        ChatMessageDto sendMessage = new ChatMessageDto();
-        sendMessage.setChatRoomId(chatRoom);
-        sendMessage.setToUserId(toUser);
-        sendMessage.setFromUserId(userDetails.getUser());
-        sendMessage.setChatContent(message);
-
-        // 메세지 저장
-        chattingService.insertChatMessage(sendMessage);
-
-        // 알림 메세지 생성
-        String notificationMessage;
-        // 알림 생성
-        if(userDetails.getUser().getUserCategory() == 2) {
-            BoyugUserDto boyugUser = accountService.getBoyugUserInfo(userDetails.getUser().getUserId());
-            notificationMessage = String.format("%s님이 메세지를 보냈습니다.", boyugUser.getBoyugUserName());
-        } else {
-            notificationMessage = String.format("%s님이 메세지를 보냈습니다.", userDetails.getUser().getUserName());
-        }
-
-        notificationService.insertNotification(userDetails.getUser(), toUser, chatRoom, notificationMessage, message);
-        model.addAttribute("toUserId", toUserId);
-
-        // WebSocket으로 1번 방에 메시지 전송
-//        sendNotificationToChatting1(message, userDetails.getUser().getUserName(), toUserId, roomNumber);
-        return "success";
+        return toUserId;
     }
+
+
 
     @GetMapping("message-read")
     @ResponseBody
     public String chatMessageIsRead(int chatRoomId, int toUserId) {
-        WebUserDetails userDetails = getUserDetails();
         chattingService.updateChatMessageIsRead(chatRoomId, toUserId);
         return "success";
     }
@@ -258,6 +212,8 @@ public class ChattingController {
 
         return "success";
     }
+
+
 
     // 로그인한 유저 정보 function
     private WebUserDetails getUserDetails() {

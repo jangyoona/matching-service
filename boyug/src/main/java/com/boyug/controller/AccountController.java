@@ -2,10 +2,7 @@ package com.boyug.controller;
 
 import com.boyug.common.KaKaoApi;
 import com.boyug.common.SmsApi;
-import com.boyug.common.Util;
 import com.boyug.dto.BoyugUserDto;
-import com.boyug.dto.BoyugUserFileDto;
-import com.boyug.dto.ProfileImageDto;
 import com.boyug.dto.UserDto;
 import com.boyug.service.AccountService;
 import jakarta.servlet.http.Cookie;
@@ -31,9 +28,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/userView/account")
@@ -43,19 +37,8 @@ public class AccountController {
     @Setter(onMethod_ = { @Autowired })
     private AccountService accountService;
 
-    private final KaKaoApi kakaoApi;
-
-//    @Value("${kakao.rest-api-key}")
-//    private String kakaoMapApiKey;
-
     @Setter(onMethod_ = { @Autowired })
     private SmsApi smsApi;
-
-    @Value("${file.profile-dir}")
-    private String profileDir;
-
-    @Value("${file.boyugfile-dir}")
-    private String boyugFileDir;
 
     @GetMapping("/privacy-policy")
     public String privacyPolicyShow() {
@@ -131,6 +114,7 @@ public class AccountController {
             for(Cookie cookie : cookies) {
                 if (cookie.getName().equals("saveId")) {
                     userName = cookie.getValue();
+                    break;
                 }
             }
         }
@@ -155,76 +139,15 @@ public class AccountController {
 
     @PostMapping("/business-register")
     public String register(UserDto user, BoyugUserDto boyugUser, String domain,
-                           MultipartFile[] attach, MultipartFile attachProfile, HttpServletRequest req) {
+                           MultipartFile[] attach, MultipartFile attachProfile) {
 
-        // 위도, 경도 추출
-        Map<String, Object> xy = kakaoApi.getKakaoSearch(user.getUserAddr2());
-        user.setUserLongitude((String) xy.get("x"));
-        user.setUserLatitude((String) xy.get("y"));
-
-        String email = boyugUser.getBoyugEmail().concat("@").concat(domain);
-        boyugUser.setBoyugEmail(email);
-        UserDto savedUser = accountService.registerBoyugUser(user, boyugUser);
-
-        List<BoyugUserFileDto> boyugUserFileList = new ArrayList<>();
-        ProfileImageDto profileImage = new ProfileImageDto();
-
-        if (attach.length > 0 ) {
-            try {
-                // 업체 첨부파일
-//                String dir = "/home/ubuntu/boyugUser-file";
-
-                // 디렉토리가 없으면 생성
-                createDirectoryIfNotExists(boyugFileDir);
-
-                for (MultipartFile file : attach) {
-                    String userFileName = file.getOriginalFilename();
-                    String savedFileName = Util.makeUniqueFileName(userFileName);
-
-                    BoyugUserFileDto userFile = new BoyugUserFileDto();
-                    userFile.setUserId(savedUser.getUserId());
-                    userFile.setFileOriginName(userFileName);
-                    userFile.setFileSavedName(savedFileName);
-                    file.transferTo(new File(boyugFileDir, savedFileName)); // 파일 저장
-                    boyugUserFileList.add(userFile);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            if (!attachProfile.isEmpty() && attachProfile.getOriginalFilename().length() > 0) {
-                try {
-                    // 프로필 사진
-                    String profileUserFileName = attachProfile.getOriginalFilename();
-                    String profileSavedFileName = Util.makeUniqueFileName(profileUserFileName);
-//                    String profileDir = "/home/ubuntu/profile-image";
-
-                    // 디렉토리가 없으면 생성
-                    createDirectoryIfNotExists(profileDir);
-
-                    profileImage.setUser(savedUser);
-                    profileImage.setImgOriginName(profileUserFileName);
-                    profileImage.setImgSavedName(profileSavedFileName);
-                    attachProfile.transferTo(new File(profileDir, profileSavedFileName)); // 파일 저장
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            try {
-                accountService.insertAttachments(boyugUserFileList ,profileImage);
-            } catch (Exception ex) {
-                System.out.println("파일 등록 실패");
-                ex.printStackTrace();
-            }
+        try {
+            accountService.registerUserWithFiles(user, boyugUser, domain, attach, attachProfile);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("파일 등록 실패");
         }
         return "redirect:/userView/account/success";
-    }
-
-    // 디렉터리 확인 후 없으면 생성
-    private void createDirectoryIfNotExists(String dirName) {
-        File directory = new File(dirName);
-        if (!directory.exists()) {
-            directory.mkdirs(); // 디렉토리 생성
-        }
     }
 
     @PostMapping("/reset-passwd")
@@ -236,35 +159,40 @@ public class AccountController {
         return accountService.updateUserPasswd(userPhone, userPw);
     }
 
-    public void fileDownload(HttpServletRequest req) {
-        try {
-            // URL 객체 생성
-            URL url = new URL("요청 url");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
 
-            // 응답 코드 체크
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                // 입력 스트림 생성
-                InputStream inputStream = connection.getInputStream();
-                // 파일 저장 경로 설정
-                String targetPath = req.getServletContext().getRealPath("/profile-image");
-                String fileName = "파일명 지정"; // 저장할 파일 이름
-                Path targetFilePath = Path.of(targetPath, fileName);
-                // 파일 다운로드 및 저장
-                Files.copy(inputStream, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
-                inputStream.close();
-                System.out.println("File downloaded: " + targetFilePath);
-            } else {
-                System.out.println("Failed to download _HTTP response code: " + connection.getResponseCode());
-            }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void fileDownload(HttpServletRequest req) {
+//        try {
+//            // URL 객체 생성
+//            URL url = new URL("요청 url");
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setRequestMethod("GET");
+//            connection.connect();
+//
+//            // 응답 코드 체크
+//            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+//                // 입력 스트림 생성
+//                InputStream inputStream = connection.getInputStream();
+//                // 파일 저장 경로 설정
+//                String targetPath = req.getServletContext().getRealPath("/profile-image");
+//                String fileName = "파일명 지정"; // 저장할 파일 이름
+//                Path targetFilePath = Path.of(targetPath, fileName);
+//                // 파일 다운로드 및 저장
+//                Files.copy(inputStream, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
+//                inputStream.close();
+//                System.out.println("File downloaded: " + targetFilePath);
+//            } else {
+//                System.out.println("Failed to download _HTTP response code: " + connection.getResponseCode());
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
+
+    //    @Value("${kakao.rest-api-key}")
+//    private String kakaoMapApiKey;
 
     //    @GetMapping("/logout/oauth/code/kakao")
 //    public String kakaoLogout(HttpSession session) {

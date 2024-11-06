@@ -10,11 +10,15 @@ import java.util.List;
 public interface ChattingService {
     int getNextChatRoomId();
 
-    int insetChatRoom(ChatRoomDto room);
+//    int insetChatRoom(ChatRoomDto room);
+
+    List<ChatRoomDto> createOrGetChatRoom(WebUserDetails userDetails, int toUserId);
 
     ChatRoomDto getChatRoom(int roomNumber);
 
     void insertChatMessage(ChatMessageDto sendMessage);
+
+    void sendMessage(WebUserDetails userDetails, String roomNumber, String message, int toUserId);
 
     List<ChatMessageDto> getMessagesByRoomId(int roomNumber);
 
@@ -24,5 +28,5 @@ public interface ChattingService {
 
     void editChatRoomActive(WebUserDetails user, int[] selectedValues);
 
-    Integer getRoomDupCheck(UserDto loginUser, int otherUserId);
+//    Integer getRoomDupCheck(UserDto loginUser, int otherUserId);
 }

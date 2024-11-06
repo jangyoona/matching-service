@@ -1,6 +1,7 @@
 package com.boyug.config;
 
 
+import com.boyug.common.KaKaoApi;
 import com.boyug.repository.*;
 import com.boyug.service.*;
 import com.zaxxer.hikari.HikariConfig;
@@ -55,11 +56,13 @@ public class RootConfiguration {
 	}
 
 	@Bean
-	public AccountService accountService(AccountRepository accountRepository, ProfileImageRepository profileImageRepository, BoyugUserRepository boyugUserRepository) throws Exception {
+	public AccountService accountService(AccountRepository accountRepository, ProfileImageRepository profileImageRepository,
+										 BoyugUserRepository boyugUserRepository, KaKaoApi kaKaoApi) throws Exception {
 		AccountServiceImpl accountService = new AccountServiceImpl();
 		accountService.setAccountRepository(accountRepository);
 		accountService.setProfileImageRepository(profileImageRepository);
 		accountService.setBoyugUserRepository(boyugUserRepository);
+		accountService.setKakaoApi(kaKaoApi);
 		return accountService;
 	}
 
@@ -151,17 +154,30 @@ public class RootConfiguration {
 	}
 
 	@Bean
-	public ChattingService chattingService(ChatRoomRepository chatRoomRepository, ChatMessageRepository chatMessageRepository) throws Exception{
+	public ChattingService chattingService(ChatRoomRepository chatRoomRepository, ChatMessageRepository chatMessageRepository,
+										   AccountService accountService) throws Exception{
 		ChattingServiceImpl chattingService = new ChattingServiceImpl();
 		chattingService.setChatRoomRepository(chatRoomRepository);
 		chattingService.setChatMessageRepository(chatMessageRepository);
+		chattingService.setAccountService(accountService);
 		return chattingService;
 	}
+
+
+
+//	@Bean
+//	public ChattingHelper chattingHelper(NotificationService notificationService, ChattingService chattingService) throws Exception{
+//		ChattingHelper chattingHelper = new ChattingHelper();
+//		chattingHelper.setNotificationService(notificationService);
+//		chattingHelper.setChattingService(chattingService);
+//		return chattingHelper;
+//	}
 
 	@Bean
 	public NotificationService notificationService(NotificationRepository notificationRepository) throws Exception {
 		NotificationServiceImpl notificationService = new NotificationServiceImpl();
 		notificationService.setNotificationRepository(notificationRepository);
+//		notificationService.setChattingHelper(chattingHelper);
 		return notificationService;
 	}
 

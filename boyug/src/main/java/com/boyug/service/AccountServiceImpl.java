@@ -1,5 +1,6 @@
 package com.boyug.service;
 
+import com.boyug.common.KaKaoApi;
 import com.boyug.common.Util;
 import com.boyug.dto.BoyugUserDto;
 import com.boyug.dto.BoyugUserFileDto;
@@ -13,12 +14,13 @@ import com.boyug.repository.AccountRepository;
 import com.boyug.repository.BoyugUserRepository;
 import com.boyug.repository.ProfileImageRepository;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AccountServiceImpl implements AccountService {
@@ -31,6 +33,15 @@ public class AccountServiceImpl implements AccountService {
 
     @Setter
     private BoyugUserRepository boyugUserRepository;
+
+    @Setter
+    private KaKaoApi kakaoApi;
+
+    @Value("${file.profile-dir}")
+    private String profileDir;
+
+    @Value("${file.boyugfile-dir}")
+    private String boyugFileDir;
 
     @Override
     public UserDto getUserInfo(int userId) {
@@ -80,6 +91,65 @@ public class AccountServiceImpl implements AccountService {
 
         return UserDto.of(savedUser);
     }
+
+    //
+    @Override
+    public UserDto registerUserWithFiles(UserDto user, BoyugUserDto boyugUser, String domain,
+                                         MultipartFile[] attach, MultipartFile attachProfile) throws IOException {
+        // 위도, 경도 추출
+        Map<String, Object> xy = kakaoApi.getKakaoSearch(user.getUserAddr2());
+        user.setUserLongitude((String) xy.get("x"));
+        user.setUserLatitude((String) xy.get("y"));
+
+        // 이메일 설정
+        String email = boyugUser.getBoyugEmail().concat("@").concat(domain);
+        boyugUser.setBoyugEmail(email);
+        UserDto savedUser = registerBoyugUser(user, boyugUser);
+
+        List<BoyugUserFileDto> boyugUserFileList = new ArrayList<>();
+        ProfileImageDto profileImage = new ProfileImageDto();
+
+        if (attach.length > 0) {
+            createDirectoryIfNotExists(boyugFileDir);
+
+            for (MultipartFile file : attach) {
+                String userFileName = file.getOriginalFilename();
+                String savedFileName = Util.makeUniqueFileName(userFileName);
+
+                BoyugUserFileDto userFile = new BoyugUserFileDto();
+                userFile.setUserId(savedUser.getUserId());
+                userFile.setFileOriginName(userFileName);
+                userFile.setFileSavedName(savedFileName);
+                file.transferTo(new File(boyugFileDir, savedFileName));
+                boyugUserFileList.add(userFile);
+            }
+        }
+
+        if (!attachProfile.isEmpty() && attachProfile.getOriginalFilename().length() > 0) {
+            createDirectoryIfNotExists(profileDir);
+
+            String profileUserFileName = attachProfile.getOriginalFilename();
+            String profileSavedFileName = Util.makeUniqueFileName(profileUserFileName);
+
+            profileImage.setUser(savedUser);
+            profileImage.setImgOriginName(profileUserFileName);
+            profileImage.setImgSavedName(profileSavedFileName);
+            attachProfile.transferTo(new File(profileDir, profileSavedFileName));
+        }
+
+        insertAttachments(boyugUserFileList, profileImage);
+
+        return savedUser;
+    }
+
+    private void createDirectoryIfNotExists(String dirPath) {
+        File dir = new File(dirPath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+    }
+
+    //
 
     @Transactional
     @Override
