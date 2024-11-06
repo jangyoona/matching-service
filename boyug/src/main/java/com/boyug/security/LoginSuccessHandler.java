@@ -45,11 +45,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             }
         }
 
-        if (userDetails.getUser().getUserCategory() == 3) {
-            response.sendRedirect("/personal/personalHome");
-            return;
-        }
-
         // 아이디 저장 설정
         String saveId = request.getParameter("saveId"); // true or false
         String username = authentication.getName();
@@ -77,6 +72,12 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                 response.addCookie(newCookie);
             }
         }
+
+        if (userDetails.getUser().getUserCategory() == 3) {
+            response.sendRedirect("/personal/personalHome");
+            return;
+        }
+
         response.sendRedirect("/home");
     }
 

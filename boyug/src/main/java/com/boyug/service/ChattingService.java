@@ -4,13 +4,13 @@ import com.boyug.dto.ChatMessageDto;
 import com.boyug.dto.ChatRoomDto;
 import com.boyug.dto.UserDto;
 import com.boyug.security.WebUserDetails;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
 public interface ChattingService {
     int getNextChatRoomId();
-
-//    int insetChatRoom(ChatRoomDto room);
 
     List<ChatRoomDto> createOrGetChatRoom(WebUserDetails userDetails, int toUserId);
 
@@ -20,6 +20,8 @@ public interface ChattingService {
 
     void sendMessage(WebUserDetails userDetails, String roomNumber, String message, int toUserId);
 
+    ModelAndView prepareChatView(int roomNumber, WebUserDetails userDetails, HttpSession session);
+
     List<ChatMessageDto> getMessagesByRoomId(int roomNumber);
 
     void updateChatMessageIsRead(int chatRoomId, int userId);
@@ -27,6 +29,4 @@ public interface ChattingService {
     List<ChatRoomDto> getChatRoomByUserId(UserDto loginUser);
 
     void editChatRoomActive(WebUserDetails user, int[] selectedValues);
-
-//    Integer getRoomDupCheck(UserDto loginUser, int otherUserId);
 }

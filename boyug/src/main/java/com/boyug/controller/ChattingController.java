@@ -69,98 +69,10 @@ public class ChattingController {
 
     @RequestMapping("moveChatting")
     public ModelAndView chatting(@RequestParam HashMap<Object, Object> params, HttpSession session) {
-        // 채팅방
-        ModelAndView mv = new ModelAndView();
+
         int roomNumber = Integer.parseInt((String) params.get("roomNumber"));
-        ChatRoomDto isChatRoom = chattingService.getChatRoom(roomNumber);
-
-        // 현재 로그인 사용자 구분
         WebUserDetails userDetails = getUserDetails();
-        UserDto loginUser = userDetails.getUser();
-        mv.addObject("loginUser", loginUser);
-
-
-        // 1 otherUser 추출
-        UserDto otherUser = null;
-        if(loginUser.getUserId() == isChatRoom.getChatMessages().get(0).getToUserId().getUserId()) {
-            otherUser = accountService.getUserInfo(isChatRoom.getChatMessages().get(0).getFromUserId().getUserId());
-        } else {
-            otherUser = accountService.getUserInfo(isChatRoom.getChatMessages().get(0).getToUserId().getUserId());
-        }
-
-        // 2 채팅방 헤더 name
-        String otherUserName = "";
-
-        if (otherUser.getUserCategory() == 2) {
-            BoyugUserDto boyugUser = accountService.getBoyugUserInfo(otherUser.getUserId());
-            otherUserName = boyugUser.getBoyugUserName();
-        } else if (otherUser.getUserCategory() == 3) {
-            otherUserName = otherUser.getUserName();
-        }
-        mv.addObject("otherUserName", otherUserName);
-
-
-        if(isChatRoom != null) {
-            mv.addObject("roomNumber", params.get("roomNumber"));
-            mv.setViewName("chat");
-
-            // 채팅방 목록 상대방 ProfileImage List
-            List<ChatRoomDto> userRoomList = chattingService.getChatRoomByUserId(loginUser);
-            int userCategory = loginUser.getUserCategory();
-
-            List<ProfileImageDto> profileImage = accountService.getUserProfileImage(otherUser);
-            String profileUrl = (profileImage != null && !profileImage.isEmpty()) ? profileImage.get(0).getImgSavedName() : null; // 채팅방 상대 프로필
-
-            List<ProfileImageDto> profileImages = null;
-            for (ChatRoomDto chatRoomDto : userRoomList) {
-                if((userCategory == 2 && chatRoomDto.isBoyugChatActive()) || (userCategory == 3 && chatRoomDto.isUserChatActive())) {
-                    if (chatRoomDto.getChatMessages().get(0).getToUserId().getUserId() != loginUser.getUserId()) {
-                        profileImages = accountService.getUserProfileImage(chatRoomDto.getChatMessages().get(0).getToUserId());
-                        chatRoomDto.getChatMessages().get(0).getToUserId().setImages(profileImages);
-                    } else {
-                        profileImages = accountService.getUserProfileImage(chatRoomDto.getChatMessages().get(0).getFromUserId());
-                        chatRoomDto.getChatMessages().get(0).getFromUserId().setImages(profileImages);
-                    }
-                }
-            }
-            mv.addObject("userRoomList", userRoomList); // 채팅창 왼쪽 목록에 띄울 리스트
-            mv.addObject("profileUrl", profileUrl); // 채팅창 상대방 프로필 url
-
-
-            // 기존 채팅 불러오기
-            List<ChatMessageDto> messages = chattingService.getMessagesByRoomId(roomNumber);
-            for (ChatMessageDto message : messages) {
-                if (message.getToUserId().getUserId() != loginUser.getUserId()) {
-                    message.getToUserId().setImages(profileImage);
-                } else if (message.getFromUserId().getUserId() != loginUser.getUserId()) {
-                    message.getFromUserId().setImages(profileImage);
-                }
-            }
-            mv.addObject("messages", messages);
-
-            // 메세지 send시 option에 담길 toUserId를 위해 저장
-            int toUserId = 0;
-
-            // from, to 유저 서버에 저장
-            roomUser.put(roomNumber+"f", loginUser.getUserId());
-            if(messages.isEmpty()){ // 최초 생성시 이건 잘 작동함
-                roomUser.put(roomNumber+"t", session.getAttribute("toUserId"));
-            } else {
-                if(messages.get(0).getToUserId().getUserId() == userDetails.getUser().getUserId()) {
-                    roomUser.put(roomNumber+"t", messages.get(0).getFromUserId().getUserId());
-                    mv.addObject("toUserName", messages.get(0).getFromUserId().getUserName());
-                    toUserId = messages.get(0).getFromUserId().getUserId();
-                } else {
-                    roomUser.put(roomNumber+"t", messages.get(0).getToUserId().getUserId());
-                    mv.addObject("toUserName", messages.get(0).getToUserId().getUserName());
-                    toUserId = messages.get(0).getToUserId().getUserId();
-                }
-            }
-            mv.addObject("toUserId", toUserId);
-        } else {
-            mv.setViewName("home?chaterror");
-        }
-        return mv;
+        return chattingService.prepareChatView(roomNumber, userDetails, session);
     }
 
 

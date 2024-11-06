@@ -114,7 +114,7 @@ public class AccountController {
             for(Cookie cookie : cookies) {
                 if (cookie.getName().equals("saveId")) {
                     userName = cookie.getValue();
-                    break;
+//                    break;
                 }
             }
         }
