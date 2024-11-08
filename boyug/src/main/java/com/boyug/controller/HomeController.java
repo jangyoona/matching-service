@@ -5,6 +5,7 @@ import com.boyug.oauth2.CustomOAuth2User;
 import com.boyug.security.WebUserDetails;
 import com.boyug.service.AccountService;
 import com.boyug.service.ActivityService;
+import com.boyug.service.HomeService;
 import com.boyug.service.NotificationService;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,38 +37,17 @@ public class HomeController {
     @Setter(onMethod_ = {@Autowired})
     ActivityService activityService;
 
+    @Setter(onMethod_ = {@Autowired})
+    HomeService homeService;
+
     @RequestMapping(path = {"/", "/home"})
     public String home(Model model) {
 
         // 보육 프로그램 리스트 최근 20개
-        Page<BoyugProgramDto> boyugProgramList = activityService.findAllList(0, 20);
-        for (BoyugProgramDto program : boyugProgramList) {
-            UserDto user = accountService.getUserInfo(program.getUserId());
-            // 화면 출력용 주소 자르기
-            String[] addrCut = user.getUserAddr2().split("\\s+");
-            String addrSplit = String.format("%s %s", addrCut[0], addrCut[1]);
-            user.setUserAddr2(addrSplit);
-
-            List<ProfileImageDto> profile = accountService.getUserProfileImage(user);
-            user.setImages(profile);
-            program.setUser(user);
-
-            if (program.getUser().getImages().isEmpty()) {
-                // 프로필 이미지가 만약 없을 경우 기본 이미지 세팅
-                ProfileImageDto basicImage = new ProfileImageDto();
-                basicImage.setImgSavedName("no_img.jpg");
-                profile.add(basicImage);
-                user.setImages(profile);
-            }
-        }
+        Page<BoyugProgramDto> boyugProgramList = homeService.getLatestBoyugProgramList();
         model.addAttribute("boyugProgramList", boyugProgramList);
         return "home";
     }
-
-//    @RequestMapping(path = {"/noinHome"})
-//    public String noinHome() {
-//        return "noinHome";
-//    }
 
     @RequestMapping(path = {"/module"})
     public String moudle() {

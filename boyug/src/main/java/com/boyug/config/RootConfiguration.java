@@ -55,6 +55,15 @@ public class RootConfiguration {
 		return new JdbcTemplate(dataSource());
 	}
 
+
+	@Bean
+	public HomeService homeService(AccountService accountService, ActivityService activityService) throws Exception {
+		HomeServiceImpl homeService = new HomeServiceImpl();
+		homeService.setAccountService(accountService);
+		homeService.setActivityService(activityService);
+		return homeService;
+	}
+
 	@Bean
 	public AccountService accountService(AccountRepository accountRepository, ProfileImageRepository profileImageRepository,
 										 BoyugUserRepository boyugUserRepository, KaKaoApi kaKaoApi) throws Exception {
