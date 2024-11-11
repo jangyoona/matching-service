@@ -131,11 +131,11 @@
 
                             <th:block th:if="${message.fromUserId.userId != loginUser.userId}">
                                 <!--/* 프로필사진 미 등록시 기본 이미지 */-->
-                                <img th:if="${ profileUrl == null }" th:src="@{'/profile-image/no_img.jpg'}" class="img-fluid rounded-circle" style="width:60px;">
+                                <img th:if="${ profileUrl == null }" th:src="@{'/profile-image/no_img.jpg'}" class="img-fluid rounded-circle" style="width:60px; margin-left: 0.5rem; margin-left: 0.5rem;">
                                 <!--/* 프로필 사진 show */-->
                                 <img th:if="${ profileUrl != null }"
                                      th:src="${'/profile-image/' + profileUrl }"
-                                     class="img-fluid rounded-circle other-image" alt="Image" style="width:60px; background-color:white; aspect-ratio : 1 / 1;">
+                                     class="img-fluid rounded-circle other-image" alt="Image" style="width:60px; background-color:white; aspect-ratio : 1 / 1; margin-left: 0.5rem;">
                             </th:block>
 
                             <div class="box"

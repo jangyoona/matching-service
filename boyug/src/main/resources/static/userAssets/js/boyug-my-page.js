@@ -1,3 +1,4 @@
+$('.container-fluid #nav-container-box').load('/navbar');
 
 const currentUrl = window.location.href;
 let currentPath = currentUrl.replace(/^https?:\/\/[^/]+/, '');
