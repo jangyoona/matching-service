@@ -76,7 +76,7 @@ $(function() {
                         $(".chat_wrap .inner").append(
                                   '<div class="item yourmsg" style="margin-left:-9px;">' +
                                   '<div class="testimonial-img p-1" style="width:4rem; display:inline-block">' +
-                                  '<img src="' + otherUserImg + '" class="img-fluid rounded-circle" alt="Image" style="background-color:white; aspect-ratio: 1 / 1; margin-left: 0.5rem;">' +
+                                  '<img src="' + otherUserImg + '" class="img-fluid rounded-circle" alt="Image" style="background-color:white; aspect-ratio: 1 / 1;">' +
                                   '</div>' +
                                   '<div class="box" style="margin-left: 0.5rem; margin-top:1.5rem; position:relative; top:0.6rem;">' +
                                   '<p class="msg" style="height:auto;">' + d.msg + '</p><span class="time">' + currentTime() + '</span>' +
