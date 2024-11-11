@@ -64,7 +64,7 @@
 
 # 아키텍처
 
-![333차 아키텍처 drawio](https://github.com/user-attachments/assets/4f60df00-d837-44a7-9d48-5cd1a43bbbb4)
+![3차 배포 아키텍처](https://github.com/user-attachments/assets/2a40da71-a4f6-4c9a-8abe-4a165e3b2c3e)
 
 <br>
 
