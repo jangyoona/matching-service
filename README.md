@@ -64,12 +64,12 @@
 
 # 아키텍처
 
-![3차 배포 아키텍처](https://github.com/user-attachments/assets/13a7a742-4a24-45e6-a135-53da34821187)
+![333차 아키텍처 drawio](https://github.com/user-attachments/assets/4f60df00-d837-44a7-9d48-5cd1a43bbbb4)
 
 <br>
 
-> 기존 수동 배포 방식에서 -> Git-Hub WebHook과 Jenkins를 활용해 자동 배포 방식으로 변경하였습니다. --11/10 <br>
-> NginX 웹 서버를 추가하였습니다. --11/11
+> -기존의 수동 배포 방식을 Jenkins 기반의 CI/CD 파이프라인으로 전환하여 자동화된 배포 환경을 구축하였습니다. --11/10 <br>
+> -NginX 웹 서버를 추가하였습니다. --11/11
 
 
 <br>
