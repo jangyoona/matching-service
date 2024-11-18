@@ -107,6 +107,8 @@ public class SocketHandler extends TextWebSocketHandler {
         if (httpSession == null || httpSession.getAttribute("loginUserId") == null) {
             session.close(CloseStatus.SESSION_NOT_RELIABLE); // 연결 종료
             return; // 이후 로직 실행 방지
+        } else {
+            System.out.println("HttpSession in handleTextMessage: " + httpSession);
         }
 
         // 메시지 발송

@@ -58,6 +58,12 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
         String sessionID = httpSession.getId();
         attributes.put("sessionID", sessionID);
 
+        // 세션 만료시 소켓을 강제로 끊기 위한 httpSession 객체 저장
+        if (httpSession != null) {
+            attributes.put("HTTP_SESSION", httpSession);
+            System.out.println("HttpSession added to attributes with ID: " + httpSession.getId());
+        }
+
         String userName = req.getParameter("userName");
         attributes.put("userPhone", userName);
         return true;
