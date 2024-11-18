@@ -1,12 +1,10 @@
 package com.boyug.security;
 
 import com.boyug.service.NotificationServiceImpl;
-import com.boyug.websocket.SocketHandler;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpSessionEvent;
 import jakarta.servlet.http.HttpSessionListener;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class SessionListener implements HttpSessionListener {
@@ -14,16 +12,18 @@ public class SessionListener implements HttpSessionListener {
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
 
-        // 세션이 만료되었을 때 호출
-        String userId = (String) event.getSession().getAttribute("loginUserId");
+        HttpSession session = event.getSession();
 
-        // Socket user 저장된 목록 다시 확인 후 지우기
-        List<String> users = SocketHandler.getUsers();
-        if (!users.isEmpty()) {
-            users.removeIf(user -> user.equals(userId));
-        }
+        // 세션이 만료되었을 때 호출
+        Integer userId = (Integer) session.getAttribute("loginUserId");
+
+        // Socket user 저장된 목록은 웹소켓 종료 핸들러에서 지움
         // SSE 접속 사용자 제거
-        NotificationServiceImpl.removeEmitter(userId);
+        NotificationServiceImpl.removeEmitter(String.valueOf(userId));
+
+        // 세션 종료
+        session.invalidate();
+
 
     }
 

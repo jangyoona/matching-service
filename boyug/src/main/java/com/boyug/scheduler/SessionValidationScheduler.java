@@ -22,7 +22,11 @@ public class SessionValidationScheduler {
         for (HashMap<String, Object> map : sessions) {
             for (String key : map.keySet()) {
                 if (!"roomNumber".equals(key)) {
-                    WebSocketSession session = (WebSocketSession) map.get(key); // session.getId()로 세션 찾기
+                    Object obj = map.get(key); // session.getId()로 세션 찾기
+                    WebSocketSession session = (WebSocketSession) obj;
+                    if (session == null) {
+                        return;
+                    }
                     HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTP_SESSION");
 
                     try {
@@ -38,4 +42,7 @@ public class SessionValidationScheduler {
             }
         }
     }
+
+
+
 }

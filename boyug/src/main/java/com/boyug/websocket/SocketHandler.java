@@ -44,12 +44,18 @@ public class SocketHandler extends TextWebSocketHandler {
         super.afterConnectionEstablished(session);
         boolean flag = false;
         String url = session.getUri().toString();
-        System.out.println(url);
+        System.out.println("afterConnectionEstablished ------------------> " + url);
         String roomNumber = url.split("/chatting/")[1];
 
         // 현재 사용자 정보
         SecurityContext securityContext = (SecurityContext) session.getAttributes().get("SPRING_SECURITY_CONTEXT");
         Authentication authentication = securityContext.getAuthentication();
+
+        if (authentication.getPrincipal() == null) {
+            System.out.println("afterConnectionEstablished ---------------> 세션만료 중간 멈추기");
+            session.close(CloseStatus.SESSION_NOT_RELIABLE);
+            return;
+        }
 
         WebUserDetails userDetails = null;
         if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
@@ -104,11 +110,17 @@ public class SocketHandler extends TextWebSocketHandler {
         HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTP_SESSION");
 
         // 세션이 없거나 세션에 로그인 정보가 없으면 연결 종료
-        if (httpSession == null || httpSession.getAttribute("loginUserId") == null) {
+        try {
+            if (httpSession == null || httpSession.getAttribute("loginUserId") == null) {
+                session.close(new CloseStatus(4401, "Session Expired")); // 연결 종료
+                return;
+            } else {
+                System.out.println("HttpSession in handleTextMessage: " + httpSession);
+            }
+        } catch (IllegalStateException e) {
+            // 세션이 이미 무효화된 경우 예외 처리
             session.close(new CloseStatus(4401, "Session Expired")); // 연결 종료
             return;
-        } else {
-            System.out.println("HttpSession in handleTextMessage: " + httpSession);
         }
 
         // 메시지 발송
@@ -125,7 +137,6 @@ public class SocketHandler extends TextWebSocketHandler {
                 if (roomNumber.equals(rN)) { // 같은 값의 방이 존재한다면
                     temp = rls.get(i); // 해당 방 번호의 세션리스트의 존재하는 모든 object 값을 가져온다.
                     break;
-                } else {
                 }
             }
 
@@ -175,11 +186,6 @@ public class SocketHandler extends TextWebSocketHandler {
             }
             currentUser = userDetails.getUser();
         }
-
-//        Authentication authentication = securityContext.getAuthentication();
-//        WebUserDetails userDetails = (WebUserDetails) authentication.getPrincipal();
-//        UserDto currentUser = userDetails.getUser();
-
 
         // 1번방 소켓 종료
         String uri = session.getUri().toString();

@@ -42,7 +42,7 @@ $(function() {
 
             var msg = data.data;
 
-            if (msg != null && msg.trim() != '' && getCookie('JSESSIONID')) {
+            if (msg != null && msg.trim() != '') {
                 var d = JSON.parse(msg);
                 if (d.type == "getId") {
                     var si = d.sessionId != null ? d.sessionId : "";
@@ -85,7 +85,7 @@ $(function() {
                                   '<img src="' + otherUserImg + '" class="img-fluid rounded-circle" alt="Image" style="background-color:white; aspect-ratio: 1 / 1;">' +
                                   '</div>' +
                                   '<div class="box" style="margin-left: 0.5rem; margin-top:1.5rem; position:relative; top:0.6rem;">' +
-                                  '<p class="msg" style="height:auto;">' + d.msg + '</p><span class="time" style="margin-bottom:1.2rem;>' + currentTime() + '</span>' +
+                                  '<p class="msg" style="height:auto;">' + d.msg + '</p><span class="time" style="margin-bottom:1.2rem;">' + currentTime() + '</span>' +
                                   '</div></div>'
                         );
                     }
@@ -132,19 +132,6 @@ $(function() {
             ws.close();
         };
     }
-
-    // 쿠키 조회
-    function getCookie(name) {
-        let cookieArr = document.cookie.split(";");
-        for (let i = 0; i < cookieArr.length; i++) {
-            let cookiePair = cookieArr[i].split("=");
-            if (name.trim() === cookiePair[0].trim()) {
-                return decodeURIComponent(cookiePair[1]);
-            }
-        }
-        return null;
-    };
-
 
     // 채팅 목록의 안읽은 메세지 계산
     $('.new-message-count').each(function() {

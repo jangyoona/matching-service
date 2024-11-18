@@ -5,6 +5,7 @@ import com.boyug.security.WebUserDetails;
 import com.boyug.service.ActivityService;
 import com.boyug.service.ChattingService;
 import com.boyug.service.NotificationService;
+import jakarta.transaction.Transactional;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -40,6 +41,7 @@ public class NotificationController {
     }
 
     @GetMapping("/notification/chat-read")
+    @Transactional
     public String markChatNotificationsAsRead(int notificationId, int chatRoomId) {
         // 알림, 메세지 읽음 처리
         WebUserDetails userDetails = getUserDetails();

@@ -51,11 +51,8 @@ public class LogoutSuccessHandler implements org.springframework.security.web.au
 
         String userId = String.valueOf(userDetails.getUser().getUserId());
 
-        // Socket user 저장된 목록 다시 확인 후 지우기
-        List<String> users = SocketHandler.getUsers();
-        if (!users.isEmpty()) {
-            users.removeIf(user -> user.equals(userId));
-        }
+        // Socket user 저장된 목록은 웹소켓 종료 핸들러에서 지움
+
         // SSE 접속 사용자 제거
         NotificationServiceImpl.removeEmitter(userId);
 

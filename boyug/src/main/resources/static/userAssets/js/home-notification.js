@@ -9,6 +9,7 @@ $(function() {
             error: function(err) {
                 console.error('에러 발생:', err);
                 alert('요청이 실패했습니다. 다시 시도해 주세요.');
+                location.reload();
             }
         });
     }
