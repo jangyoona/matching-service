@@ -117,6 +117,7 @@ $(function() {
             } else {
                 console.error("Maximum reconnect attempts reached. Please check your connection.");
                 alert("서버와의 연결이 끊어졌습니다. 새로 고침 후 다시 시도해 주세요.");
+                window.close();
             }
         };
 
