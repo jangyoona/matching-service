@@ -101,6 +101,9 @@ $(function() {
                 }
             } else {
                 alert('세션이 만료되었습니다. 다시 로그인해 주세요.');
+                if (ws) {
+                    ws.close();
+                }
                 window.close();
             }
         };
@@ -132,10 +135,14 @@ $(function() {
 
     // 쿠키 조회
     function getCookie(name) {
-        let matches = document.cookie.match(new RegExp(
-            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-        ));
-        return matches ? decodeURIComponent(matches[1]) : undefined;
+        let cookieArr = document.cookie.split(";");
+        for (let i = 0; i < cookieArr.length; i++) {
+            let cookiePair = cookieArr[i].split("=");
+            if (name.trim() === cookiePair[0].trim()) {
+                return decodeURIComponent(cookiePair[1]);
+            }
+        }
+        return null;
     };
 
 
