@@ -2,16 +2,21 @@ $(function() {
     $('#chatting').focus();
 
     var ws;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+
     function wsOpen() {
         if (ws && ws.readyState === 1) {
             // 이미 WebSocket 연결이 존재하면 새로 연결하지 않음
             console.log("WebSocket is already open.");
+            reconnectAttempts = 0;
             return;
         }
 
         ws = new WebSocket("ws://" + location.host + "/chatting/" + $("#roomNumber").val());
         wsEvt();
     }
+
 
     function wsEvt() {
         ws.onopen = function(data) {
@@ -95,7 +100,24 @@ $(function() {
                 }
             }
         };
+
+        ws.onclose = function(e) {
+            if(reconnectAttempts < maxReconnectAttempts) {
+                reconnectAttempts++;
+                setTimeout(function() {
+                    wsOpen(); // 재연결 시도
+                }, 5000 * reconnectAttempts); // 재연결 간격 증가
+            } else {
+                console.error("Maximum reconnect attempts reached. Please check your connection.");
+                alert("서버와의 연결이 끊어졌습니다. 새로 고침 후 다시 시도해 주세요.");
+            }
+        };
+
+        ws.onerror = function(error) {
+            ws.close();
+        };
     }
+
 
     // 채팅 목록의 안읽은 메세지 계산
     $('.new-message-count').each(function() {

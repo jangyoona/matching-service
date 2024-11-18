@@ -73,6 +73,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             }
         }
 
+        // 로그인 유저 아이디 세션에 저장
+        HttpSession session = request.getSession();
+        session.setAttribute("loginUserId", userDetails.getUser().getUserId());
+
         if (userDetails.getUser().getUserCategory() == 3) {
             response.sendRedirect("/personal/personalHome");
             return;
