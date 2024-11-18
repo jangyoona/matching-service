@@ -42,7 +42,7 @@ $(function() {
 
             var msg = data.data;
 
-            if (msg != null && msg.trim() != '') {
+            if (msg != null && msg.trim() != '' && getCookie('JSESSIONID')) {
                 var d = JSON.parse(msg);
                 if (d.type == "getId") {
                     var si = d.sessionId != null ? d.sessionId : "";
@@ -72,7 +72,8 @@ $(function() {
                                 }
                             },
                             error: function(status, xhr, err) {
-                                alert('메세지 전송 에러');
+                                alert('메세지 전송 중 오류가 발생했습니다. 새로 고침 후 다시 시도해 주세요.');
+                                window.close();
                             }
                         });
                     } else {
@@ -98,6 +99,9 @@ $(function() {
                 } else {
                     console.warn("unknown type!");
                 }
+            } else {
+                alert('세션이 만료되었습니다. 다시 로그인해 주세요.');
+                window.close();
             }
         };
 
@@ -125,6 +129,14 @@ $(function() {
             ws.close();
         };
     }
+
+    // 쿠키 조회
+    function getCookie(name) {
+        let matches = document.cookie.match(new RegExp(
+            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+    };
 
 
     // 채팅 목록의 안읽은 메세지 계산
