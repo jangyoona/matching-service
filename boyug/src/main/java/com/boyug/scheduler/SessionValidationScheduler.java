@@ -29,6 +29,7 @@ public class SessionValidationScheduler {
                         // HttpSession이 없거나 loginUserId 속성이 없는 경우 세션 만료로 판단
                         if (httpSession == null || httpSession.getAttribute("loginUserId") == null) {
                             session.close(new CloseStatus(4401, "Session Expired")); // WebSocket 연결 종료
+                            map.remove(key);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();

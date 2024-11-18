@@ -144,6 +144,14 @@ public class SocketHandler extends TextWebSocketHandler {
                     }
                 } else {
                     // 세션이 없거나 닫혀 있는 경우 알림 생성
+                    try {
+                        if (wss != null) {
+                            wss.close(new CloseStatus(4401, "Session Expired")); // 세션 닫기
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                     temp.remove(k);
                 }
             }
         }

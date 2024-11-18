@@ -84,7 +84,7 @@ $(function() {
                                   '<img src="' + otherUserImg + '" class="img-fluid rounded-circle" alt="Image" style="background-color:white; aspect-ratio: 1 / 1;">' +
                                   '</div>' +
                                   '<div class="box" style="margin-left: 0.5rem; margin-top:1.5rem; position:relative; top:0.6rem;">' +
-                                  '<p class="msg" style="height:auto;">' + d.msg + '</p><span class="time">' + currentTime() + '</span>' +
+                                  '<p class="msg" style="height:auto;">' + d.msg + '</p><span class="time" style="margin-bottom:1.2rem;>' + currentTime() + '</span>' +
                                   '</div></div>'
                         );
                     }
