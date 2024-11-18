@@ -3,6 +3,7 @@ package com.boyug.websocket;
 import com.boyug.dto.UserDto;
 import com.boyug.oauth2.CustomOAuth2User;
 import com.boyug.security.WebUserDetails;
+import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -62,14 +63,6 @@ public class SocketHandler extends TextWebSocketHandler {
         }
         String userId = String.valueOf(userDetails.getUser().getUserId());
 
-//        if(roomNumber.equals("1")) {
-//            if (roomSessionsMap.containsKey(userId)) {
-//                // 이미 연결된 경우
-//                System.out.println("이미 연결된 세션입니다: " + session.getId());
-//                return; // 중복 연결 방지
-//            }
-//        }
-
         int idx = rls.size(); // 방의 사이즈를 조사
         if(rls.size() > 0) {
             for(int i=0; i<rls.size(); i++) {
@@ -101,24 +94,20 @@ public class SocketHandler extends TextWebSocketHandler {
         obj.put("type", "getId");
         obj.put("sessionId", session.getId());
         session.sendMessage(new TextMessage(obj.toJSONString()));
-
-        // 1번방 작업
-//        roomSessionsMap.computeIfAbsent(roomNumber, k -> new ArrayList<>()).add(session); // 방 번호 기준으로 저장
-//        roomSessionsMap.computeIfAbsent(userId, k -> new ArrayList<>()).add(session); // 유저 아이디 기준으로 저장
     }
 
-    // 1번방 모든 세션에 메시지 전송 함수
-//    public void sendMessageToRoom(String roomNumber, String message, int toUserId) {
-//        System.out.println("1번 세션 msg = " + message);
-//        List<WebSocketSession> sessions = roomSessionsMap.get(String.valueOf(toUserId));
-//
-//        // 해당 유저가 지금 접속중이 아닐 때
-//        if(sessions == null) {
-//            return;
-//        }
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) {
+    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
+        // 메세지를 주고 받을 때 마다 세션 유효성 검증
+        // WebSocketSession의 attributes에서 HttpSession 가져오기
+        HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTP_SESSION");
+
+        // 세션이 없거나 세션에 로그인 정보가 없으면 연결 종료
+        if (httpSession == null || httpSession.getAttribute("loginUserId") == null) {
+            session.close(CloseStatus.SESSION_NOT_RELIABLE); // 연결 종료
+            return; // 이후 로직 실행 방지
+        }
 
         // 메시지 발송
         String msg = message.getPayload();
