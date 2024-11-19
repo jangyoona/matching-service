@@ -4,13 +4,20 @@ package com.boyug.config;
 import com.boyug.common.KaKaoApi;
 import com.boyug.repository.*;
 import com.boyug.service.*;
+import com.boyug.websocket.SocketHandler;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
@@ -29,6 +36,9 @@ public class RootConfiguration {
 	@Autowired
 	Environment env;
 
+	@Value("${spring.data.redis.host}")
+	private String redisHost;
+
 	@Bean
 	// Environment 객체에 저장된 속성 중에서 spring.datasource.hikari로 시작하는 속성을 적용
 	@ConfigurationProperties(prefix = "spring.datasource.hikari")
@@ -41,6 +51,40 @@ public class RootConfiguration {
 		HikariDataSource dataSource = new HikariDataSource(hikariConfig());
 		return dataSource;
 	}
+
+	// redisTemplate
+	@Bean
+	public RedisConnectionFactory redisConnectionFactory() {
+		RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
+		config.setHostName(redisHost); // EC2 프록시 서버 주소
+		config.setPort(6379);
+
+		return new LettuceConnectionFactory(config);
+	}
+
+	@Bean
+	public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) throws Exception {
+		RedisTemplate<String, String> template = new RedisTemplate<>();
+		template.setConnectionFactory(connectionFactory);
+
+		// 키와 값을 String 형식으로 직렬화 설정
+		template.setKeySerializer(new StringRedisSerializer());
+		template.setValueSerializer(new StringRedisSerializer());
+		template.setHashKeySerializer(new StringRedisSerializer());
+		template.setHashValueSerializer(new StringRedisSerializer());
+
+		// 설정 초기화
+		template.afterPropertiesSet();
+		return template;
+	}
+
+	@Bean
+	public SocketHandler socketHandler(RedisService redisService) throws Exception {
+		SocketHandler socketHandler = new SocketHandler();
+		socketHandler.setRedisService(redisService);
+		return socketHandler;
+	}
+
 
 	// security autoLogin : remember-me token DB insert
 	@Bean

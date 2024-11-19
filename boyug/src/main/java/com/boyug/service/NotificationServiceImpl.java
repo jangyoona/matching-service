@@ -33,46 +33,39 @@ public class NotificationServiceImpl implements NotificationService {
     @Setter(onMethod_ = { @Autowired})
     AccountService accountService;
 
+    @Setter(onMethod_ = { @Autowired})
+    RedisService redisService;
+
     private static Map<String, SseEmitter> emitters = new HashMap<>();
 
 
     @Override
     public void insertNotification(UserDto fromUser, UserDto toUser, ChatRoomDto chatRoom, String notificationMessage, String message2) {
-        // 알림 DB 저장
-        NotificationEntity notification = new NotificationEntity();
-        notification.setFromUser(fromUser.toEntity());
-        notification.setToUser(toUser.toEntity());
-        notification.setChatRoom(chatRoom.toEntity());
-        notification.setMessage(notificationMessage);
-        NotificationEntity savedNotificationId = notificationRepository.save(notification);
 
-        // SSE 알림 발송
-        List<HashMap<String, Object>> connectedUsers = SocketHandler.getRoomConnectUser(); // 채팅창 안에 있는 사람들 저장 list_map
-        List<String> users = SocketHandler.getUsers();
+        boolean isUserInRoom = redisService.isUserInRoomNumber(String.valueOf(chatRoom.getChatRoomId()), String.valueOf(toUser.getUserId()));
 
-        // 상대방이 채팅방 안에 있는지 구분
-        if(connectedUsers != null) {
-            boolean isUserInRoom = users.stream()
-                    .anyMatch(userId -> userId.equals(String.valueOf(toUser.getUserId())));
-            // 채팅방 밖이면 알림 발송
-            if (!isUserInRoom) {
-                String fromUserName;
-                try {
-                    if(fromUser.getUserCategory() == 2) { // 보육유저면 보육원 Name으로 저장.
-                        BoyugUserDto boyugUser = accountService.getBoyugUserInfo(fromUser.getUserId());
-                        fromUserName = boyugUser.getBoyugUserName();
-                    } else {
-                        fromUserName = fromUser.getUserName();
-                    }
-                    sendMessage(chatRoom.getChatRoomId(), fromUser.getUserId(), fromUserName,
-                                toUser.getUserId(), message2, savedNotificationId.getNotificationId());
-                } catch (Exception e) {
-                    e.printStackTrace();
+        // 채팅방 밖일 경우에만 알림 발송
+        if (!isUserInRoom) {
+            String fromUserName;
+            try {
+                // 알림 DB 저장
+                NotificationEntity notification = new NotificationEntity();
+                notification.setFromUser(fromUser.toEntity());
+                notification.setToUser(toUser.toEntity());
+                notification.setChatRoom(chatRoom.toEntity());
+                notification.setMessage(notificationMessage);
+                NotificationEntity savedNotificationId = notificationRepository.save(notification);
+
+                if(fromUser.getUserCategory() == 2) { // 보육유저면 보육원 Name으로 저장.
+                    BoyugUserDto boyugUser = accountService.getBoyugUserInfo(fromUser.getUserId());
+                    fromUserName = boyugUser.getBoyugUserName();
+                } else {
+                    fromUserName = fromUser.getUserName();
                 }
-            } else {
-                // 채팅창 안에 있으면
-                notificationRepository.updateIsReadByNotificationId(savedNotificationId.getNotificationId()); // 알림 바로 읽음 처리
-                chattingService.updateChatMessageIsRead(chatRoom.getChatRoomId(), toUser.getUserId()); // 상대방 채팅도 바로 읽음 처리
+                sendMessage(chatRoom.getChatRoomId(), fromUser.getUserId(), fromUserName,
+                            toUser.getUserId(), message2, savedNotificationId.getNotificationId());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -95,6 +88,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void markAsReadAll(int userId) {
         notificationRepository.updateIsReadByToUserId(userId);
     }
+
 
     // 로그인 유저 SSE 서버 접속처리
     @Override

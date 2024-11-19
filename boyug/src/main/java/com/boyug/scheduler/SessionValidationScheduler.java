@@ -17,7 +17,7 @@ public class SessionValidationScheduler {
     @Scheduled(fixedRate = 300000)
     public void validateSessions() {
 
-        List<HashMap<String, Object>> sessions = SocketHandler.getRoomConnectUser();
+        List<HashMap<String, Object>> sessions = SocketHandler.getSessionList();
 
         for (HashMap<String, Object> map : sessions) {
             for (String key : map.keySet()) {
