@@ -1,38 +1,70 @@
 package com.boyug.security;
 
-import com.boyug.controller.ChattingController;
-import com.boyug.dto.ChatRoomDto;
 import com.boyug.oauth2.CustomOAuth2User;
 import com.boyug.service.NotificationServiceImpl;
-import com.boyug.websocket.SocketHandler;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.data.jpa.repository.Query;
+import jakarta.servlet.http.HttpSession;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 @Component
 public class LogoutSuccessHandler implements org.springframework.security.web.authentication.logout.LogoutSuccessHandler {
 
-    private Map<String, List<WebSocketSession>> sessionMap; // WebSocket 세션을 저장하는 Map
-
-    public LogoutSuccessHandler() {}
-    public LogoutSuccessHandler(Map<String, List<WebSocketSession>> sessionMap) {
-        this.sessionMap = sessionMap;
-    }
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    private String kakaoClientId;
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
+        // 기존 세션만 가져와서 삭제
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        WebUserDetails userDetails = getUserDetails(authentication);
+
+        // Socket user 저장된 목록은 웹소켓 종료 핸들러에서 지움
+        // SSE 접속 사용자 제거
+        NotificationServiceImpl.removeEmitter(String.valueOf(userDetails.getUser().getUserId()));
+
+
+        // 카카오 유저 로그아웃
+        if(userDetails.getUser().getSocialId() != null) {
+            String kakaoLogoutUrl = getKakaoLogoutUrl(request);
+            response.sendRedirect(kakaoLogoutUrl);
+            return;
+        }
+
+        response.sendRedirect("/home");
+    }
+
+
+    @NotNull
+    private String getKakaoLogoutUrl(HttpServletRequest request) {
+//        String scheme = request.getScheme(); // "http" or "https"
+        String serverName = request.getServerName(); // 도메인 이름
+        int port = request.getServerPort(); // 포트 번호
+
+        // 기본 포트번호 (80, 443) 생략 + 포트 있으면 append 없으면 삭제
+        String fullDomain = serverName + ((port == 80 || port == 443) ? "" : ":" + port);
+
+        String kakaoLogoutUrl = "https://kauth.kakao.com/oauth/logout?client_id=" + kakaoClientId +
+                                "&logout_redirect_uri=http://" + fullDomain + "/";
+
+        return kakaoLogoutUrl;
+    }
+
+    private WebUserDetails getUserDetails(Authentication authentication) {
         WebUserDetails userDetails = null;
         if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
 
@@ -43,19 +75,6 @@ public class LogoutSuccessHandler implements org.springframework.security.web.au
                 userDetails = (WebUserDetails) authentication.getPrincipal();
             }
         }
-
-        if(userDetails == null) {
-            response.sendRedirect("/home");
-            return;
-        }
-
-        String userId = String.valueOf(userDetails.getUser().getUserId());
-
-        // Socket user 저장된 목록은 웹소켓 종료 핸들러에서 지움
-
-        // SSE 접속 사용자 제거
-        NotificationServiceImpl.removeEmitter(userId);
-
-        response.sendRedirect("/home");
+        return userDetails;
     }
 }

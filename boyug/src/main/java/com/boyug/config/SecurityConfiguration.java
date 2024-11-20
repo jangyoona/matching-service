@@ -61,7 +61,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/personal/personalHome").hasRole("USER")
                         .anyRequest().permitAll()) // 그 외 모든 요청은 허용
                 .sessionManagement(session -> session
-                        .maximumSessions(2)) // 동시 세션 제어
+                        .maximumSessions(1)) // 동시 세션 제어
 //                                .exceptionHandling(exception -> exception
 //                                        .accessDeniedPage("/login-denied") // 권한 부족시 404 페이지
 ////                        .maxSessionsPreventsLogin(true) // 동시 로그인 차단
@@ -80,8 +80,8 @@ public class SecurityConfiguration {
                         .logoutUrl("/userView/account/logout")
                         .logoutSuccessHandler(logoutSuccessHandler())
                         .invalidateHttpSession(true) // 로그아웃시 로그인 했던 모든 정보를 삭제
-                        .deleteCookies("JSESSIONID") // 톰캣이 만든 세션Id
-                        .logoutSuccessUrl("/home")); // 로그아웃시 리다이렉트할 URL
+                        .deleteCookies("JSESSIONID")); // 톰캣이 만든 세션Id
+
         // OAuth2
         http
                 .oauth2Login(OAuth2ClientConfigurer -> OAuth2ClientConfigurer

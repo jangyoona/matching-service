@@ -53,7 +53,6 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
 
         // 로그아웃 or 세션 만료시 소켓 연결 막기
         if (userDetails == null) {
-            System.out.println("beforeHandshake : session expire --------------->> " + userDetails);
             return false;
         }
 
@@ -67,7 +66,6 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
         // 세션 만료시 소켓을 강제로 끊기 위한 httpSession 객체 저장
         if (httpSession != null) {
             attributes.put("HTTP_SESSION", httpSession);
-            System.out.println("인터셉터 세션저장 아이디 =========>> " + httpSession.getId());
         }
 
         String userName = req.getParameter("userName");
