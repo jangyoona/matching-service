@@ -108,6 +108,10 @@ $(function() {
                 }
             }, false);
 
+            eventSource.onopen = function() {
+                reconnectDelay = 1000; // 지연시간 초기화
+            };
+
             eventSource.onerror = function(error) {
                 console.error("SSE 연결 오류= ", error);
                 eventSource.close();
