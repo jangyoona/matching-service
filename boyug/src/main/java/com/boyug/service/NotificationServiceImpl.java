@@ -9,6 +9,9 @@ import com.boyug.repository.NotificationRepository;
 import com.boyug.websocket.SocketHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Setter;
+import lombok.extern.java.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 
 public class NotificationServiceImpl implements NotificationService {
 
+    private static final Logger log = LoggerFactory.getLogger(NotificationServiceImpl.class);
     @Setter
     private NotificationRepository notificationRepository;
 
@@ -98,9 +102,13 @@ public class NotificationServiceImpl implements NotificationService {
         // 사용자 저장
         emitters.put(userId, emitter);
 
-        // 연결종료 or 시간초과시 map data 삭제
+        // 연결종료 or 시간초과 or 에러발생 시 이벤트 객체 삭제
         emitter.onCompletion(() -> emitters.remove(userId));
         emitter.onTimeout(() -> emitters.remove(userId));
+        emitter.onError((e) -> {
+            emitters.remove(userId);
+            System.out.println(e.getMessage());
+        });
         sendToClient(userId);
 
         return emitter;

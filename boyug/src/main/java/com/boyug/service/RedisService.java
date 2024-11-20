@@ -56,6 +56,16 @@ public class RedisService {
         redisTemplate.opsForSet().remove("room:" + roomNumber, userId);
     }
 
+    // 서버 초기화용 roomNumber~ 삭제
+    public void deleteAllRoomKeys() {
+        Set<String> roomKeys = redisTemplate.keys("room:*");
+        if (roomKeys != null && !roomKeys.isEmpty()) {
+            redisTemplate.delete(roomKeys);
+        } else {
+            System.out.println("RedisService = No keys");
+        }
+    }
+
 
 
 }

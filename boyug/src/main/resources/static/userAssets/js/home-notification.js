@@ -78,34 +78,46 @@ $(function() {
     });
 
 
-// SSE
+    // SSE
     let userId = $("#currentUserId").val();
-    if(userId != null) {
-        const eventSource = new EventSource("/notifications/" + userId);
+    let reconnectDelay = 1000;
+    let eventSource;
 
-        eventSource.addEventListener('chatNotification', function(event) {
-            const data = event.data;
-            const parseData = JSON.parse(data);
+    startEventSource();
+    function startEventSource() {
+        if(userId != null) {
+            eventSource = new EventSource("/notifications/" + userId);
 
-            if(parseData != '연결완료') {
-                showToastNotification(parseData); // toast show
+            eventSource.addEventListener('chatNotification', function(event) {
+                const data = event.data;
+                const parseData = JSON.parse(data);
 
-                // toast-header click -> chatRoom popUp show
-                $('.popup').on('click', function() {
-                    const notificationId = parseData.notificationId;
-                    const chatRoomId = parseData.chatRoomId;
+                if(parseData != '연결완료') {
+                    showToastNotification(parseData); // toast show
 
-                    commonAjax("/notification/chat-read", { notificationId, chatRoomId }); // 알림, 메세지 읽음으로 변경
+                    // toast-header click -> chatRoom popUp show
+                    $('.popup').on('click', function() {
+                        const notificationId = parseData.notificationId;
+                        const chatRoomId = parseData.chatRoomId;
 
-                    const options = 'width=978, height=720, top=50, left=100, scrollbars=no, location=no, resizable=no';
-                    window.open("/moveChatting?roomNumber=" + encodeURIComponent(chatRoomId), '_black', options);
-                });
-            }
-        }, false);
+                        commonAjax("/notification/chat-read", { notificationId, chatRoomId }); // 알림, 메세지 읽음으로 변경
 
-        eventSource.onerror = function(error) {
-            console.error("SSE 연결 오류= ", error);
-        };
+                        const options = 'width=978, height=720, top=50, left=100, scrollbars=no, location=no, resizable=no';
+                        window.open("/moveChatting?roomNumber=" + encodeURIComponent(chatRoomId), '_black', options);
+                    });
+                }
+            }, false);
+
+            eventSource.onerror = function(error) {
+                console.error("SSE 연결 오류= ", error);
+                eventSource.close();
+
+                setTimeout(() => {
+                    reconnectDelay = Math.min(reconnectDelay * 2, 60000); // 최대 지연 시간 1분
+                        startEventSource();
+                }, reconnectDelay);
+            };
+        }
     }
 
     function showToastNotification(data) {

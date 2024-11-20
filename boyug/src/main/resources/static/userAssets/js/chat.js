@@ -77,6 +77,23 @@ $(function() {
                             }
                         });
                     } else {
+                        $.ajax({
+                            url: "/checkLoginStatus",
+                            success: function(resp) {
+                                if(!resp) {
+                                    alert('로그인 세션이 만료되었습니다. 다시 로그인 해주세요.');
+                                    window.close();
+                                }
+                            },
+                            error: function(error) {
+                                alert('세션 확인 중 오류가 발생했습니다.');
+                                if(ws) {
+                                    ws.close();
+                                }
+                                window.close();
+                            }
+                        });
+
                         const otherUserImg = $('.other-image').last().attr('src');
                         // 상대방이 보낸 메세지
                         $(".chat_wrap .inner").append(

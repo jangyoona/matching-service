@@ -31,7 +31,7 @@ public class SocketHandler extends TextWebSocketHandler {
 
     // Redis Service
     @Setter
-    private  RedisService redisService;
+    private RedisService redisService;
 
     // WebSocketSession 저장
     @Getter
@@ -131,34 +131,46 @@ public class SocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        WebUserDetails userDetails = null;
+        String userId = "";
 
-        WebUserDetails userDetails = getUserInfo(session);
-        String uri = session.getUri().toString();
-        String roomNumber = extractRoomNumberFromUri(uri);
+        try {
+            userDetails = getUserInfo(session);
+            if (userDetails != null) {
+                userId = String.valueOf(userDetails.getUser().getUserId());
+            }
+        } catch (Exception e) {
+            System.out.println("socKet connectionClosed error-----------");
+            e.printStackTrace();
+        } finally {
+            String uri = session.getUri().toString();
+            String roomNumber = extractRoomNumberFromUri(uri);
 
-        // 채팅방 소켓 종료
-        if (sessionList.size() > 0) { // 소켓이 종료되면 해당 세션값들을 찾아서 지운다.
-            for (int i = 0; i < sessionList.size(); i++) {
-                HashMap<String, Object> currentMap = sessionList.get(i);
-                // 방 번호가 일치하는지 확인
-                if (currentMap.get("roomNumber").equals(roomNumber)) {
-                    currentMap.remove(session.getId()); // 해당 세션만 제거
-                    if (currentMap.size() == 1) { // 아이디만 남은 경우에 해당 건 제거
-                        sessionList.remove(i);
+            // 채팅방 소켓 종료
+            if (sessionList.size() > 0) { // 소켓이 종료되면 해당 세션값들을 찾아서 지운다.
+                for (int i = 0; i < sessionList.size(); i++) {
+                    HashMap<String, Object> currentMap = sessionList.get(i);
+                    // 방 번호가 일치하는지 확인
+                    if (currentMap.get("roomNumber").equals(roomNumber)) {
+                        currentMap.remove(session.getId()); // 해당 세션만 제거
+                        if (currentMap.size() == 1) { // 아이디만 남은 경우에 해당 건 제거
+                            sessionList.remove(i);
+                        }
+                        break;
                     }
-                    break;
                 }
             }
-        }
 
-        String userId = String.valueOf(userDetails.getUser().getUserId());
-        boolean userInRoomNumber = redisService.isUserInRoomNumber(roomNumber, userId);
+            boolean userInRoomNumber = redisService.isUserInRoomNumber(roomNumber, userId);
 
-        if (userInRoomNumber) {
-            redisService.removeUserFromRoomNumber(roomNumber, userId);
-            redisService.removeSessionFromRoomNumber(roomNumber, session.getId());
+            if (userInRoomNumber) {
+                if (!userId.equals("")) {
+                    redisService.removeUserFromRoomNumber(roomNumber, userId);
+                }
+                redisService.removeSessionFromRoomNumber(roomNumber, session.getId());
+            }
+            super.afterConnectionClosed(session, status);
         }
-        super.afterConnectionClosed(session, status);
     }
 
 

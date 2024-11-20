@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpSessionEvent;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,6 +48,21 @@ public class ChattingController {
     public static Map<String, Object> getRoomUser() {
         return roomUser;
     }
+
+    @GetMapping("/checkLoginStatus")
+    public ResponseEntity<Boolean> checkLoginStatus() {
+        try {
+            WebUserDetails userDetails = getUserDetails();
+
+            // null 만 반환할 가능성이 있어 null 체크 한번 하고
+            if (userDetails == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        };
+        return ResponseEntity.ok(true);
+    };
 
     @RequestMapping("/chat")
     public ModelAndView chattingShow() {
