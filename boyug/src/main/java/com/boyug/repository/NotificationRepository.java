@@ -2,7 +2,9 @@ package com.boyug.repository;
 
 import com.boyug.entity.NotificationEntity;
 import com.boyug.entity.UserEntity;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +17,9 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
     // 받는 사람 기준
 //    List<NotificationEntity> findByToUserAndIsReadOrderBySendDateDesc(UserEntity toUser, boolean isRead);
 
+//    @Query("SELECT n FROM NotificationEntity n WHERE n.toUser = :toUser AND n.isRead = :isRead ORDER BY n.sendDate DESC")
+    @EntityGraph(attributePaths = {"chatRoom"})
+    @BatchSize(size = 5)
     @Query("SELECT n FROM NotificationEntity n WHERE n.toUser = :toUser AND n.isRead = :isRead ORDER BY n.sendDate DESC")
     List<NotificationEntity> findNotificationsWithLimit(UserEntity toUser, boolean isRead, Pageable pageable);
 

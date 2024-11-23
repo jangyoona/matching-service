@@ -11,6 +11,9 @@ import java.util.List;
 
 public interface AccountService {
 
+    // N+1 해결 테스트
+    UserDto getUserInfoWithProfileImage(int userId);
+
     UserDto getUserInfo(int userId);
 
     long dupCheckUserPhone(String userPhone);

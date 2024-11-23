@@ -40,7 +40,14 @@ $(function() {
             const moveUri = appendPath(baseUri, "moveChatting?roomNumber=" + chatRoomId);
 
             const notificationId = $(this).data("notification-id");
-            commonAjax("/notification/chat-read", { notificationId, chatRoomId }); // 알림, 메세지 읽음으로 변경
+
+            // 알림, 메세지 읽음으로 변경
+            commonAjax("/notification/chat-read", { notificationId, chatRoomId }, function(resp) {
+                if(!resp) {
+                    alert("채팅방 접속 중 오류가 발생하였습니다.");
+                    href.reload();
+                }
+            });
 
             const options = 'width=978, height=793, top=50, left=100, scrollbars=no, location=no, resizable=no';
             window.open(moveUri, '_black', options);
@@ -100,7 +107,14 @@ $(function() {
                         const notificationId = parseData.notificationId;
                         const chatRoomId = parseData.chatRoomId;
 
-                        commonAjax("/notification/chat-read", { notificationId, chatRoomId }); // 알림, 메세지 읽음으로 변경
+                        // 알림, 메세지 읽음으로 변경
+                        commonAjax("/notification/chat-read", { notificationId, chatRoomId }, function(resp) {
+                            if(!resp) {
+                                alert('채팅방 입장 중 오류가 발생하였습니다.');
+                                location.reload();
+                                return;
+                            }
+                        });
 
                         const options = 'width=978, height=720, top=50, left=100, scrollbars=no, location=no, resizable=no';
                         window.open("/moveChatting?roomNumber=" + encodeURIComponent(chatRoomId), '_black', options);

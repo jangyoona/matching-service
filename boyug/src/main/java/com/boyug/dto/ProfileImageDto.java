@@ -33,7 +33,7 @@ public class ProfileImageDto {
     public static ProfileImageDto of(ProfileImageEntity entity) {
         return ProfileImageDto.builder()
                 .imageId(entity.getImageId())
-                .user(UserDto.of(entity.getUser()))
+//                .user(UserDto.of(entity.getUser())) // 재귀 호출
                 .userId(entity.getUser().getUserId())
                 .imgOriginName(entity.getImgOriginName())
                 .imgSavedName(entity.getImgSavedName())

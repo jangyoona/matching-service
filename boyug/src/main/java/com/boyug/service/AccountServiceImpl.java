@@ -44,6 +44,12 @@ public class AccountServiceImpl implements AccountService {
     private String boyugFileDir;
 
     @Override
+    public UserDto getUserInfoWithProfileImage(int userId) {
+        Optional<UserEntity> entity = accountRepository.findUserWithProfileImage(userId);
+        return entity.isPresent() ? UserDto.of(entity.get()) : null;
+    }
+
+    @Override
     public UserDto getUserInfo(int userId) {
         Optional<UserEntity> entity = accountRepository.findById(userId);
         return entity.isPresent() ? UserDto.of(entity.get()) : null;

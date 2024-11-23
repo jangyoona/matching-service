@@ -59,7 +59,7 @@
 <!--            <a th:href="@{/userView/activityPages/boyugProgramList}" class="dropdown-item">보육원게시판</a>-->
             <a href="/userView/activityPages/boyugProgramList" class="dropdown-item">보육원게시판</a>
             <th:block sec:authorize="isAuthenticated()">
-                <a th:if="${#authentication.principal.user.userCategory == 2}"th:href="@{/userView/activityPages/noinRegisterList}" class="dropdown-item">노인리스트</a>
+                <a th:if="${#authentication.principal.user.userCategory == 2}"th:href="@{/userView/activityPages/noinRegisterList}" class="dropdown-item">시니어리스트</a>
             </th:block>
             <th:block sec:authorize="isAuthenticated()">
                 <a th:if="${#authentication.principal.user.userCategory == 2}" href="/myPage/boyug-my-info">내정보</a>
@@ -118,13 +118,13 @@
                     </th:block>
                     <div class="noti-box">
                     </div>
-                    <div class="d-grid gap-2 mt-5">
+                    <div class="d-grid gap-2 mt-5" th:if="${ notifications != null && notifications.size() > 4 }">
                         <button class="btn btn-light" type="button" id="more-btn" style="font-size:14px;">더보기
                             <i class="fa-solid fa-caret-down"></i>
                         </button>
                     </div>
 
-                    <input type="hidden" id="user-id" th:value="${ #authentication.principal.user.userId }">
+<!--/*                    <input type="hidden" id="user-id" th:value="${ #authentication.principal.user.userId }"> */-->
                     <a class="dropdown-item" th:if="${ #lists.isEmpty(notifications) }" style="font-size:1rem;">
                         <i class="fas fa-bell me-2"></i>알림이 없습니다.
                     </a>

@@ -64,7 +64,7 @@ public class UserEntity {
     @Column
     private String userType; // ROLE_ADMIN OR ROLE_BOYUG, ROLE_USER
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name="TBL_USERROLE",
             joinColumns = @JoinColumn(name = "userId"),

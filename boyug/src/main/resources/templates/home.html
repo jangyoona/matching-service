@@ -283,8 +283,6 @@
                                  th:src="${ '/profile-image/' + boyugProgram.user.images.get(0).imgSavedName }" class="img-fluid w-100 rounded-top" alt="Image">
                             <div class="packages-info d-flex border border-start-0 border-end-0 position-absolute" style="width: 100%; bottom: 0; left: 0; z-index: 5;">
                                 <small class="flex-fill text-center border-end py-2"><i class="fa fa-map-marker-alt me-2"></i>[[${boyugProgram.user.userAddr2}]]</small>
-<!--                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt me-2"></i>날짜</small>-->
-<!--                                <small class="flex-fill text-center py-2"><i class="fa fa-user me-2"></i>모집인원(명수)</small>-->
                             </div>
                         </div>
                         <div class="packages-content bg-light">
@@ -293,18 +291,10 @@
                                     th:text="${ #strings.length(boyugProgram.boyugProgramName) > 20 ? (#strings.substring(boyugProgram.boyugProgramName, 0, 20) + '...')
                                               : boyugProgram.boyugProgramName }"></h5>
                                 <small class="text-uppercase" th:text="${ '[ ' + boyugProgram.boyugUserName + ' ]' }"></small>
-<!--                                <div class="mb-3"> 별 5개 -->
-<!--                                    <small class="fa fa-star text-primary"></small>-->
-<!--                                    <small class="fa fa-star text-primary"></small>-->
-<!--                                    <small class="fa fa-star text-primary"></small>-->
-<!--                                    <small class="fa fa-star text-primary"></small>-->
-<!--                                    <small class="fa fa-star text-primary"></small>-->
-<!--                                </div>-->
                                 <p class="mb-4">아래의 모집글 상세보기를 눌러<br>자세한 내용을 확인하세요.</p>
                             </div>
                             <div class="row bg-primary rounded-bottom mx-0">
                                 <a th:href="@{/userView/activityPages/boyugProgramDetail(boyugProgramId=${boyugProgram.boyugProgramId})}" class="btn-hover btn text-white py-2 px-4">모집글 상세보기</a>
-<!--                                <a th:href="@{/userView/activityPages/boyugProgramDetail/{boyugProgramId} (boyugProgramId=${boyugProgramId})}">-->
                             </div>
                         </div>
                     </div>

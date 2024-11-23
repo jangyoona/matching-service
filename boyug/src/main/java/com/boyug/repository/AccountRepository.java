@@ -17,6 +17,9 @@ import java.util.Optional;
 
 public interface AccountRepository  extends JpaRepository<UserEntity, Integer> {
 
+    @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.images WHERE u.userId = :userId")
+    Optional<UserEntity> findUserWithProfileImage(int userId);
+
     Optional<UserEntity> findByUserPhone(String userPhone);
 
     Optional<UserEntity> findBySocialId(String socialId);

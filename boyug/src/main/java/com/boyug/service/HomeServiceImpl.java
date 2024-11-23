@@ -6,6 +6,7 @@ import com.boyug.dto.UserDto;
 import lombok.Setter;
 import org.springframework.data.domain.Page;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeServiceImpl implements HomeService {
@@ -26,7 +27,7 @@ public class HomeServiceImpl implements HomeService {
         Page<BoyugProgramDto> boyugProgramList = activityService.findAllList(0, 20);
 
         for (BoyugProgramDto program : boyugProgramList) {
-            UserDto user = accountService.getUserInfo(program.getUserId());
+            UserDto user = accountService.getUserInfoWithProfileImage(program.getUserId());
             // 화면 출력용 주소 자르기
             String[] addrCut = user.getUserAddr2().split("\\s+");
             String addrSplit = String.format("%s %s", addrCut[0], addrCut[1]);
@@ -41,15 +42,12 @@ public class HomeServiceImpl implements HomeService {
     * 등록된 프로필 이미지가 없을 경우 기본 이미지 세팅
     * */
     private void setUserProfileImage(UserDto user, BoyugProgramDto program) {
-        List<ProfileImageDto> profile = accountService.getUserProfileImage(user);
-
-        if (profile.isEmpty()) {
+        if (user == null || user.getImages().isEmpty()) {
             ProfileImageDto basicImage = new ProfileImageDto();
+            List<ProfileImageDto> list = new ArrayList<>();
             basicImage.setImgSavedName("no_img.jpg");
-            profile.add(basicImage);
-            user.setImages(profile);
-        } else {
-            user.setImages(profile);
+            list.add(basicImage);
+            user.setImages(list);
         }
         program.setUser(user);
     }

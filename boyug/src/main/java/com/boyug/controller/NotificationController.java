@@ -8,6 +8,8 @@ import com.boyug.service.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -42,13 +44,17 @@ public class NotificationController {
 
     @GetMapping("/notification/chat-read")
     @Transactional
-    public String markChatNotificationsAsRead(int notificationId, int chatRoomId) {
-        // 알림, 메세지 읽음 처리
-        WebUserDetails userDetails = getUserDetails();
-        notificationService.markAsRead(notificationId);
-        chattingService.updateChatMessageIsRead(chatRoomId, userDetails.getUser().getUserId());
+    public ResponseEntity<Boolean> markChatNotificationsAsRead(int notificationId, int chatRoomId) {
 
-        return "success";
+        WebUserDetails userDetails = getUserDetails();
+        try {
+            // 알림, 메세지 읽음 처리
+            notificationService.markAsRead(notificationId);
+            chattingService.updateChatMessageIsRead(chatRoomId, userDetails.getUser().getUserId());
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+        }
     }
 
     @GetMapping("/notification/read")

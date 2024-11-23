@@ -76,6 +76,9 @@ public class UserDto {
                 .socialId(userEntity.getSocialId())
                 .userCategory(userEntity.getUserCategory())
                 .userType(userEntity.getUserType())
+                .images(userEntity.getImages() != null
+                        ? userEntity.getImages().stream().map(ProfileImageDto::of).toList()
+                        : List.of()) // null 방지
                 // .roles(new HashSet<RoleDto>(userEntity.getRoles().stream().map(RoleDto::of).toList()))
                 .build();
     }
