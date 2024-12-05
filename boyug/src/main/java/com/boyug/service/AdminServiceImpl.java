@@ -5,13 +5,8 @@ import com.boyug.entity.*;
 import com.boyug.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,7 +29,7 @@ public class AdminServiceImpl implements AdminService {
     @Setter
     private RoleRepository roleRepository;
     @Setter
-    private SessionRepository sessionRepository;
+    private SessionsRepository sessionsRepository;
     @Setter
     private SangDamRepository sangDamRepository;
     @Setter
@@ -307,36 +302,36 @@ public class AdminServiceImpl implements AdminService {
     // 모든 세션
     @Override
     public List<SessionDto> findAllSession() {
-        return sessionRepository.findAll().stream()
+        return sessionsRepository.findAll().stream()
                 .map(SessionDto::of)
                 .collect(Collectors.toList());
     }
 
     // 세션 추가
     public void addSession(SessionEntity sessionEntity) {
-        sessionRepository.save(sessionEntity);
+        sessionsRepository.save(sessionEntity);
     }
 
     // 세션 삭제
     public void deleteSession(int sessionId) {
-        sessionRepository.deleteById(sessionId);
+        sessionsRepository.deleteById(sessionId);
     }
     // 엑티브 변경
     public void updateSessionActive(int sessionId, boolean isActive) {
-        SessionEntity session = sessionRepository.findById(sessionId)
+        SessionEntity session = sessionsRepository.findById(sessionId)
                 .orElseThrow(() -> new EntityNotFoundException("세션을 찾을 수 없습니다."));
         session.setSessionActive(isActive);
-        sessionRepository.save(session);
+        sessionsRepository.save(session);
     }
     // 세션 이름 업데이트 메소드
     public void updateSessionName(int sessionId, String newSessionName) {
         // 세션 ID로 세션 엔티티 조회
-        Optional<SessionEntity> sessionOptional = sessionRepository.findById(sessionId);
+        Optional<SessionEntity> sessionOptional = sessionsRepository.findById(sessionId);
 
         if (sessionOptional.isPresent()) {
             SessionEntity session = sessionOptional.get();
             session.setSessionName(newSessionName); // 새 이름 설정
-            sessionRepository.save(session); // 변경 사항 저장
+            sessionsRepository.save(session); // 변경 사항 저장
         } else {
             throw new EntityNotFoundException("아이디로 세션을찾을 수 없습니다.: " + sessionId);
         }

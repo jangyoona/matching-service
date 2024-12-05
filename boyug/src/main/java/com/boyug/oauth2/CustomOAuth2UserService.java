@@ -6,10 +6,19 @@ import com.boyug.dto.UserDto;
 import com.boyug.entity.RoleEntity;
 import com.boyug.entity.UserEntity;
 import com.boyug.repository.AccountRepository;
+import com.boyug.security.LoginSuccessHandler;
+import com.boyug.security.WebUserDetails;
+import com.boyug.security.jwt.JwtInfoDto;
+import com.boyug.security.jwt.JwtUtil;
+import com.boyug.service.RedisService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -19,17 +28,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService { // implements OAuth2UserService<OAuth2AuthenticationToken, OAuth2User>
 
     // https://jngsngjn.tistory.com/16
-    @Setter(onMethod_ = { @Autowired })
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
+    private final JwtUtil jwtUtil;
+    private final RedisService redisService;
 
     // OAuth2 인증 요청을 받아 사용자 정보를 불러오는 메서드
     @Override
@@ -56,7 +69,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService { // imple
         String userId = oAuth2Response.getProviderId();
 
         // 기존 사용자 조회
-        Optional<UserEntity> existData = accountRepository.findBySocialId(userId);
+        Optional<UserEntity> existData = accountRepository.findLoginUserBySocialId(userId);
         UserDto userDto = existData.isPresent() ? UserDto.of(existData.get()) : new UserDto();
 
         // 사용자가 없으면 새로운 사용자 저장
@@ -101,8 +114,63 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService { // imple
             // 정보 업데이트 필요시 구현
             Set<RoleEntity> roles = existData.get().getRoles();
 
+            /**
+             * JWT 전환으로 추가
+             **/
+            WebUserDetails userDetails = new WebUserDetails(UserDto.of(existData.get()), roles.stream().map(RoleDto::of).toList());
+
+            // 토큰 발급 + Cookie 저장
+            AddAuthenticationJwtToken(userDetails);
+
+            // 인증 정보 저장
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authToken);
+
+            /**
+             *
+             **/
+
             return new CustomOAuth2User(oAuth2Response, "ROLE_USER", userId, userDto, roles.stream().map(RoleDto::of).toList());
         }
+    }
+
+
+    /**
+    * loginSuccessHandler 중 토큰 발급 메서드
+    **/
+    private void AddAuthenticationJwtToken(WebUserDetails userDetails) {
+        HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getResponse();
+
+        // jwt
+        JwtInfoDto token = jwtUtil.createToken(userDetails, null);
+
+        // 토큰 cookie 저장
+        String encodedToken = null;
+        String encodedToken_Refresh = null;
+        try {
+            encodedToken = URLEncoder.encode(token.getAccessToken(), StandardCharsets.UTF_8.toString());
+            encodedToken_Refresh = URLEncoder.encode(token.getRefreshToken(), StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("토큰 인코딩 오류");
+            throw new RuntimeException(e);
+        }
+
+        // Token 저장
+        Cookie accseeCookie = new Cookie("Authorization", encodedToken);
+        accseeCookie.setHttpOnly(true);
+        accseeCookie.setPath("/");
+        accseeCookie.setMaxAge(60 * 30); // 30분
+        response.addCookie(accseeCookie);
+
+        // RefreshToken 저장
+        Cookie refreshCookie = new Cookie("RefreshToken", encodedToken_Refresh);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge(60 * 60 * 24 * 7); // 7일
+        response.addCookie(refreshCookie);
+
+        redisService.addJwtRefreshToken(userDetails.getUser().getUserId(), encodedToken_Refresh);
     }
 
 

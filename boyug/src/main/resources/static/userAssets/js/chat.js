@@ -67,13 +67,17 @@ $(function() {
                                 },
                             contentType: "application/json; charset=UTF-8",
                             success: function(res, status, xhr) {
-                                if(res === 'success') {
+                                if(res) {
                                     console.log('메세지 저장 완료');
                                 }
                             },
                             error: function(status, xhr, err) {
-                                alert('메세지 전송 중 오류가 발생했습니다. 새로 고침 후 다시 시도해 주세요.');
-                                window.close();
+                                if(status.status === 401) {
+                                    alert("로그인 세션이 만료되었습니다. 다시 로그인 해주세요.");
+                                    window.close();
+                                } else {
+                                    alert('메세지 전송 중 오류가 발생했습니다. 새로 고침 후 다시 시도해 주세요.');
+                                }
                             }
                         });
                     } else {

@@ -59,7 +59,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 		if (!uploadDir.exists()) {
 			uploadDir.mkdirs();
 		}
-		System.out.println("1. ----------------------> " + uploadDir.toURI().toString());
+
 		registry
 				.addResourceHandler("/board/uploads/**") // 웹 요청 경로
 				.addResourceLocations(uploadDir.toURI().toString()); // static 경로

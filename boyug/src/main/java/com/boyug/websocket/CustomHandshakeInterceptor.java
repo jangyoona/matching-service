@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.server.HandshakeInterceptor;
@@ -20,6 +21,7 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class CustomHandshakeInterceptor implements HandshakeInterceptor {
 
 //    CustomHandshakeInterceptor : 소켓이 연결될 때 수행해야할 작업을 해주는 클래스
@@ -29,8 +31,6 @@ public class CustomHandshakeInterceptor implements HandshakeInterceptor {
 //    beforeHandshake는 클라이언트의 연결요청이 들어오면 3번의 handshake에서 호출됩니다.
 //    아래 코드에서는 http에 존재하는 session을 웹소켓 세션으로 등록합니다.
 
-//    @Bean
-//    public SocketHandler socketHandler() { return new SocketHandler(); }
 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {

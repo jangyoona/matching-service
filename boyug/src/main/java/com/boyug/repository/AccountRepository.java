@@ -1,15 +1,16 @@
 package com.boyug.repository;
 
-import com.boyug.dto.ProfileImageDto;
 import com.boyug.entity.RoleEntity;
 import com.boyug.entity.SessionEntity;
 import com.boyug.entity.UserDetailEntity;
 import com.boyug.entity.UserEntity;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,15 @@ public interface AccountRepository  extends JpaRepository<UserEntity, Integer> {
     Optional<UserEntity> findByUserPhone(String userPhone);
 
     Optional<UserEntity> findBySocialId(String socialId);
+
+    @Query("SELECT u.userPhone FROM UserEntity u WHERE userId = :userId")
+    String findUserPhoneByUserId(int userId);
+
+    /**
+     * OAuthService용
+     **/
+    @EntityGraph(attributePaths = {"images", "roles"})
+    Optional<UserEntity> findLoginUserBySocialId(String socialId);
 
     // 아이디 중복 체크
     long countByUserPhone(String userPhone);

@@ -1,4 +1,23 @@
 $(function() {
+
+//    // 헤더 토큰 설정
+//    $(document).ajaxSend(function(event, jqxhr, settings) {
+//        const token = localStorage.getItem("token");
+//        if (token) {
+//            jqxhr.setRequestHeader("Authorization", `Bearer ${token}`);
+//        }
+//    });
+//
+//    // 토큰 만료시
+//    $(document).ajaxError(function(event, jqxhr, settings, error) {
+//        if (jqxhr.status === 401) { // 401 응답인 경우
+//            alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+//            localStorage.removeItem("token"); // 만료된 토큰 삭제
+//            location.href = "/userView/account/login";
+//        }
+//    });
+
+
     function commonAjax(url, data, callback) {
         $.ajax({
             url : url,

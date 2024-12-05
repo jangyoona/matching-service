@@ -47,6 +47,11 @@ public class NotificationController {
     public ResponseEntity<Boolean> markChatNotificationsAsRead(int notificationId, int chatRoomId) {
 
         WebUserDetails userDetails = getUserDetails();
+
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+
         try {
             // 알림, 메세지 읽음 처리
             notificationService.markAsRead(notificationId);

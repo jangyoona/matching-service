@@ -96,17 +96,21 @@ public class ChattingController {
 
     @GetMapping("sendMessage")
     @ResponseBody
-    public String sendMessage(String message, String roomNumber, String uri, Model model) {
+    public ResponseEntity<Boolean> sendMessage(String message, String roomNumber, Model model) {
 
         // 현재 로그인 사용자
         WebUserDetails userDetails = getUserDetails();
+
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
 
         // 받는사람 추출
         int toUserId = getToUserId(roomNumber, userDetails);
         model.addAttribute("toUserId", toUserId);
 
         chattingService.sendMessage(userDetails, roomNumber, message, toUserId);
-        return "success";
+        return ResponseEntity.ok(true);
     }
 
     private int getToUserId(String roomNumber, WebUserDetails userDetails) {

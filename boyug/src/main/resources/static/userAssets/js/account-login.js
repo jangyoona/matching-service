@@ -49,10 +49,39 @@ $(function(){
             isSocial(id, function(isSocialUser) {
                 if (!isSocialUser) {
                     $('#login-form').submit();
+// 로컬 스토리지에 저장
+//                    const registerForm = $('#login-form');
+//                    const formData = new FormData(registerForm[0]);
+//                    $.ajax({
+//                        url: "process-login",
+//                        method: "POST",
+//                        processData: false, // FormData를 변환하지 않음
+//                        contentType: false, // FormData의 기본 contentType 사용
+//                        data: formData,
+//                        success: function (response) {
+//                            if(response.Authorization == null) {
+//                                alert('아아디, 비밀번호를 다시 확인해 주세요');
+//                                $('#userPw').focus();
+//                                return;
+//                            }
+//
+//                            // 서버에서 받은 JWT를 로컬 스토리지에 저장
+//                            console.log(response);
+//                            const token = response.Authorization;
+//                            localStorage.setItem("token", token);
+//                            location.href = "/home";
+//
+//                        },
+//                        error: function (xhr, status, error) {
+//                            alert('아이디, 패스워드를 다시 확인해 주세요');
+//                            console.log("로그인 실패: " + xhr.responseText);
+//                        }
+//                    });
                 }
             });
         }
     });
+
 
     $('#kakao-btn').on('click', function(e) {
 

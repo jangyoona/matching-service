@@ -66,6 +66,25 @@ public class RedisService {
         }
     }
 
+    // ////////////////////////////////////////////////////////////////////////
+
+    // Jwt Refresh Token 저장
+    public void addJwtRefreshToken(int userId, String refreshToken) {
+        removeJwtRefreshTokenToUserId(userId); // 기존 RefreshToken 삭제하고
+        redisTemplate.opsForSet().add("refreshToken:" + userId, refreshToken);
+    }
+
+    // Jwt Refresh Token 조회
+    public String getJwtRefreshTokenToUserId(int userId) {
+        Set<String> refreshToken = redisTemplate.opsForSet().members("refreshToken:" + userId);
+        return refreshToken != null && !refreshToken.isEmpty() ? refreshToken.iterator().next() : null;
+    }
+
+    // Jwt Refresh Token 삭제
+    public void removeJwtRefreshTokenToUserId(int userId) {
+        redisTemplate.delete("refreshToken:" + userId);
+    }
+
 
 
 }

@@ -81,7 +81,7 @@
                 <a th:href="@{/userView/account/login}">로그인</a>
             </th:block>
             <a sec:authorize="isAuthenticated()" th:href="@{/userView/account/logout}" class="dropdown-item">Log Out</a>
-            
+
             <!-- Notification Dropdown Menu -->
             <div class="dropdown" sec:authorize="isAuthenticated()">
                 <a href="#" class="dropdown-toggle text-light" data-bs-toggle="dropdown">

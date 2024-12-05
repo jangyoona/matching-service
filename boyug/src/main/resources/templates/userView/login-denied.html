@@ -112,10 +112,15 @@
 
 <!-- Template Javascript -->
 <script src="/userAssets/js/main.js"></script>
-<script>
+<script type="text/javascript" th:inline="javascript">
     $(function(){
         $('#nav-container-box').load('/navbar');
-    })
+
+        if(/*[[${ #ctx.param.expiration }]]*/) {
+            alert('로그인 시간이 만료되었습니다. 다시 로그인 해주세요.');
+            location.href = '/userView/account/login';
+        }
+    });
 </script>
 </body>
 

@@ -4,23 +4,19 @@ import com.boyug.dto.*;
 import com.boyug.entity.*;
 import com.boyug.repository.*;
 import lombok.Setter;
-import org.hibernate.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.User;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 public class ActivityServiceImpl implements ActivityService {
 
     @Setter
-    public SessionRepository sessionRepository;
+    public SessionsRepository sessionsRepository;
 
     @Setter
     public SessionDto sessionDto;
@@ -303,7 +299,7 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public List<SessionDto> findAllSessions() {
-        List<SessionEntity> sessionEntities = sessionRepository.findAll();
+        List<SessionEntity> sessionEntities = sessionsRepository.findAll();
 
         List<SessionDto> sessions = new ArrayList<>();
         for (SessionEntity session : sessionEntities) {
@@ -321,7 +317,7 @@ public class ActivityServiceImpl implements ActivityService {
         // 해당 글에서 모집하는 활동들을 글과 연결
         List<BoyugProgramDetailEntity> detailEntities = program.getProgramDetails().stream().map((programDetail) -> {
             // session에서 sessionId로 해당 활동 찾기
-            SessionEntity sessionEntity = sessionRepository.findById(programDetail.getSessionId()).get();
+            SessionEntity sessionEntity = sessionsRepository.findById(programDetail.getSessionId()).get();
             // 찾기 끝
 
             // detailDto를 detailEntity로 변환
@@ -370,7 +366,7 @@ public class ActivityServiceImpl implements ActivityService {
 
             } else {
 
-                SessionEntity sessionEntity = sessionRepository.findById(detailDto.getSessionId()).get();
+                SessionEntity sessionEntity = sessionsRepository.findById(detailDto.getSessionId()).get();
                 BoyugProgramDetailEntity detailEntity = detailDto.toEntity();
                 detailEntity.setSession(sessionEntity);
                 detailEntity.setBoyugProgram(programEntity);

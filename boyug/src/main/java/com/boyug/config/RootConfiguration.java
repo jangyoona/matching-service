@@ -74,15 +74,8 @@ public class RootConfiguration {
 		template.setHashValueSerializer(new StringRedisSerializer());
 
 		// 설정 초기화
-		template.afterPropertiesSet();
+//		template.afterPropertiesSet();
 		return template;
-	}
-
-	@Bean
-	public SocketHandler socketHandler(RedisService redisService) throws Exception {
-		SocketHandler socketHandler = new SocketHandler();
-		socketHandler.setRedisService(redisService);
-		return socketHandler;
 	}
 
 
@@ -123,7 +116,7 @@ public class RootConfiguration {
 	public AdminService adminService(AdminRepository adminRepository, AdminUserDetailRepository adminUserDetailRepository,
 									 AdminBoyugUserRepository adminBoyugUserRepository, AdminUserRepository adminUserRepository,
 									 BoyugProgramRepository boyugProgramRepository, BoyugProgramDetailRepository boyugProgramDetailRepository,
-									 SessionRepository sessionRepository, UserToBoyugRepository userToBoyugRepository,
+									 SessionsRepository sessionsRepository, UserToBoyugRepository userToBoyugRepository,
 									 RoleRepository roleRepository, SangDamRepository sangDamRepository,
 									 UserSessionRepository userSessionRepository) throws Exception {
 		AdminServiceImpl adminService = new AdminServiceImpl();
@@ -134,7 +127,7 @@ public class RootConfiguration {
 		adminService.setBoyugProgramRepository(boyugProgramRepository);
 		adminService.setBoyugProgramDetailRepository(boyugProgramDetailRepository);
 		adminService.setUserToBoyugRepository(userToBoyugRepository);
-		adminService.setSessionRepository(sessionRepository);
+		adminService.setSessionsRepository(sessionsRepository);
 		adminService.setRoleRepository(roleRepository);
 		adminService.setSangDamRepository(sangDamRepository);
 		adminService.setUserSessionRepository(userSessionRepository);
@@ -150,7 +143,7 @@ public class RootConfiguration {
 	}
 
 	@Bean
-	public ActivityService activityService(SessionRepository sessionRepository,
+	public ActivityService activityService(SessionsRepository sessionsRepository,
 										   BoyugProgramRepository boyugProgramRepository,
 										   BoyugUserRepository boyugUserRepository,
 										   BoyugProgramDetailRepository boyugProgramDetailRepository,
@@ -159,7 +152,7 @@ public class RootConfiguration {
 										   ProfileImageRepository profileImageRepository,
 										   BoyugToUserRepository boyugToUserRepository) throws Exception {
 		ActivityServiceImpl activityServiceImpl = new ActivityServiceImpl();
-		activityServiceImpl.setSessionRepository(sessionRepository);
+		activityServiceImpl.setSessionsRepository(sessionsRepository);
 		activityServiceImpl.setBoyugProgramRepository(boyugProgramRepository);
 		activityServiceImpl.setBoyugProgramDetailRepository(boyugProgramDetailRepository);
 		activityServiceImpl.setBoyugUserRepository(boyugUserRepository);
@@ -172,14 +165,14 @@ public class RootConfiguration {
 
 	@Bean
 	public PersonalService personalService(PersonalRepository personalRepository, PersonalDetailRepository personalDetailRepository,
-										   SessionRepository sessionRepository, ProfileImageRepository profileImageRepository,
+										   SessionsRepository sessionsRepository, ProfileImageRepository profileImageRepository,
 										   BoyugUserRepository boyugUserRepository, UserToBoyugRepository userToBoyugRepository,
 										   BoyugProgramDetailRepository boyugProgramDetailRepository, BoyugProgramRepository boyugProgramRepository,
 										   BoyugToUserRepository boyugToUserRepository, UserSessionRepository userSessionRepository) throws Exception {
 		PersonalServiceImpl personalService = new PersonalServiceImpl();
 		personalService.setPersonalRepository(personalRepository);
 		personalService.setPersonalDetailRepository(personalDetailRepository);
-		personalService.setSessionRepository(sessionRepository);
+		personalService.setSessionsRepository(sessionsRepository);
 		personalService.setProfileImageRepository(profileImageRepository);
 		personalService.setBoyugUserRepository(boyugUserRepository);
 		personalService.setBoyugProgramDetailRepository(boyugProgramDetailRepository);

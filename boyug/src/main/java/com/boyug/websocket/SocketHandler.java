@@ -1,17 +1,14 @@
 package com.boyug.websocket;
 
-import com.boyug.oauth2.CustomOAuth2User;
 import com.boyug.security.WebUserDetails;
 import com.boyug.service.RedisService;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -19,19 +16,19 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
+@RequiredArgsConstructor
 public class SocketHandler extends TextWebSocketHandler {
     // https://myhappyman.tistory.com/101
     // https://micropilot.tistory.com/category/Spring%204/WebSocket%20with%20Interceptor
 
-
     // Redis Service
-    @Setter
-    private RedisService redisService;
+    private final RedisService redisService;
 
     // WebSocketSession 저장
     @Getter
@@ -191,22 +188,37 @@ public class SocketHandler extends TextWebSocketHandler {
         return obj;
     }
 
+    // JWT 토큰용
     private WebUserDetails getUserInfo(WebSocketSession session) {
-
-        SecurityContext securityContext = (SecurityContext) session.getAttributes().get("SPRING_SECURITY_CONTEXT");
-        Authentication authentication = securityContext.getAuthentication();
+        Principal principal = session.getPrincipal();
         WebUserDetails userDetails = null;
 
-        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
-
+        if (principal != null && principal instanceof UsernamePasswordAuthenticationToken authentication) {
             // OAuth2AuthenticationToken인 경우 변환, 아니면 WebUserDetails를 직접 할당
-            if (authentication instanceof OAuth2AuthenticationToken) {
-                userDetails = WebUserDetails.of((CustomOAuth2User) authentication.getPrincipal());
-            } else if (authentication.getPrincipal() instanceof WebUserDetails) {
+            if (authentication.isAuthenticated()) {
                 userDetails = (WebUserDetails) authentication.getPrincipal();
             }
         }
 
         return userDetails;
     }
+
+    // JWT 방식으로 바꾸면 SPRING_SECURITY_CONTEXT (세션)에 속성이 채워지지 않음. 아래는 세션 방식일 때 쓰는 놈임.
+//    private WebUserDetails getUserInfo(WebSocketSession session) {
+//        SecurityContext securityContext = (SecurityContext) session.getAttributes().get("SPRING_SECURITY_CONTEXT");
+//        Authentication authentication = securityContext.getAuthentication();
+//        WebUserDetails userDetails = null;
+//
+//        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+//
+//            // OAuth2AuthenticationToken인 경우 변환, 아니면 WebUserDetails를 직접 할당
+//            if (authentication instanceof OAuth2AuthenticationToken) {
+//                userDetails = WebUserDetails.of((CustomOAuth2User) authentication.getPrincipal());
+//            } else if (authentication.getPrincipal() instanceof WebUserDetails) {
+//                userDetails = (WebUserDetails) authentication.getPrincipal();
+//            }
+//        }
+//
+//        return userDetails;
+//    }
 }

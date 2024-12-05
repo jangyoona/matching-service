@@ -5,7 +5,6 @@ import com.boyug.dto.*;
 import com.boyug.entity.*;
 import com.boyug.repository.*;
 import lombok.Setter;
-import org.hibernate.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,7 @@ public class PersonalServiceImpl implements PersonalService{
     private PersonalDetailRepository personalDetailRepository;
 
     @Setter
-    private SessionRepository sessionRepository;
+    private SessionsRepository sessionsRepository;
 
     @Setter
     private ProfileImageRepository profileImageRepository;
@@ -114,7 +113,7 @@ public class PersonalServiceImpl implements PersonalService{
 
     @Override
     public List<SessionDto> findAllSession() {
-        List<SessionEntity> entityList = sessionRepository.findBySessionActiveTrue();
+        List<SessionEntity> entityList = sessionsRepository.findBySessionActiveTrue();
         ArrayList<SessionDto> sessionList = new ArrayList<>();
         for (SessionEntity e : entityList) {
             sessionList.add(SessionDto.of(e));
@@ -124,7 +123,7 @@ public class PersonalServiceImpl implements PersonalService{
 
     @Override
     public SessionDto findSessionId(String s) {
-        Optional<SessionEntity> optionalEntity = sessionRepository.findBySessionNameAndSessionActiveTrue(s);
+        Optional<SessionEntity> optionalEntity = sessionsRepository.findBySessionNameAndSessionActiveTrue(s);
         if (optionalEntity.isPresent()) {
             SessionEntity entity = optionalEntity.get();
             return SessionDto.of(entity);

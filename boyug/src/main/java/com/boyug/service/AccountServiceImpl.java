@@ -50,6 +50,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public String getUserPhone(int userId) {
+        return accountRepository.findUserPhoneByUserId(userId);
+    }
+
+    @Override
     public UserDto getUserInfo(int userId) {
         Optional<UserEntity> entity = accountRepository.findById(userId);
         return entity.isPresent() ? UserDto.of(entity.get()) : null;
