@@ -1,5 +1,6 @@
 package com.boyug.security.jwt;
 
+import com.boyug.dto.RoleDto;
 import com.boyug.security.WebUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -65,6 +67,7 @@ public class JwtUtil {
         claims.put("userId", user.getUser().getUserId());
         claims.put("userPhone", user.getUser().getUserPhone());
         claims.put("socialId", user.getUser().getSocialId());
+        claims.put("userCategory", user.getUser().getUserCategory());
         claims.put("role", user.getAuthorities());
 
         ZonedDateTime now = ZonedDateTime.now();
@@ -128,6 +131,10 @@ public class JwtUtil {
 
     public String getSocialId(String token, String type) {
         return parseClaims(token, type).get("socialId", String.class);
+    }
+
+    public List<RoleDto> getUserRole(String token, String type) {
+        return parseClaims(token, type).get("role", List.class);
     }
 
     public String getExpiration(String token, String type) {

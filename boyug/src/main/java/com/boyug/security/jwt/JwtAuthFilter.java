@@ -1,5 +1,6 @@
 package com.boyug.security.jwt;
 
+import com.boyug.dto.RoleDto;
 import com.boyug.security.WebUserDetails;
 import com.boyug.security.WebUserDetailsService;
 import com.boyug.service.AccountService;
@@ -23,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Set;
 
 
@@ -44,11 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     // 필터 제외할 경로 설정
     private static final Set<String> EXCLUDED_PATHS =
             Set.of("/userAssets/", "/profile-image/", "/img/", "/notifications/",
-                    "/userView/account/login", "/userView/account/socialId-check", "/userView/account/process-login",
-                    "/userView/account/business-register", "/personal/personal-register",
-                    "/userView/account/success", "/userView/account/form", "/userView/account/reset-passwd");
-
-
+                    "/userView/account/", "/personal/personal-register");
 
     /**
      * JWT 토큰 검증 필터 수행
@@ -91,6 +89,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     //현재 Request의 Security Context에 접근권한 설정
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
+
+                // DB 조회 없는 토큰 생성 => 됨. html에서 user 정보 뽑는게 일단 문제임. 전체 바꾸는 날 Home 부터 차근차근 하자.
+                // 문제1. HTML 에서 #authentication.principal.user ~ 이렇게 추출하는 코드가 너무 많음... 아래 userId만으로 만드는것보다
+                // userDetails 객체 임의로 만들어서 그 안에 Id, phone, category, role 만이라도 넣어서 기존 HTML 코드 문제 안생기게 해야될 듯.
+                // 진짜 큰일 난건 아래 코드임... 아님 저건 컨트롤러에서 model에 담아 보내줘도 될 듯. 저 경도를 굳이 객체에 계속 담고 다니는것도 웃기잖아.
+                // var userLat = /*[[${#authentication.principal.user.userLatitude}]]*/''
+                // var userLng = /*[[${#authentication.principal.user.userLongitude}]]*/''
+//                UsernamePasswordAuthenticationToken authToken =
+//                        new UsernamePasswordAuthenticationToken(jwtUtil.getUserId(token, "access"), jwtUtil.getUserRole(token, "access"));
+//
+//                //현재 Request의 Security Context에 접근권한 설정
+//                SecurityContextHolder.getContext().setAuthentication(authToken);
             } else {
                 removeAccessToken(response);
             }

@@ -3,10 +3,13 @@ package com.boyug.controller;
 import com.boyug.dto.*;
 import com.boyug.oauth2.CustomOAuth2User;
 import com.boyug.security.WebUserDetails;
+import com.boyug.security.jwt.JwtUtil;
 import com.boyug.service.AccountService;
 import com.boyug.service.ActivityService;
 import com.boyug.service.HomeService;
 import com.boyug.service.NotificationService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,6 +43,9 @@ public class HomeController {
     @Setter(onMethod_ = {@Autowired})
     HomeService homeService;
 
+    @Setter(onMethod_ = {@Autowired})
+    JwtUtil jwtUtil;
+
     @RequestMapping(path = {"/", "/home"})
     public String home(Model model) {
 
@@ -55,11 +61,16 @@ public class HomeController {
     }
 
     @GetMapping("/navbar")
-    public String navbarShow(Model model, @RequestParam(defaultValue = "0") Integer page,
-                                          @RequestParam(defaultValue = "5") int size) {
+    public String navbarShow(Model model, HttpServletRequest request,
+                             @RequestParam(defaultValue = "0") Integer page,
+                             @RequestParam(defaultValue = "5") int size) {
 
         // 현재 로그인 사용자 구분
         WebUserDetails userDetails = getUserDetails();
+
+        // 이걸로 로직 테스트 함 해봐
+        int userIdByToken = getUserIdByToken(request);
+
         if (userDetails != null) {
             List<NotificationDto> notifications = (userDetails != null)
                     ? notificationService.getUnreadNotifications(userDetails.getUser(), page, size)
@@ -89,6 +100,27 @@ public class HomeController {
         return "userView/login-denied";
     }
 
+    // 토큰 추출
+    private int getUserIdByToken(HttpServletRequest request) {
+        // 쿠키에서 JWT 추출
+        String token = null;
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("Authorization".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        int userId = 0;
+        if (token == null) {
+            return userId;
+        }
+        return jwtUtil.getUserId(token, "access");
+    }
 
     // 로그인 유저
     private WebUserDetails getUserDetails() {

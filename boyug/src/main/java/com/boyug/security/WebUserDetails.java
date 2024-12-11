@@ -33,6 +33,16 @@ public class WebUserDetails implements UserDetails, Serializable {
         this.roles = roles;
     }
 
+    /**
+     * JWT 토큰 초기화용
+     **/
+    private int userId;
+
+    public WebUserDetails(int userId, List<RoleDto> roles) {
+        this.userId = userId;
+        this.roles = roles;
+    }
+
 
 
     @Override
