@@ -1,7 +1,6 @@
 spring:
   application:
     name: boyug
-
   datasource:
     hikari:
       driver-class-name: ${DB}
@@ -9,7 +8,6 @@ spring:
       username: ${DB_USERNAME}
       password: ${DB_PASSWORD}
       connection-test-query: ${TEST_QUERY}
-
   jpa:
     database: ${JPA_DATABASE}
     database-platform: ${DATABASE_PLATFORM}
@@ -20,12 +18,10 @@ spring:
       naming:
         physical-strategy: ${NAMING_PHYSICAL}
     show-sql: ${JPA_SHOW_SQL}
-
   data:
     redis:
       port: 6379
       host: ${REDIS_ENDPOINT}
-
   security:
     oauth2:
       client:
@@ -44,38 +40,30 @@ spring:
             token-uri: ${KAKAO_TOKEN_URI}
             user-info-uri: ${KAKAO_USER_INFO_URI}
             user-name-attribute: ${KAKAO_USER_NAME_ATTRIBUTE}
-
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 15MB
-
   thymeleaf:
     cache: false
-
 server:
   port: 8080
-
 upload:
   path: C:/Temp
-
 file:
   profile-dir: ${PROFILE_DIR}
   boyugfile-dir: ${BOYUGFILE_DIR}
   boardattach-dir: ${BOYUGATTACH_DIR}
-
 kakao:
   map-key: ${KAKAO_MAP_KEY}
   rest-api-key: ${KAKAO_REST_API_KEY}
   api-key: ${KAKAO_API_KEY}
   redirect-uri: ${KAKAO_REDIRECT_URI}
   logout-uri: ${KAKAO_LOGOUT_URI}
-
 coolsms:
   api-key: ${SMS_API_KEY}
   api-secret: ${SMS_API_SECRET}
   api-sendernumber: ${SMS_API_SENDER_NUMBER}
-
 jwt:
   secret: ${JWT_ACCESS_TOKEN_KEY}
   refresh:
