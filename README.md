@@ -1,4 +1,4 @@
-## ✅ 배포 👉 <a href="http://141.164.50.145/" target="_blank">Together</a>
+## ✅ 배포 👉 <a href="http://158.247.198.164/" target="_blank">Together</a>
 
 <br>
 <br>
