@@ -63,8 +63,7 @@
 <br>
 
 # 아키텍처
-
-![3차 배포 아키텍처](https://github.com/user-attachments/assets/2a40da71-a4f6-4c9a-8abe-4a165e3b2c3e)
+![3차_아키텍처](https://github.com/user-attachments/assets/f2164d4c-d4b6-431c-9790-173c8eb4d6df)
 
 <br>
 
