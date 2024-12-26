@@ -1,4 +1,4 @@
-## ✅ 배포 👉 <a href="http://141.164.50.145/" target="_blank">Together</a>
+## ✅ 배포 👉 <a href="http://158.247.198.164/" target="_blank">Together</a>
 
 <br>
 <br>
@@ -63,8 +63,7 @@
 <br>
 
 # 아키텍처
-
-![3차 배포 아키텍처](https://github.com/user-attachments/assets/2a40da71-a4f6-4c9a-8abe-4a165e3b2c3e)
+![3차_아키텍처](https://github.com/user-attachments/assets/f2164d4c-d4b6-431c-9790-173c8eb4d6df)
 
 <br>
 
