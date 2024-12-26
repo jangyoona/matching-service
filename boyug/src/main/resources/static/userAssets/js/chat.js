@@ -2,8 +2,59 @@ $(function() {
     $('#chatting').focus();
 
     var ws;
+    // 재연결
     let reconnectAttempts = 0;
     const maxReconnectAttempts = 5;
+
+    // ping pong 체크
+    let lastPongTime = Date.now();  // 마지막 pong 응답 시간
+    const pongTimeout = 10000;  // 10초 동안 pong 응답이 없으면 연결 종료
+    const pingInterval = 30000;  // 30초마다 ping을 보냄
+
+
+    // 서버로 ping을 보내고 응답을 기다리는 비동기 함수
+    async function sendPing() {
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.send("ping");
+            console.log('ping 발송');
+
+            // pong 응답을 기다리기 위해 10초 타이머를 설정
+            const responseReceived = await waitForPong();
+
+            if (!responseReceived) {
+                alert('서버와의 연결에 실패했습니다. 다시 시도해 주세요.');
+                ws.close();
+                window.close();
+            }
+        }
+    }
+
+    // pong 응답을 기다리는 함수
+    function waitForPong() {
+        return new Promise((resolve) => {
+            const timeout = setTimeout(() => {
+                resolve(false);  // pong 응답이 없으면 false 반환
+            }, pongTimeout);  // pong 응답을 기다리는 최대 시간 (10초)
+
+            // 기존 onmessage 핸들러를 덮어쓰지 않고, pong 메시지를 처리
+            const pongHandler = (event) => {
+                if (event.data === "pong") {
+                    clearTimeout(timeout);  // 타이머를 중지
+                    ws.removeEventListener('message', pongHandler);  // 이벤트 리스너 제거
+                    resolve(true);  // 응답을 받으면 true 반환
+                }
+            };
+
+            // 새로운 pong 응답을 받기 위한 이벤트 리스너 추가
+            ws.addEventListener('message', pongHandler);
+        });
+    }
+
+    // 주기적으로 ping을 보내는 타이머 설정
+    let pingTimer = setInterval(() => {
+        sendPing();  // ping을 보냄
+    }, pingInterval);  // 30초마다 ping을 보냄
+
 
     function wsOpen() {
         if (ws && ws.readyState === 1) {
@@ -21,8 +72,8 @@ $(function() {
     function wsEvt() {
         ws.onopen = function(data) {
             // 소켓이 열리면 동작
-            let loginUser = $('#login-user').val();
-            if(loginUser.userCategory == 2 || loginUser.userCategory == 3) {
+            let loginUserCategory = $('#loginUserCategory').val();
+            if(loginUserCategory == 2 || loginUserCategory == 3) {
                 const welcomeMessage = `[Welcome]\n안녕하세요 문의사항을 남겨주시면 확인 후 답변 도와드리겠습니다.`
                 // welcome message 작성하세요
                 const otherUserImg = $('.other-image').last().attr('src');
@@ -41,6 +92,13 @@ $(function() {
         ws.onmessage = function(data) {
 
             var msg = data.data;
+
+            // ping-pong 일 경우 return
+            if(msg == 'pong') {
+                lastPongTime = Date.now();  // pong을 받으면 마지막 시간 갱신
+                console.log("pong 응답");
+                return;
+            }
 
             if (msg != null && msg.trim() != '') {
                 var d = JSON.parse(msg);
@@ -63,6 +121,7 @@ $(function() {
                                     message: d.msg,
                                     roomNumber: d.roomNumber,
                                     fromUserId : $('#fromUserId').val(),
+                                    toUserId : $('#toUserId').val(),
                                     uri : currentUrl
                                 },
                             contentType: "application/json; charset=UTF-8",

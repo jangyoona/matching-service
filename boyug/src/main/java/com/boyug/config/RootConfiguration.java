@@ -199,15 +199,15 @@ public class RootConfiguration {
 		return boyugMyPageService;
 	}
 
-	@Bean
-	public ChattingService chattingService(ChatRoomRepository chatRoomRepository, ChatMessageRepository chatMessageRepository,
-										   AccountService accountService) throws Exception{
-		ChattingServiceImpl chattingService = new ChattingServiceImpl();
-		chattingService.setChatRoomRepository(chatRoomRepository);
-		chattingService.setChatMessageRepository(chatMessageRepository);
-		chattingService.setAccountService(accountService);
-		return chattingService;
-	}
+//	@Bean
+//	public ChattingService chattingService(ChatRoomRepository chatRoomRepository, ChatMessageRepository chatMessageRepository,
+//										   AccountService accountService) throws Exception{
+//		ChattingServiceImpl chattingService = new ChattingServiceImpl();
+//		chattingService.setChatRoomRepository(chatRoomRepository);
+//		chattingService.setChatMessageRepository(chatMessageRepository);
+//		chattingService.setAccountService(accountService);
+//		return chattingService;
+//	}
 
 
 

@@ -8,6 +8,7 @@ import com.boyug.service.AccountService;
 import com.boyug.service.ChattingService;
 import com.boyug.service.NotificationService;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpSessionEvent;
 import lombok.Setter;
@@ -85,18 +86,18 @@ public class ChattingController {
     }
 
     @RequestMapping("moveChatting")
-    public ModelAndView chatting(@RequestParam HashMap<Object, Object> params, HttpSession session) {
+    public ModelAndView chatting(@RequestParam HashMap<Object, Object> params, HttpServletRequest request) {
 
         int roomNumber = Integer.parseInt((String) params.get("roomNumber"));
         WebUserDetails userDetails = getUserDetails();
-        return chattingService.prepareChatView(roomNumber, userDetails, session);
+        return chattingService.prepareChatView(roomNumber, userDetails, request);
     }
 
 
 
     @GetMapping("sendMessage")
     @ResponseBody
-    public ResponseEntity<Boolean> sendMessage(String message, String roomNumber, Model model) {
+    public ResponseEntity<Boolean> sendMessage(String message, String roomNumber, Model model, Integer toUserId) {
 
         // 현재 로그인 사용자
         WebUserDetails userDetails = getUserDetails();
@@ -106,26 +107,26 @@ public class ChattingController {
         }
 
         // 받는사람 추출
-        int toUserId = getToUserId(roomNumber, userDetails);
+//        int toUserId = getToUserId(roomNumber, userDetails);
         model.addAttribute("toUserId", toUserId);
 
         chattingService.sendMessage(userDetails, roomNumber, message, toUserId);
         return ResponseEntity.ok(true);
     }
 
-    private int getToUserId(String roomNumber, WebUserDetails userDetails) {
-        int toUserId = 0;
-
-        String fromUserIdStr = roomUser.get(roomNumber + "f").toString();
-        String targetUserIdStr = roomUser.get(roomNumber + "t").toString();
-
-        if (userDetails.getUser().getUserId() == Integer.parseInt(fromUserIdStr)) {
-            toUserId = Integer.parseInt(targetUserIdStr);
-        } else {
-            toUserId = Integer.parseInt(fromUserIdStr);
-        }
-        return toUserId;
-    }
+//    private int getToUserId(String roomNumber, WebUserDetails userDetails) {
+//        int toUserId = 0;
+//
+//        String fromUserIdStr = roomUser.get(roomNumber + "f").toString();
+//        String targetUserIdStr = roomUser.get(roomNumber + "t").toString();
+//
+//        if (userDetails.getUser().getUserId() == Integer.parseInt(fromUserIdStr)) {
+//            toUserId = Integer.parseInt(targetUserIdStr);
+//        } else {
+//            toUserId = Integer.parseInt(fromUserIdStr);
+//        }
+//        return toUserId;
+//    }
 
 
 

@@ -4,6 +4,7 @@ import com.boyug.dto.ChatMessageDto;
 import com.boyug.dto.ChatRoomDto;
 import com.boyug.dto.UserDto;
 import com.boyug.security.WebUserDetails;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -20,7 +21,7 @@ public interface ChattingService {
 
     void sendMessage(WebUserDetails userDetails, String roomNumber, String message, int toUserId);
 
-    ModelAndView prepareChatView(int roomNumber, WebUserDetails userDetails, HttpSession session);
+    ModelAndView prepareChatView(int roomNumber, WebUserDetails userDetails, HttpServletRequest request);
 
     List<ChatMessageDto> getMessagesByRoomId(int roomNumber);
 

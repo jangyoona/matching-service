@@ -1,41 +1,42 @@
 package com.boyug.service;
 
-import com.boyug.controller.ChattingController;
 import com.boyug.dto.*;
 import com.boyug.entity.ChatMessageEntity;
 import com.boyug.entity.ChatRoomEntity;
 import com.boyug.repository.ChatMessageRepository;
 import com.boyug.repository.ChatRoomRepository;
 import com.boyug.security.WebUserDetails;
-import jakarta.servlet.http.HttpSession;
-import lombok.Setter;
+import com.boyug.security.jwt.JwtUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
+@Service
 public class ChattingServiceImpl implements ChattingService {
 
-    @Setter
-    ChatRoomRepository chatRoomRepository;
-
-    @Setter
-    ChatMessageRepository chatMessageRepository;
-
-    @Setter
-    AccountService accountService;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final AccountService accountService;
+    private final JwtUtil jwtUtil;
 
     // NotificationService 와 순환 참조로 인해 이벤트 객체 생성
     private ApplicationEventPublisher eventPublisher;
 
-    @Autowired
-    public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
+    public ChattingServiceImpl(ApplicationEventPublisher eventPublisher, JwtUtil jwtUtil, AccountService accountService, ChatMessageRepository chatMessageRepository, ChatRoomRepository chatRoomRepository) {
         this.eventPublisher = eventPublisher;
+        this.jwtUtil = jwtUtil;
+        this.accountService = accountService;
+        this.chatMessageRepository = chatMessageRepository;
+        this.chatRoomRepository = chatRoomRepository;
     }
+
 
     private static final String WELCOME_MESSAGE = "안녕하세요 문의사항을 남겨주시면 확인 후 답변드리겠습니다.";
 
@@ -174,7 +175,7 @@ public class ChattingServiceImpl implements ChattingService {
 
     // start_moveChatting
     @Override
-    public ModelAndView prepareChatView(int roomNumber, WebUserDetails userDetails, HttpSession session) {
+    public ModelAndView prepareChatView(int roomNumber, WebUserDetails userDetails, HttpServletRequest request) {
         ModelAndView mv = new ModelAndView("chat");
         ChatRoomDto isChatRoom = getChatRoom(roomNumber);
 
@@ -183,13 +184,15 @@ public class ChattingServiceImpl implements ChattingService {
             return mv;
         }
 
-        // 로그인 유저
+        // 로그인 유저 카테고리 추출 (welcome message 유무 체크)
         UserDto loginUser = userDetails.getUser();
-        mv.addObject("loginUser", loginUser);
+        mv.addObject("loginUserId", loginUser.getUserId());
+        mv.addObject("loginUserName", loginUser.getUserName());
+        mv.addObject("loginUserCategory", loginUser.getUserCategory());
 
-        // 채팅방 헤더 name
+        // 상대방 채팅방 헤더 name 추출
         UserDto otherUser = getOtherUser(isChatRoom, loginUser);
-        mv.addObject("otherUserName", getOtherUserName(otherUser));
+         mv.addObject("otherUserName", getOtherUserName(otherUser));
 
         // 채팅방 목록 profileImage url
         List<ProfileImageDto> profileImage = accountService.getUserProfileImage(otherUser);
@@ -207,8 +210,8 @@ public class ChattingServiceImpl implements ChattingService {
         setProfileImagesForMessages(messages, loginUser, profileImage);
         mv.addObject("messages", messages);
 
-        int toUserId = getToUserId(roomNumber, session, messages, loginUser, mv);
-        mv.addObject("toUserId", toUserId);
+//        int toUserId = getToUserId(roomNumber, session, messages, loginUser, mv);
+        mv.addObject("toUserId", otherUser.getUserId());
         mv.addObject("roomNumber", roomNumber);
 
         return mv;
@@ -280,29 +283,29 @@ public class ChattingServiceImpl implements ChattingService {
     /*
     * 5. toUserId 추출
     * */
-    private int getToUserId(int roomNumber, HttpSession session, List<ChatMessageDto> messages, UserDto loginUser, ModelAndView mv) {
-        // 메세지 send시 json-option에 담길 toUserId를 위해 저장
-        int toUserId = 0;
-
-        Map<String, Object> roomUser = ChattingController.getRoomUser();
-
-        // from, to 유저 서버에 저장
-        roomUser.put(roomNumber+"f", loginUser.getUserId());
-        if(messages.isEmpty()){ // 최초 생성시 이건 잘 작동함
-            roomUser.put(roomNumber+"t", session.getAttribute("toUserId"));
-        } else {
-            if(messages.get(0).getToUserId().getUserId() == loginUser.getUserId()) {
-                roomUser.put(roomNumber+"t", messages.get(0).getFromUserId().getUserId());
-                mv.addObject("toUserName", messages.get(0).getFromUserId().getUserName());
-                toUserId = messages.get(0).getFromUserId().getUserId();
-            } else {
-                roomUser.put(roomNumber+"t", messages.get(0).getToUserId().getUserId());
-                mv.addObject("toUserName", messages.get(0).getToUserId().getUserName());
-                toUserId = messages.get(0).getToUserId().getUserId();
-            }
-        }
-        return toUserId;
-    }
+//    private int getToUserId(int roomNumber, HttpSession session, List<ChatMessageDto> messages, UserDto loginUser, ModelAndView mv) {
+//        // 메세지 send시 json-option에 담길 toUserId를 위해 저장
+//        int toUserId = 0;
+//
+////        Map<String, Object> roomUser = ChattingController.getRoomUser();
+//
+//        // from, to 유저 서버에 저장
+////        roomUser.put(roomNumber+"f", loginUser.getUserId());
+//        if(messages.isEmpty()){ // 최초 생성시 이건 잘 작동함
+////            roomUser.put(roomNumber+"t", session.getAttribute("toUserId"));
+//        } else {
+//            if(messages.get(0).getToUserId().getUserId() == loginUser.getUserId()) {
+////                roomUser.put(roomNumber+"t", messages.get(0).getFromUserId().getUserId());
+//                mv.addObject("toUserName", messages.get(0).getFromUserId().getUserName());
+//                toUserId = messages.get(0).getFromUserId().getUserId();
+//            } else {
+////                roomUser.put(roomNumber+"t", messages.get(0).getToUserId().getUserId());
+//                mv.addObject("toUserName", messages.get(0).getToUserId().getUserName());
+//                toUserId = messages.get(0).getToUserId().getUserId();
+//            }
+//        }
+//        return toUserId;
+//    }
     // end_moveChatting
 
 

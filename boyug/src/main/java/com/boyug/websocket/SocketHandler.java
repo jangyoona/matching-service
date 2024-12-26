@@ -2,6 +2,7 @@ package com.boyug.websocket;
 
 import com.boyug.security.WebUserDetails;
 import com.boyug.service.RedisService;
+import jakarta.servlet.http.Cookie;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,8 @@ import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -80,12 +83,26 @@ public class SocketHandler extends TextWebSocketHandler {
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
 
-        // 메시지 발송
+        Principal user = session.getPrincipal();
+        if (user == null) { // 인증 정보 없으면
+            session.close(CloseStatus.NOT_ACCEPTABLE); // 연결 종료
+            return;
+        }
+
+        // 메세지
         String msg = message.getPayload();
+
+        // 주기적으로 서버-클라이언트 상태를 확인
+        if (msg.equals(("ping"))) {
+            session.sendMessage(new TextMessage("pong"));
+            return;
+        }
+
+        // 메시지 발송
         JSONObject obj = jsonToObjectParser(msg);
         System.out.println(obj.toJSONString());
-
         String rN = (String) obj.get("roomNumber");
+
         HashMap<String, Object> temp = new HashMap<>();
 
         boolean roomExists = redisService.isRoomExists(rN);
