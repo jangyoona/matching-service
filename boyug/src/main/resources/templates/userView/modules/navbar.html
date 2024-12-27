@@ -102,7 +102,7 @@
                     </div>
                     <th:block th:each="noti, index : ${ notifications }">
                             <div class="noti-container" style="display:flex; border-bottom:1px solid gray;">
-                                <a class="dropdown-item notification" th:if="${ noti.toUser.userId == #authentication.principal.user.userId }"
+                                <a class="dropdown-item notification"
                                     th:data-chatroom-id="${ noti.chatRoom.chatRoomId }" th:data-notification-id="${ noti.notificationId }"
                                     th:data-chat-message="${ noti.message }"
                                     style="font-size:1rem; margin:10px; cursor:pointer; color:white;">

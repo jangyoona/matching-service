@@ -20,7 +20,11 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
 //    @Query("SELECT n FROM NotificationEntity n WHERE n.toUser = :toUser AND n.isRead = :isRead ORDER BY n.sendDate DESC")
     @EntityGraph(attributePaths = {"chatRoom"})
     @BatchSize(size = 5)
-    @Query("SELECT n FROM NotificationEntity n WHERE n.toUser = :toUser AND n.isRead = :isRead ORDER BY n.sendDate DESC")
+    @Query("SELECT n " +
+            "FROM NotificationEntity n " +
+            "WHERE n.toUser = :toUser " +
+                "AND n.isRead = :isRead " +
+            "ORDER BY n.sendDate DESC")
     List<NotificationEntity> findNotificationsWithLimit(UserEntity toUser, boolean isRead, Pageable pageable);
 
     @Modifying

@@ -14,9 +14,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ChattingServiceImpl implements ChattingService {
@@ -171,18 +171,26 @@ public class ChattingServiceImpl implements ChattingService {
         chatMessageRepository.updateToIsRead(chatRoomId, toUserId);
     }
 
+    @Override // getChatRoom 이랑 같은데 Message 정렬버전 ASC
+    public ChatRoomDto getByIdWithMessagesSorted(int chatRoomId) {
+        return chatRoomRepository.findByIdWithMessagesSorted(chatRoomId)
+                .map(ChatRoomDto::of)
+                .orElse(null);
+    }
 
 
     // start_moveChatting
     @Override
     public ModelAndView prepareChatView(int roomNumber, WebUserDetails userDetails, HttpServletRequest request) {
         ModelAndView mv = new ModelAndView("chat");
-        ChatRoomDto isChatRoom = getChatRoom(roomNumber);
+        ChatRoomDto isChatRoom = getByIdWithMessagesSorted(roomNumber);
 
         if (isChatRoom == null) {
             mv.setViewName("home?chaterror");
             return mv;
         }
+
+        mv.addObject("roomNumber", roomNumber);
 
         // 로그인 유저 카테고리 추출 (welcome message 유무 체크)
         UserDto loginUser = userDetails.getUser();
@@ -192,27 +200,22 @@ public class ChattingServiceImpl implements ChattingService {
 
         // 상대방 채팅방 헤더 name 추출
         UserDto otherUser = getOtherUser(isChatRoom, loginUser);
-         mv.addObject("otherUserName", getOtherUserName(otherUser));
+        mv.addObject("otherUserName", getOtherUserName(otherUser));
+        mv.addObject("toUserId", otherUser.getUserId());
 
         // 채팅방 목록 profileImage url
-        List<ProfileImageDto> profileImage = accountService.getUserProfileImage(otherUser);
+        List<ProfileImageDto> profileImage = otherUser.getImages();
         String profileUrl = (profileImage != null && !profileImage.isEmpty()) ? profileImage.get(0).getImgSavedName() : null;
         mv.addObject("profileUrl", profileUrl);
 
         // 채팅방 목록 안 각 메세지별 프로필 사진 설정 (나 or 상대방)
         List<ChatRoomDto> userRoomList = getChatRoomByUserId(loginUser);
-        setUserProfileImagesForChatRooms(userRoomList, loginUser);
-//        setUserProfileImagesForChatRooms(userRoomList, loginUser, otherUser);
+//        setUserProfileImagesForChatRooms(userRoomList, loginUser);
         mv.addObject("userRoomList", userRoomList);
 
         // 기존 채팅 불러오기
-        List<ChatMessageDto> messages = getMessagesByRoomId(roomNumber);
-        setProfileImagesForMessages(messages, loginUser, profileImage);
-        mv.addObject("messages", messages);
-
-//        int toUserId = getToUserId(roomNumber, session, messages, loginUser, mv);
-        mv.addObject("toUserId", otherUser.getUserId());
-        mv.addObject("roomNumber", roomNumber);
+        setProfileImagesForMessages(isChatRoom.getChatMessages(), loginUser, profileImage);
+        mv.addObject("messages", isChatRoom.getChatMessages());
 
         return mv;
     }
@@ -224,9 +227,9 @@ public class ChattingServiceImpl implements ChattingService {
         UserDto otherUser = null;
 
         if(loginUser.getUserId() == isChatRoom.getChatMessages().get(0).getToUserId().getUserId()) {
-            otherUser = accountService.getUserInfo(isChatRoom.getChatMessages().get(0).getFromUserId().getUserId());
+            otherUser = isChatRoom.getChatMessages().get(0).getFromUserId();
         } else {
-            otherUser = accountService.getUserInfo(isChatRoom.getChatMessages().get(0).getToUserId().getUserId());
+            otherUser = isChatRoom.getChatMessages().get(0).getToUserId();
         }
         return otherUser;
     }
@@ -249,23 +252,22 @@ public class ChattingServiceImpl implements ChattingService {
     /*
     * 3. 왼쪽 채팅목록 프로필 사진 메세지에서 추출
     * */
-    private void setUserProfileImagesForChatRooms(List<ChatRoomDto> userRoomList, UserDto loginUser) {
-//    private void setUserProfileImagesForChatRooms(List<ChatRoomDto> userRoomList, UserDto loginUser, UserDto otherUser) {
-        int userCategory = loginUser.getUserCategory();
-
-        List<ProfileImageDto> profileImages = null;
-        for (ChatRoomDto chatRoomDto : userRoomList) {
-            if((userCategory == 2 && chatRoomDto.isBoyugChatActive()) || (userCategory == 3 && chatRoomDto.isUserChatActive())) {
-                if (chatRoomDto.getChatMessages().get(0).getToUserId().getUserId() != loginUser.getUserId()) {
-                    profileImages = accountService.getUserProfileImage(chatRoomDto.getChatMessages().get(0).getToUserId());
-                    chatRoomDto.getChatMessages().get(0).getToUserId().setImages(profileImages);
-                } else {
-                    profileImages = accountService.getUserProfileImage(chatRoomDto.getChatMessages().get(0).getFromUserId());
-                    chatRoomDto.getChatMessages().get(0).getFromUserId().setImages(profileImages);
-                }
-            }
-        }
-    }
+//    private void setUserProfileImagesForChatRooms(List<ChatRoomDto> userRoomList, UserDto loginUser) {
+//        int userCategory = loginUser.getUserCategory();
+//
+//        List<ProfileImageDto> profileImages = null;
+//        for (ChatRoomDto chatRoomDto : userRoomList) {
+//            if((userCategory == 2 && chatRoomDto.isBoyugChatActive()) || (userCategory == 3 && chatRoomDto.isUserChatActive())) {
+//                if (chatRoomDto.getChatMessages().get(0).getToUserId().getUserId() != loginUser.getUserId()) {
+//                    profileImages = accountService.getUserProfileImage(chatRoomDto.getChatMessages().get(0).getToUserId());
+//                    chatRoomDto.getChatMessages().get(0).getToUserId().setImages(profileImages);
+//                } else {
+//                    profileImages = accountService.getUserProfileImage(chatRoomDto.getChatMessages().get(0).getFromUserId());
+//                    chatRoomDto.getChatMessages().get(0).getFromUserId().setImages(profileImages);
+//                }
+//            }
+//        }
+//    }
 
     /*
     * 4. 메세지별 프로필 이미지 설정
@@ -320,12 +322,6 @@ public class ChattingServiceImpl implements ChattingService {
             list = chatRoomRepository.findAllChatRoomByUserId(loginUser.getUserId());
         }
 
-        if(list != null) {
-            for (ChatRoomEntity chatRoomEntity : list) { // 한 행씩 꺼내서 보여줌 == 펼침.
-                List<ChatMessageEntity> messages = chatMessageRepository.findByChatRoomChatRoomIdOrderByChatSendTimeAsc(chatRoomEntity.getChatRoomId());
-                chatRoomEntity.setChatMessages(messages);
-            }
-        }
         return list != null ? list.stream()
                                   .map(ChatRoomDto::of)
                                   .collect(Collectors.toList()) : null;

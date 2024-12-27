@@ -11,6 +11,37 @@
     <link href="userAssets/css/user-boyug-chat.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <style>
+        .date-txt {
+            padding: 0 8px 0 8px;
+        }
+
+        .date-txt-line{
+            display: flex;
+            flex-basis 100%;
+            align-items center;
+            color:rgba(0,0,0,0.80);
+            font-size:14px;
+            margin: 3rem 0 1.5rem;
+            align-items: center;
+        }
+        .date-txt-line:before {
+            content:"";
+            flex-grow:1;
+            margin:0px 16px;
+            background:rgba(0,0,0,0.35);
+            height:1px;
+            font-size:0px;
+            line-height: 0px;
+        }
+        .date-txt-line:after {
+            content:"";
+            flex-grow:1;
+            margin:0px 16px;
+            background:rgba(0,0,0,0.35);
+            height:1px;
+            font-size:0px;
+            line-height: 0px;
+        }
     </style>
 </head>
 <body>
@@ -125,9 +156,18 @@
                         </div>
                     </div> */-->
                     <th:block sec:authorize="isAuthenticated()">
-                        <div th:each="message, idx : ${messages}"
+                        <div th:each="message, iterStat : ${messages}"
                              th:class="${message.fromUserId.userId == loginUserId ? 'item mymsg on' : 'item yourmsg on'}"
                              th:style="${ message.fromUserId.userId != loginUserId ? 'margin-left:-9px;' : ''}">
+
+                            <!--/* 날짜 표시 */-->
+                            <div th:if="${iterStat.index == 0
+                                         or #dates.format(messages.get(iterStat.index - 1).chatSendTime, 'yyyy-MM-dd')
+                                         != #dates.format(message.chatSendTime, 'yyyy-MM-dd')}"
+                                 th:text="${#dates.format(message.chatSendTime, 'yyyy-MM-dd')}"
+                                 style="margin-left: 10px; font-weight: bold;"
+                                 class="date-txt-line">
+                            </div>
 
                             <th:block th:if="${message.fromUserId.userId != loginUserId}">
                                 <!--/* 프로필사진 미 등록시 기본 이미지 */-->
@@ -144,6 +184,7 @@
                                 <span class="time" th:text="${#dates.format(message.chatSendTime, 'a hh:mm')}" style="margin-bottom:1.2rem;"></span>
                             </div>
                         </div>
+
                     </th:block>
                 </div>
             </div>

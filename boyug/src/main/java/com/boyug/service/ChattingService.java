@@ -17,6 +17,8 @@ public interface ChattingService {
 
     ChatRoomDto getChatRoom(int roomNumber);
 
+    ChatRoomDto getByIdWithMessagesSorted(int chatRoomId);
+
     void insertChatMessage(ChatMessageDto sendMessage);
 
     void sendMessage(WebUserDetails userDetails, String roomNumber, String message, int toUserId);

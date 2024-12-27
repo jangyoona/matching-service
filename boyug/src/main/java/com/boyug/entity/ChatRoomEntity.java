@@ -26,7 +26,7 @@ public class ChatRoomEntity {
     @Column
     private boolean userChatActive = true;
 
-    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ChatMessageEntity> chatMessages;
 
 //// 수신자 ID
