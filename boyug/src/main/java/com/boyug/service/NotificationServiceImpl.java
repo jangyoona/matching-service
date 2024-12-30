@@ -77,11 +77,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public List<NotificationDto> getUnreadNotifications(UserDto toUser, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "sendDate"));
-        List<NotificationEntity> entities = notificationRepository.findNotificationsWithLimit(toUser.toEntity(), false, pageable);
+        return notificationRepository.findNotificationsWithLimit(toUser.toEntity(), false, pageable);
 
-        return entities.stream()
-                .map(NotificationDto::of)
-                .collect(Collectors.toList());
     }
 
     public void markAsRead(int notificationId) {
@@ -97,6 +94,12 @@ public class NotificationServiceImpl implements NotificationService {
     // 로그인 유저 SSE 서버 접속처리
     @Override
     public SseEmitter createConnection(String userId) {
+
+        // 이미 emitter 가 존재하면 재사용
+        if (emitters.containsKey(userId)) {
+            return emitters.get(userId);
+        }
+
         SseEmitter emitter = new SseEmitter(TimeUnit.MINUTES.toMillis(30)); // 30분 설정
 
         // 사용자 저장

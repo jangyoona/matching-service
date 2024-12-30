@@ -94,8 +94,8 @@ $(function() {
         e.preventDefault();
 
         if(confirm('알림을 전체삭제 하시겠습니까?')) {
-            if($('#user-id').val() != undefined && $('#user-id').val() != null) {
-                commonAjax("/notification/allDelete", { userId : $('#user-id').val() }, function(resp) {
+            if($('#currentUserId').val() != undefined && $('#currentUserId').val() != null) {
+                commonAjax("/notification/allDelete", { userId : $('#currentUserId').val() }, function(resp) {
                     alert('전체삭제 완료되었습니다');
                     $('.container-fluid #nav-container-box').load('/navbar');
                 });
@@ -210,12 +210,12 @@ $(function() {
                       return `
                           <div class="noti-container" style="display:flex; border-bottom:1px solid gray;">
                               <a class="dropdown-item notification"
-                                  data-chatroom-id="${noti.chatRoom.chatRoomId}"
+                                  data-chatroom-id="${noti.chatRoomId}"
                                   data-notification-id="${noti.notificationId}"
+                                  data-chat-message="${ noti.message }"
                                   style="font-size:1rem; margin:10px; cursor:pointer; color:white;">
                                   <i class="fa-solid fa-comments" style="margin-left:0.5rem;"></i> ${noti.message} |
                                   <span class="send-date">${formattedDate}</span>
-                                  <input type="hidden" id="toUserId" value="${noti.fromUser.userId}"> <!-- 알림창에서는 to와 from을 반대로 해줘야함 -->
                               </a>
                               <span style="align-content:center; margin-right:1rem;">
                                   <i class="fa-solid fa-square-xmark notification-delete-btn"

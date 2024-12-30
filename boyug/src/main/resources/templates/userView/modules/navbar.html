@@ -103,12 +103,12 @@
                     <th:block th:each="noti, index : ${ notifications }">
                             <div class="noti-container" style="display:flex; border-bottom:1px solid gray;">
                                 <a class="dropdown-item notification"
-                                    th:data-chatroom-id="${ noti.chatRoom.chatRoomId }" th:data-notification-id="${ noti.notificationId }"
+                                    th:data-chatroom-id="${ noti.chatRoomId }" th:data-notification-id="${ noti.notificationId }"
                                     th:data-chat-message="${ noti.message }"
                                     style="font-size:1rem; margin:10px; cursor:pointer; color:white;">
                                     <i class="fa-solid fa-comments" style="margin-left:0.5rem;"></i> [[${ noti.message }]] |
                                     <span class="send-date" th:text="${#dates.format(noti.sendDate, 'a hh:mm')}"></span>
-                                    <input type="hidden" id="toUserId" th:value="${ noti.fromUser.userId }"> <!-- 여기 알림창에서는 to와 from을 반대로 해줘야함 계속 테스트하셈 -->
+<!--                                    <input type="hidden" id="toUserId" th:value="${ noti.fromUser.userId }"> &lt;!&ndash; 여기 알림창에서는 to와 from을 반대로 해줘야함 계속 테스트하셈 &ndash;&gt;-->
                                 </a>
                                 <span style="align-content:center; margin-right:1rem;">
                                     <i class="fa-solid fa-square-xmark notification-delete-btn" th:data-notification-id="${ noti.notificationId }"
@@ -124,7 +124,6 @@
                         </button>
                     </div>
 
-<!--/*                    <input type="hidden" id="user-id" th:value="${ #authentication.principal.user.userId }"> */-->
                     <a class="dropdown-item" th:if="${ #lists.isEmpty(notifications) }" style="font-size:1rem;">
                         <i class="fas fa-bell me-2"></i>알림이 없습니다.
                     </a>

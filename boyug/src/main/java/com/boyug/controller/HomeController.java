@@ -1,6 +1,7 @@
 package com.boyug.controller;
 
-import com.boyug.dto.*;
+import com.boyug.dto.BoyugProgramDto;
+import com.boyug.dto.NotificationDto;
 import com.boyug.oauth2.CustomOAuth2User;
 import com.boyug.security.WebUserDetails;
 import com.boyug.security.jwt.JwtUtil;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

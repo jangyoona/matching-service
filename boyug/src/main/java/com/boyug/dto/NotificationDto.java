@@ -25,6 +25,15 @@ public class NotificationDto {
     private boolean isRead;
     private boolean active;
 
+    // NotificationRepository Dto 프로젝션
+    private int chatRoomId;
+    public NotificationDto(int notificationId, String message, Timestamp sendDate, int chatRoomId) {
+        this.notificationId = notificationId;
+        this.message = message;
+        this.sendDate = sendDate;
+        this.chatRoomId = chatRoomId;
+    }
+
     public NotificationEntity toEntity() {
         return NotificationEntity.builder()
                 .notificationId(notificationId)
