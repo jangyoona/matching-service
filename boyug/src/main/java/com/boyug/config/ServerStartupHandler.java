@@ -19,8 +19,7 @@ public class ServerStartupHandler {
 
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
-        redisService.deleteAllRoomKeys();
+        redisService.initRedis();
         log.info("-------------------Application Server Open-------------------");
-//        System.out.println("-------------------Application Server Open-------------------");
     }
 }

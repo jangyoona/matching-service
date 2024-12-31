@@ -19,15 +19,16 @@ public class ChatRoomEntity {
     private int chatRoomId;
 
     @Builder.Default
-    @Column
+    @Column(nullable = false)
     private boolean boyugChatActive = true;
 
     @Builder.Default
-    @Column
+    @Column(nullable = false)
     private boolean userChatActive = true;
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ChatMessageEntity> chatMessages;
+
 
 //// 수신자 ID
 //    @ManyToOne

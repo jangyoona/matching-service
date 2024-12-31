@@ -6,8 +6,7 @@ import com.boyug.oauth2.CustomOAuth2User;
 import com.boyug.security.WebUserDetails;
 import com.boyug.service.AccountService;
 import com.boyug.service.BookmarkService;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,13 +19,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class BookmarkController {
 
-    @Setter(onMethod_ = { @Autowired})
-    private BookmarkService bookmarkService;
-
-    @Setter(onMethod_ = { @Autowired})
-    private AccountService accountService;
+    private final BookmarkService bookmarkService;
+    private final AccountService accountService;
 
 
     @GetMapping("bookmark-add/{userId}")

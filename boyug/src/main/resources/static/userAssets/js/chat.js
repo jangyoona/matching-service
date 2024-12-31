@@ -7,25 +7,36 @@ $(function() {
     const maxReconnectAttempts = 5;
 
     // ping pong 체크
+    let lastPingTime = Date.now(); // 마지막 ping 보낸 시간
     let lastPongTime = Date.now();  // 마지막 pong 응답 시간
     const pongTimeout = 10000;  // 10초 동안 pong 응답이 없으면 연결 종료
     const pingInterval = 30000;  // 30초마다 ping을 보냄
 
 
-    // 서버로 ping을 보내고 응답을 기다리는 비동기 함수
+    // ping 발송 -> 응답 대기
     async function sendPing() {
         if (ws.readyState === WebSocket.OPEN) {
             ws.send("ping");
+            lastPingTime = Date.now(); // 마지막 ping 시간 갱신
             console.log('ping 발송');
 
             // pong 응답을 기다리기 위해 10초 타이머를 설정
             const responseReceived = await waitForPong();
 
             if (!responseReceived) {
-                alert('서버와의 연결에 실패했습니다. 다시 시도해 주세요.');
-                ws.close();
-                window.close();
+                ws.close(4002, "Pong timeout");
             }
+        }
+    }
+
+    // ping 발송 유무 모니터링
+    function monitorPingInterval() {
+        const now = Date.now();
+        if (now - lastPingTime > pingInterval * 2) { // 60초 동안 ping 없음
+            console.warn('Ping 주기 초과. 연결 종료.');
+            ws.close(4001, "Ping timeout");
+        } else {
+            console.log("Ping 모니터링 정상");
         }
     }
 
@@ -34,7 +45,7 @@ $(function() {
         return new Promise((resolve) => {
             const timeout = setTimeout(() => {
                 resolve(false);  // pong 응답이 없으면 false 반환
-            }, pongTimeout);  // pong 응답을 기다리는 최대 시간 (10초)
+            }, pongTimeout);  // 10초 기다림
 
             // 기존 onmessage 핸들러를 덮어쓰지 않고, pong 메시지를 처리
             const pongHandler = (event) => {
@@ -50,17 +61,21 @@ $(function() {
         });
     }
 
-    // 주기적으로 ping을 보내는 타이머 설정
+    // 주기적으로 ping을 보내는 타이머
     let pingTimer = setInterval(() => {
-        sendPing();  // ping을 보냄
-    }, pingInterval);  // 30초마다 ping을 보냄
+        sendPing();  // ping 발송
+    }, pingInterval);  // 30초마다
+
+    // ping 주기 모니터링 타이머
+    let monitorTimer = setInterval(() => {
+        monitorPingInterval(); // 모니터링
+    }, pingInterval);  // 30초마다
 
 
     function wsOpen() {
-        if (ws && ws.readyState === 1) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
             // 이미 WebSocket 연결이 존재하면 새로 연결하지 않음
             console.log("WebSocket is already open.");
-            reconnectAttempts = 0;
             return;
         }
 
@@ -72,6 +87,8 @@ $(function() {
     function wsEvt() {
         ws.onopen = function(data) {
             // 소켓이 열리면 동작
+            reconnectAttempts = 0;
+
             let loginUserCategory = $('#loginUserCategory').val();
             if(loginUserCategory == 2 || loginUserCategory == 3) {
                 const welcomeMessage = `[Welcome]\n안녕하세요 문의사항을 남겨주시면 확인 후 답변 도와드리겠습니다.`
@@ -130,8 +147,8 @@ $(function() {
                                     console.log('메세지 저장 완료');
                                 }
                             },
-                            error: function(status, xhr, err) {
-                                if(status.status === 401) {
+                            error: function(xhr, status, err) {
+                                if(xhr.status === 401) {
                                     alert("로그인 세션이 만료되었습니다. 다시 로그인 해주세요.");
                                     window.close();
                                 } else {
@@ -149,7 +166,7 @@ $(function() {
                                 }
                             },
                             error: function(error) {
-                                alert('세션 확인 중 오류가 발생했습니다.');
+                                alert('로그인 세션이 만료되었습니다. 다시 로그인 해주세요.');
                                 if(ws) {
                                     ws.close();
                                 }
@@ -180,11 +197,7 @@ $(function() {
                     console.warn("unknown type!");
                 }
             } else {
-                alert('세션이 만료되었습니다. 다시 로그인해 주세요.');
-                if (ws) {
-                    ws.close();
-                }
-                window.close();
+                alert('잘못 수신된 메세지');
             }
         };
 
@@ -196,22 +209,61 @@ $(function() {
                 return;
             }
 
-            if(reconnectAttempts < maxReconnectAttempts) {
-                reconnectAttempts++;
-                setTimeout(function() {
-                    wsOpen(); // 재연결 시도
-                }, 5000 * reconnectAttempts); // 재연결 간격 증가
-            } else {
-                console.error("Maximum reconnect attempts reached. Please check your connection.");
-                alert("서버와의 연결이 끊어졌습니다. 새로 고침 후 다시 시도해 주세요.");
-                window.close();
+            if(e.code === 1006) {
+                alert("서버 종료"); reconnectingWebSocket();
+                return;
             }
+
+            if(e.code === 4001) { // 클라이언트 ping 발송 실패
+                alert("네트워크가 불안정하여 채팅을 종료합니다. 다시 시도해 주세요.");
+                window.close();
+                return;
+            }
+
+            if(e.code === 4002) { // 서버 pong 발송 실패
+                alert('서버 연결 문제로 재연결 시도중.');
+                reconnectingWebSocket();
+                return;
+            }
+
+            reconnectingWebSocket();
         };
 
         ws.onerror = function(error) {
-            ws.close();
+            if(ws && ws.readyState == WebSocket.OPEN) {
+                ws.close();
+            }
+            reconnectingWebSocket();
         };
     }
+
+    let reconnectTimer = null;
+    // WebSocket 재연결
+    function reconnectingWebSocket() {
+        if(reconnectAttempts < maxReconnectAttempts) {
+            // 중복방지 기존 타이머 제거
+            if(reconnectTimer) {
+                clearTimeout(reconnectTimer);
+            }
+
+            reconnectTimer = setTimeout(function() {
+                if(!ws || ws.readyState !== WebSocket.OPEN){
+                    reconnectAttempts++;
+                    wsOpen(); // 재연결 시도
+                    console.log("재연결 시도중입니다.");
+                } else {
+                    console.log("웹소켓 이미 열려있음. 재연결 중단");
+                    clearTimeout(reconnectTimer);
+                }
+            }, 5000 * reconnectAttempts); // 재연결 간격 증가
+        } else {
+            console.error("Maximum reconnect attempts reached. Please check your connection.");
+            alert("서버와의 연결이 끊어졌습니다. 다시 시도해 주세요.");
+            window.close();
+        }
+    }
+
+
 
     // 채팅 목록의 안읽은 메세지 계산
     $('.new-message-count').each(function() {
@@ -373,9 +425,19 @@ $(function() {
                 location.reload();
             },
             error: function(xhr, status, err) {
+
+                if(xhr.status === 401) {
+                    alert("로그인 세션이 만료되었습니다. 다시 로그인 해주세요.);
+                    location.reload();
+                    return;
+                } else if(xhr.status === 400) {
+                    alert("잘못된 요청입니다.");
+                    location.reload();
+                    return;
+                }
                 console.error('에러 발생:', err);
-                console.log(err);
                 alert('요청이 실패했습니다. 다시 시도해 주세요.');
+                location.reload();
             }
         });
     });

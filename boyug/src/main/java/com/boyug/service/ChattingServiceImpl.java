@@ -27,14 +27,18 @@ public class ChattingServiceImpl implements ChattingService {
     private final JwtUtil jwtUtil;
 
     // NotificationService 와 순환 참조로 인해 이벤트 객체 생성
-    private ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public ChattingServiceImpl(ApplicationEventPublisher eventPublisher, JwtUtil jwtUtil, AccountService accountService, ChatMessageRepository chatMessageRepository, ChatRoomRepository chatRoomRepository) {
+    private final RedisService redisService;
+
+    public ChattingServiceImpl(ApplicationEventPublisher eventPublisher, JwtUtil jwtUtil, AccountService accountService,
+                               ChatMessageRepository chatMessageRepository, ChatRoomRepository chatRoomRepository, RedisService redisService) {
         this.eventPublisher = eventPublisher;
         this.jwtUtil = jwtUtil;
         this.accountService = accountService;
         this.chatMessageRepository = chatMessageRepository;
         this.chatRoomRepository = chatRoomRepository;
+        this.redisService = redisService;
     }
 
 
@@ -113,10 +117,10 @@ public class ChattingServiceImpl implements ChattingService {
     }
 
 
-
     // start_sendMessage
     @Override
     public void sendMessage(WebUserDetails userDetails, String roomNumber, String message, int toUserId) {
+
         UserDto toUser = accountService.getUserInfo(toUserId);
 
         ChatRoomDto chatRoom = getChatRoom(Integer.parseInt(roomNumber));
@@ -154,8 +158,10 @@ public class ChattingServiceImpl implements ChattingService {
 
     @Override
     public void insertChatMessage(ChatMessageDto sendMessage) {
-        ChatMessageEntity entity = sendMessage.toEntity();
-        chatMessageRepository.save(entity);
+//        ChatMessageEntity entity = sendMessage.toEntity();
+//        chatMessageRepository.save(entity);
+        // Redis 임시저장
+        redisService.addMessageTemporary(sendMessage);
     }
 
     @Override

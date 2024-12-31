@@ -14,6 +14,11 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Intege
     @Query(value = "SELECT TBL_CHATROOM_SEQ.NEXTVAL FROM DUAL", nativeQuery = true)
     int findNextChatRoomId();
 
+    @Query("SELECT cr FROM ChatRoomEntity cr " +
+            "JOIN FETCH cr.chatMessages m " +
+            "WHERE cr.chatRoomId = :chatRoomId ")
+    Optional<ChatRoomEntity> findByIdWithMessages(int chatRoomId);
+
     @Query("SELECT DISTINCT cr " +
             "FROM ChatRoomEntity cr " +
             "JOIN FETCH cr.chatMessages c " +

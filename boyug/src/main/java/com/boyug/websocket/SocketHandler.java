@@ -1,18 +1,20 @@
 package com.boyug.websocket;
 
+import com.boyug.entity.ChatMessageEntity;
+import com.boyug.repository.AccountRepository;
+import com.boyug.repository.ChatMessageRepository;
+import com.boyug.repository.ChatRoomRepository;
 import com.boyug.security.WebUserDetails;
 import com.boyug.service.RedisService;
-import jakarta.servlet.http.Cookie;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -20,9 +22,11 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -30,8 +34,13 @@ public class SocketHandler extends TextWebSocketHandler {
     // https://myhappyman.tistory.com/101
     // https://micropilot.tistory.com/category/Spring%204/WebSocket%20with%20Interceptor
 
+    private final TransactionTemplate transactionTemplate;
+
     // Redis Service
     private final RedisService redisService;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final AccountRepository accountRepository;
 
     // WebSocketSession 저장
     @Getter
@@ -182,9 +191,47 @@ public class SocketHandler extends TextWebSocketHandler {
                     redisService.removeUserFromRoomNumber(roomNumber, userId);
                 }
                 redisService.removeSessionFromRoomNumber(roomNumber, session.getId());
+
+                // 소켓 종료 시 Redis 에 저장된 채팅 DB 저장
+                saveMessagesToDB(roomNumber);
             }
             super.afterConnectionClosed(session, status);
         }
+    }
+
+
+    private void saveMessagesToDB(String roomNumber) {
+        transactionTemplate.execute(status -> {
+            List<String> messages = redisService.findMessagesByChatRoomId("messages:" + roomNumber);
+
+            if (messages != null && !messages.isEmpty()) {
+                // 메세지 Entity 로 변환
+                List<ChatMessageEntity> entity = convertRedisMessagesToEntities(messages);
+
+                // DB 일괄 저장
+                chatMessageRepository.saveAll(entity);
+
+                // 저장 후 Redis 데이터 삭제
+                redisService.deleteMessagesByChatRoomId("messages:" + roomNumber);
+            }
+            return null;
+        });
+    }
+
+    @NotNull
+    private List<ChatMessageEntity> convertRedisMessagesToEntities(List<String> messages) {
+        return messages.stream().map(msg -> {
+            String[] parts = msg.split("\\|");
+
+            return new ChatMessageEntity(
+                    chatRoomRepository.findById(Integer.parseInt(parts[0])), // chatRoomId
+                    parts[1],                                                // chatContent
+                    Timestamp.valueOf(parts[2]),                             // chatSendTime
+                    accountRepository.findById(Integer.parseInt(parts[3])),  // fromUser
+                    accountRepository.findById(Integer.parseInt(parts[4])),  // toUser
+                    false                                                    // toIsRead
+            );
+        }).collect(Collectors.toList());
     }
 
 

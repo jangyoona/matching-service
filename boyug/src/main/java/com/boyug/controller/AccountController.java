@@ -1,6 +1,5 @@
 package com.boyug.controller;
 
-import com.boyug.common.KaKaoApi;
 import com.boyug.common.SmsApi;
 import com.boyug.dto.BoyugUserDto;
 import com.boyug.dto.UserDto;
@@ -9,9 +8,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,25 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-
 @Controller
 @RequestMapping("/userView/account")
 @RequiredArgsConstructor
 public class AccountController {
 
-    @Setter(onMethod_ = { @Autowired })
-    private AccountService accountService;
-
-    @Setter(onMethod_ = { @Autowired })
-    private SmsApi smsApi;
+    private final AccountService accountService;
+    private final SmsApi smsApi;
 
     @GetMapping("/privacy-policy")
     public String privacyPolicyShow() {

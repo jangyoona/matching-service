@@ -3,6 +3,7 @@ package com.boyug.controller;
 import com.boyug.dto.UserDto;
 import com.boyug.service.AccountService;
 import com.boyug.service.SangDamService;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,13 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(path = {"/userView"})
+@RequiredArgsConstructor
 public class SangDamController {
 
-    @Setter(onMethod_ = {@Autowired})
-    SangDamService sangDamService;
+    private final SangDamService sangDamService;
+    private final AccountService accountService;
 
-    @Setter(onMethod_ = {@Autowired})
-    AccountService accountService;
 
     @GetMapping("/advice")
     public String adviceForm() {

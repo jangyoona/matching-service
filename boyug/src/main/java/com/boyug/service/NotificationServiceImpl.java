@@ -8,6 +8,7 @@ import com.boyug.entity.NotificationEntity;
 import com.boyug.repository.NotificationRepository;
 import com.boyug.websocket.SocketHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.Setter;
 import lombok.extern.java.Log;
 import org.slf4j.Logger;
@@ -81,6 +82,16 @@ public class NotificationServiceImpl implements NotificationService {
 
     }
 
+    @Override
+    @Transactional
+    public void processNotifications(int notificationId, int chatRoomId, int toUserId) {
+        // 알림 읽기
+        markAsRead(notificationId);
+        // 채팅(메세지) 읽기
+        chattingService.updateChatMessageIsRead(chatRoomId,toUserId);
+    }
+
+    @Override
     public void markAsRead(int notificationId) {
         notificationRepository.updateIsReadByNotificationId(notificationId);
     }

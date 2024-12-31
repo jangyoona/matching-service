@@ -1,18 +1,12 @@
 package com.boyug.controller;
 
-import com.boyug.dto.*;
-import com.boyug.entity.ChatMessageEntity;
+import com.boyug.dto.ChatRoomDto;
 import com.boyug.oauth2.CustomOAuth2User;
 import com.boyug.security.WebUserDetails;
-import com.boyug.service.AccountService;
 import com.boyug.service.ChattingService;
-import com.boyug.service.NotificationService;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.HttpSessionEvent;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -24,38 +18,29 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 public class ChattingController {
 
-    @Setter(onMethod_ = { @Autowired })
-    ChattingService chattingService;
-
-    @Setter(onMethod_ = { @Autowired })
-    NotificationService notificationService;
-
-    @Setter(onMethod_ = { @Autowired })
-    AccountService accountService;
+    private final ChattingService chattingService;
 
     // 생성된 방 번호에 들어온 유저 = roomNumber+f  OR  roomNumber+t
-    static Map<String, Object> roomUser = new HashMap<>();
-
-    public static Map<String, Object> getRoomUser() {
-        return roomUser;
-    }
+//    static Map<String, Object> roomUser = new HashMap<>();
+//
+//    public static Map<String, Object> getRoomUser() {
+//        return roomUser;
+//    }
 
     @GetMapping("/checkLoginStatus")
     public ResponseEntity<Boolean> checkLoginStatus() {
         try {
             WebUserDetails userDetails = getUserDetails();
 
-            // null 만 반환할 가능성이 있어 null 체크 한번 하고
+            // Token 없는 경우 null 반환
             if (userDetails == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
             }
@@ -132,19 +117,32 @@ public class ChattingController {
 
     @GetMapping("message-read")
     @ResponseBody
-    public String chatMessageIsRead(int chatRoomId, int toUserId) {
-        chattingService.updateChatMessageIsRead(chatRoomId, toUserId);
-        return "success";
+    public ResponseEntity<Boolean> chatMessageIsRead(int chatRoomId, int toUserId) {
+        try {
+            chattingService.updateChatMessageIsRead(chatRoomId, toUserId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+        return ResponseEntity.ok(true);
     }
 
     // 채팅방에서 목록 방 나가기
     @PostMapping("out-chatroom")
     @ResponseBody
-     public String outChatRoom(int[] selectedValues) {
-        WebUserDetails user = getUserDetails();
-        chattingService.editChatRoomActive(user,selectedValues);
+     public ResponseEntity<Boolean> outChatRoom(int[] selectedValues) {
 
-        return "success";
+        WebUserDetails user = getUserDetails();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        }
+
+        try {
+            chattingService.editChatRoomActive(user, selectedValues);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+        }
+
+        return ResponseEntity.ok(true);
     }
 
 

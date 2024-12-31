@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-@Component
-public class SessionValidationScheduler {
+//@Component
+//public class SessionValidationScheduler {
 
 //    @Scheduled(fixedRate = 300000)
 //    public void validateSessions() {
@@ -42,7 +42,4 @@ public class SessionValidationScheduler {
 //            }
 //        }
 //    }
-
-
-
-}
+//}

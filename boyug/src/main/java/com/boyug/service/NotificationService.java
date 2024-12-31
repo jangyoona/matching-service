@@ -17,6 +17,8 @@ public interface NotificationService {
 
     List<NotificationDto> getUnreadNotifications(UserDto toUser, int page, int size);
 
+    void processNotifications(int notificationId, int chatRoomId, int toUserId);
+
     void markAsRead(int notificationId);
 
     void markAsReadAll(int userId);

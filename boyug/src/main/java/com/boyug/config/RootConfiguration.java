@@ -7,6 +7,7 @@ import com.boyug.service.*;
 import com.boyug.websocket.SocketHandler;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -20,6 +21,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -134,11 +136,11 @@ public class RootConfiguration {
 		return adminService;
 	}
 
-	@Bean BoardService boardService( BoardRepository boardRepository, BoardAttachRepository boardAttachRepository) throws Exception {
+	@Bean BoardService boardService( BoardRepository boardRepository, BoardAttachRepository boardAttachRepository, EntityManagerFactory entityManagerFactory) throws Exception {
 		BoardServiceImpl boardService = new BoardServiceImpl();
 		boardService.setBoardRepository(boardRepository);
 		boardService.setBoardAttachRepository(boardAttachRepository);
-		boardService.setTransactionTemplate(transactionTemplate());
+		boardService.setTransactionTemplate(transactionTemplate(entityManagerFactory));
 		return boardService;
 	}
 
@@ -199,26 +201,6 @@ public class RootConfiguration {
 		return boyugMyPageService;
 	}
 
-//	@Bean
-//	public ChattingService chattingService(ChatRoomRepository chatRoomRepository, ChatMessageRepository chatMessageRepository,
-//										   AccountService accountService) throws Exception{
-//		ChattingServiceImpl chattingService = new ChattingServiceImpl();
-//		chattingService.setChatRoomRepository(chatRoomRepository);
-//		chattingService.setChatMessageRepository(chatMessageRepository);
-//		chattingService.setAccountService(accountService);
-//		return chattingService;
-//	}
-
-
-
-//	@Bean
-//	public ChattingHelper chattingHelper(NotificationService notificationService, ChattingService chattingService) throws Exception{
-//		ChattingHelper chattingHelper = new ChattingHelper();
-//		chattingHelper.setNotificationService(notificationService);
-//		chattingHelper.setChattingService(chattingService);
-//		return chattingHelper;
-//	}
-
 	@Bean
 	public NotificationService notificationService(NotificationRepository notificationRepository) throws Exception {
 		NotificationServiceImpl notificationService = new NotificationServiceImpl();
@@ -234,15 +216,21 @@ public class RootConfiguration {
 		return bookmarkService;
 	}
 
-	@Bean PlatformTransactionManager transactionManager() {
-		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
-		transactionManager.setDataSource(dataSource());
-		return transactionManager;
+	// JPA 트랜잭션
+	@Bean
+	public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+		return new JpaTransactionManager(entityManagerFactory);
 	}
+
+//	@Bean PlatformTransactionManager transactionManager() { //JDBC?
+//		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+//		transactionManager.setDataSource(dataSource());
+//		return transactionManager;
+//	}
 	
-	@Bean TransactionTemplate transactionTemplate() {
+	@Bean TransactionTemplate transactionTemplate(EntityManagerFactory entityManagerFactory) {
 		TransactionTemplate transactionTemplate = new TransactionTemplate();
-		transactionTemplate.setTransactionManager(transactionManager());
+		transactionTemplate.setTransactionManager(transactionManager(entityManagerFactory));
 		return transactionTemplate;
 	}
 

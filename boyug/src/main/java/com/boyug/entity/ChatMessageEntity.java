@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -19,9 +20,12 @@ public class ChatMessageEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int chatId;
 
-    @CreationTimestamp
-    @Column
-    private Timestamp chatSendTime = new Timestamp(System.currentTimeMillis());
+//    @CreationTimestamp
+//    @Column
+//    private Timestamp chatSendTime = new Timestamp(System.currentTimeMillis());
+
+    @Column(nullable = false)
+    private Timestamp chatSendTime;
 
     @Column(nullable = false, length = 3000)
     private String chatContent;
@@ -45,5 +49,16 @@ public class ChatMessageEntity {
     @ManyToOne
     @JoinColumn(name = "chatRoomId")
     private ChatRoomEntity chatRoom;
+
+
+//    public ChatMessageEntity(Optional<ChatRoomEntity> chatRoom, String chatContent, Timestamp chatSendTime, UserDto fromUser, UserDto toUser, boolean toIsRead) {
+    public ChatMessageEntity(Optional<ChatRoomEntity> chatRoom, String chatContent, Timestamp chatSendTime, Optional<UserEntity> fromUser, Optional<UserEntity> toUser, boolean toIsRead) {
+        this.chatRoom = chatRoom.get();
+        this.chatContent = chatContent;
+        this.chatSendTime = chatSendTime;
+        this.fromUser = fromUser.get();
+        this.toUser = toUser.get();
+        this.toIsRead = toIsRead;
+    }
 
 }

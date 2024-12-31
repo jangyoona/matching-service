@@ -5,14 +5,11 @@ import com.boyug.dto.NotificationDto;
 import com.boyug.oauth2.CustomOAuth2User;
 import com.boyug.security.WebUserDetails;
 import com.boyug.security.jwt.JwtUtil;
-import com.boyug.service.AccountService;
-import com.boyug.service.ActivityService;
 import com.boyug.service.HomeService;
 import com.boyug.service.NotificationService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,22 +26,12 @@ import java.util.Collections;
 import java.util.List;
 
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
 
-    @Setter(onMethod_ = {@Autowired})
-    NotificationService notificationService;
-
-    @Setter(onMethod_ = {@Autowired})
-    AccountService accountService;
-
-    @Setter(onMethod_ = {@Autowired})
-    ActivityService activityService;
-
-    @Setter(onMethod_ = {@Autowired})
-    HomeService homeService;
-
-    @Setter(onMethod_ = {@Autowired})
-    JwtUtil jwtUtil;
+    private final NotificationService notificationService;
+    private final HomeService homeService;
+    private final JwtUtil jwtUtil;
 
     @RequestMapping(path = {"/", "/home"})
     public String home(Model model) {

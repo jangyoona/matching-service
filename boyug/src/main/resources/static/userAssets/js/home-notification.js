@@ -84,9 +84,10 @@ $(function() {
         const $btn = $(this);
 
         commonAjax("/notification/delete", { notificationId : notificationId }, function(resp){
-            $('#notification-tab').addClass('show');
-            $btn.closest('.noti-container').remove();
-
+            if(resp) {
+                $('#notification-tab').addClass('show');
+                $btn.closest('.noti-container').remove();
+            }
         });
     });
 
