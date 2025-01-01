@@ -2,9 +2,12 @@ $(function() {
     $('#chatting').focus();
 
     var ws;
-    // 재연결
+    // 재연결 카운트
     let reconnectAttempts = 0;
     const maxReconnectAttempts = 5;
+
+    // pong 무응답 카운트
+    let pongNoAnswerCount = 0;
 
     // ping pong 체크
     let lastPingTime = Date.now(); // 마지막 ping 보낸 시간
@@ -24,6 +27,17 @@ $(function() {
             const responseReceived = await waitForPong();
 
             if (!responseReceived) {
+                pongNoAnswerCount++;
+
+                if(pongNoAnswerCount >= maxReconnectAttempts) {
+                    console.log("[서버 오류] 최대 재연결 시도 횟수 초과. ping 발송 중단");
+                    clearTimeout(reconnectTimer); // 재연결 시도 종료
+                    clearTimeout(pingTimer);   // ping 발송 종료
+                    clearTimeout(monitorTimer);   // ping 모니터링 종료
+                    ws.close(4003, "Pong timeout_ reload");
+                    return;
+                }
+                console.log("Pong 응답없음");
                 ws.close(4002, "Pong timeout");
             }
         }
@@ -71,6 +85,32 @@ $(function() {
         monitorPingInterval(); // 모니터링
     }, pingInterval);  // 30초마다
 
+    let reconnectTimer = null;
+    // WebSocket 재연결
+    function reconnectingWebSocket() {
+        if(reconnectAttempts < maxReconnectAttempts) {
+            // 중복방지 기존 타이머 제거
+            if(reconnectTimer) {
+                clearTimeout(reconnectTimer);
+            }
+
+            reconnectTimer = setTimeout(function() {
+                if(!ws || ws.readyState !== WebSocket.OPEN){
+                    reconnectAttempts++;
+                    wsOpen(); // 재연결 시도
+                    console.log("재연결 시도중입니다.");
+                } else {
+                    console.log("웹소켓 이미 열려있음. 재연결 중단");
+                    clearTimeout(reconnectTimer);
+                }
+            }, 5000 * reconnectAttempts); // 재연결 간격 증가
+        } else {
+            console.error("Maximum reconnect attempts reached. Please check your connection.");
+            alert("서버와의 연결이 끊어졌습니다. 다시 시도해 주세요.");
+            window.close();
+        }
+    }
+
 
     function wsOpen() {
         if (ws && ws.readyState === WebSocket.OPEN) {
@@ -88,8 +128,9 @@ $(function() {
         ws.onopen = function(data) {
             // 소켓이 열리면 동작
             reconnectAttempts = 0;
+            clearTimeout(reconnectTimer);
 
-            let loginUserCategory = $('#loginUserCategory').val();
+            const loginUserCategory = $('#loginUserCategory').val();
             if(loginUserCategory == 2 || loginUserCategory == 3) {
                 const welcomeMessage = `[Welcome]\n안녕하세요 문의사항을 남겨주시면 확인 후 답변 도와드리겠습니다.`
                 // welcome message 작성하세요
@@ -107,7 +148,6 @@ $(function() {
         };
 
         ws.onmessage = function(data) {
-
             var msg = data.data;
 
             // ping-pong 일 경우 return
@@ -119,6 +159,8 @@ $(function() {
 
             if (msg != null && msg.trim() != '') {
                 var d = JSON.parse(msg);
+
+                // 웹소켓 최초 연결 시 sessionId 응답
                 if (d.type == "getId") {
                     var si = d.sessionId != null ? d.sessionId : "";
                     if (si != '') {
@@ -210,8 +252,7 @@ $(function() {
             }
 
             if(e.code === 1006) {
-                alert("서버 종료"); reconnectingWebSocket();
-                return;
+                alert("서버 종료 및 Access 토큰 재발급");
             }
 
             if(e.code === 4001) { // 클라이언트 ping 발송 실패
@@ -221,46 +262,32 @@ $(function() {
             }
 
             if(e.code === 4002) { // 서버 pong 발송 실패
-                alert('서버 연결 문제로 재연결 시도중.');
-                reconnectingWebSocket();
+                // 재 연결 시도중
+//                if(pongNoAnswerCount >= maxReconnectAttempts) {
+//                    alert('서버 연결 문제로 새로고침 합니다.');
+//                    location.reload();
+//                    return;
+//                }
+            }
+
+            if(e.code === 4003) {
+                // 새로고침 후 재 실행
+                alert('서버 연결 문제로 새로고침 합니다.');
+                location.reload();
                 return;
             }
 
             reconnectingWebSocket();
         };
 
-        ws.onerror = function(error) {
+        ws.onerror = function(xhr, error) {
             if(ws && ws.readyState == WebSocket.OPEN) {
                 ws.close();
             }
-            reconnectingWebSocket();
-        };
-    }
-
-    let reconnectTimer = null;
-    // WebSocket 재연결
-    function reconnectingWebSocket() {
-        if(reconnectAttempts < maxReconnectAttempts) {
-            // 중복방지 기존 타이머 제거
-            if(reconnectTimer) {
-                clearTimeout(reconnectTimer);
+            if(xhr.status === 401) {
+                alert("로그아웃됨");
             }
-
-            reconnectTimer = setTimeout(function() {
-                if(!ws || ws.readyState !== WebSocket.OPEN){
-                    reconnectAttempts++;
-                    wsOpen(); // 재연결 시도
-                    console.log("재연결 시도중입니다.");
-                } else {
-                    console.log("웹소켓 이미 열려있음. 재연결 중단");
-                    clearTimeout(reconnectTimer);
-                }
-            }, 5000 * reconnectAttempts); // 재연결 간격 증가
-        } else {
-            console.error("Maximum reconnect attempts reached. Please check your connection.");
-            alert("서버와의 연결이 끊어졌습니다. 다시 시도해 주세요.");
-            window.close();
-        }
+        };
     }
 
 
@@ -308,10 +335,10 @@ $(function() {
     }
 
     function currentTime() {
-        let date = new Date();
+        const date = new Date();
         let hh = date.getHours();
-        let mm = date.getMinutes();
-        let apm = hh >= 12 ? "오후" : "오전";
+        const mm = date.getMinutes();
+        const apm = hh >= 12 ? "오후" : "오전";
         hh = hh % 12;
         hh = hh ? hh : 12;
         return apm + " " + hh + ":" + (mm < 10 ? '0' : '') + mm; // 두 자리 설정
@@ -365,7 +392,7 @@ $(function() {
 
     // 편집 버튼 눌렀을 때 select-box show
     $('#edit-btn').on('click', function(e) {
-        let status = $('#edit-btn').text();
+        const status = $('#edit-btn').text();
         if(status == '편집') {
             $('.select-box').css('display', 'inline');
             $('#getOut-chatroom, #check-span').css('display', 'block');
