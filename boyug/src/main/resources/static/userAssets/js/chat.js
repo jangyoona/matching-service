@@ -427,7 +427,7 @@ $(function() {
             error: function(xhr, status, err) {
 
                 if(xhr.status === 401) {
-                    alert("로그인 세션이 만료되었습니다. 다시 로그인 해주세요.);
+                    alert("로그인 세션이 만료되었습니다. 다시 로그인 해주세요.");
                     location.reload();
                     return;
                 } else if(xhr.status === 400) {
