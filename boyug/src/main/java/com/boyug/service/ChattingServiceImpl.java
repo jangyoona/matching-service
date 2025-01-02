@@ -162,6 +162,9 @@ public class ChattingServiceImpl implements ChattingService {
 //        chatMessageRepository.save(entity);
         // Redis 임시저장
         redisService.addMessageTemporary(sendMessage);
+
+        // Redis Message 발행
+        redisService.sendMessage(sendMessage);
     }
 
     @Override

@@ -5,11 +5,16 @@ import com.boyug.entity.ChatMessageEntity;
 import com.boyug.repository.AccountRepository;
 import com.boyug.repository.ChatMessageRepository;
 import com.boyug.repository.ChatRoomRepository;
+import com.boyug.websocket.SocketHandler;
 import lombok.RequiredArgsConstructor;
+import net.minidev.json.JSONObject;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -59,7 +64,7 @@ public class RedisService {
 
 
     /**
-     * Chatting User and WebSocket SessionId
+     * Chatting User
      **/
     // 채팅방 userID 저장
     public void addUserToRoomNumber(String roomNumber, String userId) {
@@ -78,24 +83,75 @@ public class RedisService {
         return redisTemplate.opsForSet().isMember("room:" + roomNumber, userId);
     }
 
-    // 웹소켓 세션 id 저장
-    public void addSessionToRoomNumber(String roomNumber, String sessionId) {
-        redisTemplate.opsForSet().add("room:" + roomNumber, sessionId);
-    }
-
-    // 웹소켓 세션 id 조회
-    public boolean getSessionToRoomNumber(String roomNumber, String sessionId) {
-        return redisTemplate.opsForSet().isMember("room:" + roomNumber, sessionId);
-    }
-
-    // 세션 아이디 제거
-    public void removeSessionFromRoomNumber(String roomNumber, String sessionId) {
-        redisTemplate.opsForSet().remove("room:" + roomNumber, sessionId);
-    }
-
     // 채팅방 사용자 제거
     public void removeUserFromRoomNumber(String roomNumber, String userId) {
         redisTemplate.opsForSet().remove("room:" + roomNumber, userId);
+    }
+
+
+    /**
+     * Chatting Message Pub/Sub 전송
+     **/
+    public void sendMessage(ChatMessageDto message) {
+
+        JSONObject obj = new JSONObject();
+        obj.put("roomNumber", message.getChatRoomId().getChatRoomId());
+        obj.put("message", message.getChatContent());
+        obj.put("fromUserId", message.getFromUserId().getUserId());
+        obj.put("toUserId", message.getToUserId().getUserId());
+        obj.put("chatSendTime", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                .format(new Date())); // 문자열로 변환
+
+
+
+        // 1. 상대방에게 메세지 발행
+        String channel1 = obj.get("roomNumber") + ":" + message.getToUserId().getUserId();
+        redisTemplate.convertAndSend(channel1, obj.toString());
+        System.out.println("1. 상대방에게 메세지 발행: 상대방 -->> " + channel1);
+
+
+        // 해당 채팅방에 상대방 없으면 이 전 대화 복구를 위해 Redis 임시저장본 -> DB 저장
+//        boolean status = SocketHandler.getSessions().containsKey(message.getChatRoomId().getChatRoomId() + ":" + message.getToUserId().getUserId()); // 이건 서버에서 찾는거
+        boolean userStatus = isUserInRoomNumber(obj.get("roomNumber").toString(), obj.get("toUserId").toString());
+
+        if (!userStatus) {
+            userNotExistsInChatRoom(obj);
+
+            // 2. 상대방이 미 접속시 나에게도 메세지 발행
+            String channel2 = obj.get("roomNumber") + ":" + message.getFromUserId().getUserId();
+            redisTemplate.convertAndSend(channel2, obj.toString());
+        }
+    }
+
+    private void userNotExistsInChatRoom(JSONObject obj) {
+        List<String> messages = findMessagesByChatRoomId("messages:" + obj.get("roomNumber").toString());
+
+        if (messages != null && !messages.isEmpty()) {
+            // 메세지 Entity 로 변환
+            List<ChatMessageEntity> entity = getChatMessageEntities(messages);
+
+            // 임시 저장본 DB 일괄 저장
+            chatMessageRepository.saveAll(entity);
+
+            // 저장 후 Redis 데이터 삭제
+            deleteMessagesByChatRoomId("messages:" + obj.get("roomNumber").toString());
+        }
+    }
+
+    @NotNull
+    private List<ChatMessageEntity> getChatMessageEntities(List<String> messages) {
+        return messages.stream().map(msg -> {
+            String[] parts = msg.split("\\|");
+
+            return new ChatMessageEntity(
+                    chatRoomRepository.findById(Integer.parseInt(parts[0])), // chatRoomId
+                    parts[1],                                                // chatContent
+                    Timestamp.valueOf(parts[2]),                             // chatSendTime
+                    accountRepository.findById(Integer.parseInt(parts[3])),  // fromUser
+                    accountRepository.findById(Integer.parseInt(parts[4])),  // toUser
+                    false                                                    // toIsRead
+            );
+        }).collect(Collectors.toList());
     }
 
 
@@ -119,28 +175,6 @@ public class RedisService {
         redisTemplate.delete("refreshToken:" + userId);
     }
 
-
-    /**
-     * 서버 초기화용 roomNumber~ and messages~ 삭제
-     **/
-    public void initRedis() {
-        // 1. 채팅방 키 삭제
-        Set<String> roomKeys = redisTemplate.keys("room:*");
-        if (roomKeys != null && !roomKeys.isEmpty()) {
-            redisTemplate.delete(roomKeys);
-        } else {
-            System.out.println("RedisService = No roomNumber keys");
-        }
-
-        // 2. 메세지 있다면 저장 후 삭제
-        Set<String> messageKeys = redisTemplate.keys("messages:*");
-        if (messageKeys != null && !messageKeys.isEmpty()) {
-            // DB 저장 안된채로 서버 종료된 경우 잽싸게 저장 -> Redis 초기화
-            saveMessagesToDB(messageKeys);
-        } else {
-            System.out.println("RedisService = No message keys");
-        }
-    }
 
     private void saveMessagesToDB(Set<String> messageKeys) {
 
@@ -169,6 +203,28 @@ public class RedisService {
                 // 저장 후 Redis 데이터 삭제
                 redisTemplate.delete(messageKey);
             }
+        }
+    }
+
+    /**
+     * 서버 초기화용 roomNumber~ and messages~ 삭제
+     **/
+    public void initRedis() {
+        // 1. 채팅방 키 삭제
+        Set<String> roomKeys = redisTemplate.keys("room:*");
+        if (roomKeys != null && !roomKeys.isEmpty()) {
+            redisTemplate.delete(roomKeys);
+        } else {
+            System.out.println("RedisService = No roomNumber keys");
+        }
+
+        // 2. 메세지 있다면 저장 후 삭제
+        Set<String> messageKeys = redisTemplate.keys("messages:*");
+        if (messageKeys != null && !messageKeys.isEmpty()) {
+            // DB 저장 안된채로 서버 종료된 경우 잽싸게 저장 -> Redis 초기화
+            saveMessagesToDB(messageKeys);
+        } else {
+            System.out.println("RedisService = No message keys");
         }
     }
 

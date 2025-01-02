@@ -1,12 +1,12 @@
 package com.boyug.websocket;
 
+import com.boyug.dto.ChatMessageVO;
 import com.boyug.entity.ChatMessageEntity;
 import com.boyug.repository.AccountRepository;
 import com.boyug.repository.ChatMessageRepository;
 import com.boyug.repository.ChatRoomRepository;
 import com.boyug.security.WebUserDetails;
 import com.boyug.service.RedisService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
@@ -16,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -24,16 +23,14 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.security.Principal;
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class SocketHandler extends TextWebSocketHandler {
-    // https://myhappyman.tistory.com/101
-    // https://micropilot.tistory.com/category/Spring%204/WebSocket%20with%20Interceptor
 
     private final TransactionTemplate transactionTemplate;
 
@@ -43,9 +40,11 @@ public class SocketHandler extends TextWebSocketHandler {
     private final ChatMessageRepository chatMessageRepository;
     private final AccountRepository accountRepository;
 
-    // WebSocketSession 저장
-    @Getter
-    static List<HashMap<String, Object>> sessionList = new CopyOnWriteArrayList<>();
+    // Redis pub/sub
+    private final RedisSubscriberConfig redisSubscriberConfig;
+    private final RedisSubscriber redisSubscriber;
+
+    private static final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
 
 
     @Override
@@ -57,42 +56,35 @@ public class SocketHandler extends TextWebSocketHandler {
         String roomNumber = url.split("/chatting/")[1];
 
         // 현재 사용자 정보
-        WebUserDetails userDetails = getUserInfo(session);
-        String userId = String.valueOf(userDetails.getUser().getUserId());
+        WebUserDetails loginUser = (WebUserDetails) session.getAttributes().get("loginUser");
+        String userId = String.valueOf(loginUser.getUser().getUserId());
 
-        // 방 존재 체크 이미 있으면 세션만 추가
-        boolean roomExists = false;
-        for (HashMap<String, Object> existingMap : sessionList) {
-            if (existingMap.get("roomNumber").equals(roomNumber)) {
-                existingMap.put(session.getId(), session);
-                roomExists = true;
-                break;
+        // key 생성
+        String sessionKey = roomNumber + ":" + userId;
+
+        // 기존 세션 종료 (중복 방지)
+        if (sessions.containsKey(sessionKey)) {
+            WebSocketSession oldSession = sessions.remove(sessionKey);
+            try {
+                oldSession.close(); // 기존 세션 강제 종료
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
 
-        // 방이 존재하지 않으면 새로운 방 추가
-        if (!roomExists) {
-            HashMap<String, Object> newMap = new HashMap<>();
-            newMap.put("roomNumber", roomNumber);
-            newMap.put(session.getId(), session);
-            sessionList.add(newMap);
-        }
+        // 새 세션 등록
+        sessions.put(sessionKey, session);
 
-        // Redis 채팅방 접속자 + 세션 ID 저장
+        // Redis 채팅방 접속자 (알림 유무 구분 용도)
         redisService.addUserToRoomNumber(roomNumber, userId);
-        redisService.addSessionToRoomNumber(roomNumber, session.getId());
 
-        // 세션 등록이 끝나면 발급받은 세션ID 값의 메시지 발송
-        JSONObject obj = new JSONObject();
-        obj.put("type", "getId");
-        obj.put("sessionId", session.getId());
-        session.sendMessage(new TextMessage(obj.toJSONString()));
+        // Redis 구독
+        redisSubscriberConfig.subscribe(sessionKey, redisSubscriber);
     }
 
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
-
         Principal user = session.getPrincipal();
         if (user == null) { // 인증 정보 없으면
             session.close(CloseStatus.NOT_ACCEPTABLE); // 연결 종료
@@ -105,49 +97,39 @@ public class SocketHandler extends TextWebSocketHandler {
         // 주기적으로 서버-클라이언트 상태를 확인
         if (msg.equals(("ping"))) {
             session.sendMessage(new TextMessage("pong"));
-            return;
         }
+//        // UI용 메세지 발송
+//        JSONObject obj = jsonToObjectParser(msg);
+//        WebSocketSession ws = sessions.get(obj.get("fromUserId"));
+//        if (ws != null && ws.isOpen()) {
+//            ws.sendMessage(new TextMessage(obj.toJSONString()));
+//        }
+    }
 
-        // 메시지 발송
-        JSONObject obj = jsonToObjectParser(msg);
-        System.out.println(obj.toJSONString());
-        String rN = (String) obj.get("roomNumber");
+    public void sendToUser(ChatMessageVO message) throws IOException {
 
-        HashMap<String, Object> temp = new HashMap<>();
+        JSONObject obj = new JSONObject();
+        obj.put("roomNumber", message.getRoomNumber());
+        obj.put("message", message.getMessage());
+        obj.put("fromUserId", message.getFromUserId());
+        obj.put("toUserId", message.getToUserId());
 
-        boolean roomExists = redisService.isRoomExists(rN);
-        if (roomExists) {
-            for (int i = 0; i < sessionList.size(); i++) {
-                String roomNumber = (String) sessionList.get(i).get("roomNumber"); // 세션리스트의 저장된 방 번호를 가져와서
-                if (roomNumber.equals(rN)) { // 같은 값의 방이 존재한다면
-                    temp = sessionList.get(i); // 해당 방 번호의 세션리스트의 존재하는 모든 object 값을 가져온다.
-                    break;
-                }
-            }
+        // From
+        String fromSessionKey = message.getRoomNumber() + ":" + message.getFromUserId();
+        sendMessageToSynchronized(fromSessionKey, obj);
 
-            // 해당 방의 세션만 찾아서 메시지 발송
-            for (String k : temp.keySet()) {
-                if (k.equals("roomNumber")) { // 다만 방 번호일 경우에는 패스
-                    continue;
-                }
+        // To
+        String toSessionKey = message.getRoomNumber() + ":" + message.getToUserId();
+        sendMessageToSynchronized(toSessionKey, obj);
 
-                WebSocketSession wss = (WebSocketSession) temp.get(k);
-                if (wss != null && wss.isOpen()) {
-                    try {
-                        wss.sendMessage(new TextMessage(obj.toJSONString()));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    // 세션이 없거나 닫혀 있는 경우 알림 생성
-                    try {
-                        if (wss != null) {
-                            wss.close(new CloseStatus(4401, "Session Expired")); // 세션 닫기
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                     temp.remove(k);
+    }
+    // 동기화 블록 -> 세션 있으면 메세지 전송
+    private void sendMessageToSynchronized(String sessionKey, JSONObject obj) throws IOException {
+        WebSocketSession session = sessions.get(sessionKey);
+        if (session != null) {
+            synchronized (session) {
+                if (session.isOpen()) {
+                    session.sendMessage(new TextMessage(obj.toJSONString()));
                 }
             }
         }
@@ -170,20 +152,11 @@ public class SocketHandler extends TextWebSocketHandler {
             String uri = session.getUri().toString();
             String roomNumber = extractRoomNumberFromUri(uri);
 
-            // 채팅방 소켓 종료
-            if (sessionList.size() > 0) { // 소켓이 종료되면 해당 세션값들을 찾아서 지운다.
-                for (int i = 0; i < sessionList.size(); i++) {
-                    HashMap<String, Object> currentMap = sessionList.get(i);
-                    // 방 번호가 일치하는지 확인
-                    if (currentMap.get("roomNumber").equals(roomNumber)) {
-                        currentMap.remove(session.getId()); // 해당 세션만 제거
-                        if (currentMap.size() == 1) { // 아이디만 남은 경우에 해당 건 제거
-                            sessionList.remove(i);
-                        }
-                        break;
-                    }
-                }
-            }
+            // key 생성
+            String sessionKey = roomNumber + ":" + userId;
+
+            // 세션 제거
+            sessions.remove(sessionKey);
 
             boolean userInRoomNumber = redisService.isUserInRoomNumber(roomNumber, userId);
 
@@ -191,11 +164,13 @@ public class SocketHandler extends TextWebSocketHandler {
                 if (!userId.equals("")) {
                     redisService.removeUserFromRoomNumber(roomNumber, userId);
                 }
-                redisService.removeSessionFromRoomNumber(roomNumber, session.getId());
-
                 // 소켓 종료 시 Redis 에 저장된 채팅 DB 저장
                 saveMessagesToDB(roomNumber);
             }
+
+            // Redis 구독 해제
+            redisSubscriberConfig.unsubscribe(sessionKey);
+
             super.afterConnectionClosed(session, status);
         }
     }

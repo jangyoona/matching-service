@@ -160,84 +160,49 @@ $(function() {
             if (msg != null && msg.trim() != '') {
                 var d = JSON.parse(msg);
 
-                // 웹소켓 최초 연결 시 sessionId 응답
-                if (d.type == "getId") {
-                    var si = d.sessionId != null ? d.sessionId : "";
-                    if (si != '') {
-                        $("#sessionId").val(si);
-                    }
-                } else if (d.type == "message") {
-                    if (d.sessionId == $("#sessionId").val()) {
-                        // 내가 보낸 메세지
-                        $(".chat_wrap .inner").append('<div class="item mymsg"><div class="box"><p class="msg" style="height:auto;">' +
-                                                        d.msg + '</p><span class="time">' + currentTime() + '</span></div></div>'
-                                                     );
-                        const currentUrl = encodeURIComponent(window.location.href);
-                        $.ajax({
-                            url: "sendMessage",
-                            data:
-                                {
-                                    message: d.msg,
-                                    roomNumber: d.roomNumber,
-                                    fromUserId : $('#fromUserId').val(),
-                                    toUserId : $('#toUserId').val(),
-                                    uri : currentUrl
-                                },
-                            contentType: "application/json; charset=UTF-8",
-                            success: function(res, status, xhr) {
-                                if(res) {
-                                    console.log('메세지 저장 완료');
-                                }
-                            },
-                            error: function(xhr, status, err) {
-                                if(xhr.status === 401) {
-                                    alert("로그인 세션이 만료되었습니다. 다시 로그인 해주세요.");
-                                    window.close();
-                                } else {
-                                    alert('메세지 전송 중 오류가 발생했습니다. 새로 고침 후 다시 시도해 주세요.');
-                                }
-                            }
-                        });
-                    } else {
-                        $.ajax({
-                            url: "/checkLoginStatus",
-                            success: function(resp) {
-                                if(!resp) {
-                                    alert('로그인 세션이 만료되었습니다. 다시 로그인 해주세요.');
-                                    window.close();
-                                }
-                            },
-                            error: function(error) {
+                if (d.fromUserId == $("#fromUserId").val()) {
+                    // 내가 보낸 메세지
+                    $(".chat_wrap .inner").append('<div class="item mymsg"><div class="box"><p class="msg" style="height:auto;">' +
+                                                    d.message + '</p><span class="time">' + currentTime() + '</span></div></div>'
+                                                 );
+                } else {
+                    $.ajax({
+                        url: "/checkLoginStatus",
+                        success: function(resp) {
+                            if(!resp) {
                                 alert('로그인 세션이 만료되었습니다. 다시 로그인 해주세요.');
-                                if(ws) {
-                                    ws.close();
-                                }
                                 window.close();
                             }
-                        });
+                        },
+                        error: function(error) {
+                            alert('로그인 세션이 만료되었습니다. 다시 로그인 해주세요.');
+                            if(ws) {
+                                ws.close();
+                            }
+                            window.close();
+                        }
+                    });
 
-                        const otherUserImg = $('.other-image').last().attr('src');
-                        // 상대방이 보낸 메세지
-                        $(".chat_wrap .inner").append(
-                                  '<div class="item yourmsg" style="margin-left:-9px;">' +
-                                  '<div class="testimonial-img p-1" style="width:4rem; display:inline-block">' +
-                                  '<img src="' + otherUserImg + '" class="img-fluid rounded-circle" alt="Image" style="background-color:white; aspect-ratio: 1 / 1;">' +
-                                  '</div>' +
-                                  '<div class="box" style="margin-left: 0.5rem; margin-top:1.5rem; position:relative; top:0.6rem;">' +
-                                  '<p class="msg" style="height:auto;">' + d.msg + '</p><span class="time" style="margin-bottom:1.2rem;">' + currentTime() + '</span>' +
-                                  '</div></div>'
-                        );
-                    }
-                    var lastItem = $(".chat_wrap .inner").find(".item:last");
-                    setTimeout(function() {
-                        lastItem.addClass("on");
-                    }, 10);
-
-                    var position = lastItem.position().top + $(".chat_wrap .inner").scrollTop();
-                    $(".chat_wrap .inner").stop().animate({scrollTop: position}, 500);
-                } else {
-                    console.warn("unknown type!");
+                    const otherUserImg = $('.other-image').last().attr('src');
+                    // 상대방이 보낸 메세지
+                    $(".chat_wrap .inner").append(
+                              '<div class="item yourmsg" style="margin-left:-9px;">' +
+                              '<div class="testimonial-img p-1" style="width:4rem; display:inline-block">' +
+                              '<img src="' + otherUserImg + '" class="img-fluid rounded-circle" alt="Image" style="background-color:white; aspect-ratio: 1 / 1;">' +
+                              '</div>' +
+                              '<div class="box" style="margin-left: 0.5rem; margin-top:1.5rem; position:relative; top:0.6rem;">' +
+                              '<p class="msg" style="height:auto;">' + d.message + '</p><span class="time" style="margin-bottom:1.2rem;">' + currentTime() + '</span>' +
+                              '</div></div>'
+                    );
                 }
+                var lastItem = $(".chat_wrap .inner").find(".item:last");
+                setTimeout(function() {
+                    lastItem.addClass("on");
+                }, 10);
+
+                var position = lastItem.position().top + $(".chat_wrap .inner").scrollTop();
+                $(".chat_wrap .inner").stop().animate({scrollTop: position}, 500);
+
             } else {
                 alert('잘못 수신된 메세지');
             }
@@ -252,7 +217,7 @@ $(function() {
             }
 
             if(e.code === 1006) {
-                alert("서버 종료 및 Access 토큰 재발급");
+                console.log("서버 종료 및 Access 토큰 재발급");
             }
 
             if(e.code === 4001) { // 클라이언트 ping 발송 실패
@@ -317,20 +282,37 @@ $(function() {
         send();
     });
 
+    // 메세지 발송
     function send() {
         var message = $("#chatting").val().trim();
         if (message === "") {
             return;
         }
-        var option = {
-            type: "message",
-            roomNumber: $("#roomNumber").val(),
-            sessionId: $("#sessionId").val(),
-            fromUserId: $("#fromUserId").val(),
-            toUserId: $('#toUserId').val(),
-            msg: message
-        };
-        ws.send(JSON.stringify(option));
+
+        $.ajax({
+            url: "sendMessage",
+            data:
+                {
+                    roomNumber: $("#roomNumber").val(),
+                    message: message,
+                    fromUserId : $('#fromUserId').val(),
+                    toUserId : $('#toUserId').val()
+                },
+            contentType: "application/json; charset=UTF-8",
+            success: function(res, status, xhr) {
+                if(res) {
+                    console.log('메세지 저장 완료');
+                }
+            },
+            error: function(xhr, status, err) {
+                if(xhr.status === 401) {
+                    alert("로그인 세션이 만료되었습니다. 다시 로그인 해주세요.");
+                    window.close();
+                } else {
+                    alert('메세지 전송 중 오류가 발생했습니다. 새로 고침 후 다시 시도해 주세요.');
+                }
+            }
+        });
         $('#chatting').val("");
     }
 

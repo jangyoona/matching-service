@@ -18,6 +18,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -57,10 +58,7 @@ public class RootConfiguration {
 	// redisTemplate
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
-		RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
-		config.setHostName(redisHost); // EC2 프록시 서버 주소
-		config.setPort(6379);
-
+		RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisHost, 6379);
 		return new LettuceConnectionFactory(config);
 	}
 
@@ -78,6 +76,13 @@ public class RootConfiguration {
 		// 설정 초기화
 //		template.afterPropertiesSet();
 		return template;
+	}
+
+	@Bean
+	public RedisMessageListenerContainer redisMessageListenerContainer() {
+		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+		container.setConnectionFactory(redisConnectionFactory()); // 팩토리 설정
+		return container;
 	}
 
 
