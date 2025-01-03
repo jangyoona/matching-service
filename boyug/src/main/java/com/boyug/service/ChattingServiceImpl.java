@@ -6,41 +6,27 @@ import com.boyug.entity.ChatRoomEntity;
 import com.boyug.repository.ChatMessageRepository;
 import com.boyug.repository.ChatRoomRepository;
 import com.boyug.security.WebUserDetails;
-import com.boyug.security.jwt.JwtUtil;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
+@RequiredArgsConstructor
 public class ChattingServiceImpl implements ChattingService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final AccountService accountService;
-    private final JwtUtil jwtUtil;
+    private final RedisService redisService;
 
     // NotificationService 와 순환 참조로 인해 이벤트 객체 생성
     private final ApplicationEventPublisher eventPublisher;
-
-    private final RedisService redisService;
-
-    public ChattingServiceImpl(ApplicationEventPublisher eventPublisher, JwtUtil jwtUtil, AccountService accountService,
-                               ChatMessageRepository chatMessageRepository, ChatRoomRepository chatRoomRepository, RedisService redisService) {
-        this.eventPublisher = eventPublisher;
-        this.jwtUtil = jwtUtil;
-        this.accountService = accountService;
-        this.chatMessageRepository = chatMessageRepository;
-        this.chatRoomRepository = chatRoomRepository;
-        this.redisService = redisService;
-    }
-
 
     private static final String WELCOME_MESSAGE = "안녕하세요 문의사항을 남겨주시면 확인 후 답변드리겠습니다.";
 

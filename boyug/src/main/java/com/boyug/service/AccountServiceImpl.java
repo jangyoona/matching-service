@@ -13,8 +13,10 @@ import com.boyug.entity.UserEntity;
 import com.boyug.repository.AccountRepository;
 import com.boyug.repository.BoyugUserRepository;
 import com.boyug.repository.ProfileImageRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,25 +25,21 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
+@RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
-    @Setter
-    private AccountRepository accountRepository;
-
-    @Setter
-    private ProfileImageRepository profileImageRepository;
-
-    @Setter
-    private BoyugUserRepository boyugUserRepository;
-
-    @Setter
-    private KaKaoApi kakaoApi;
+    private final AccountRepository accountRepository;
+    private final ProfileImageRepository profileImageRepository;
+    private final BoyugUserRepository boyugUserRepository;
+    private final KaKaoApi kakaoApi;
 
     @Value("${file.profile-dir}")
     private String profileDir;
 
     @Value("${file.boyugfile-dir}")
     private String boyugFileDir;
+
 
     @Override
     public UserDto getUserInfoWithProfileImage(int userId) {

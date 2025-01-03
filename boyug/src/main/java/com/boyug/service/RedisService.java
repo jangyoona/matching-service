@@ -102,44 +102,41 @@ public class RedisService {
         obj.put("chatSendTime", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
                 .format(new Date())); // 문자열로 변환
 
-
+        String roomNumber = obj.get("roomNumber").toString();
 
         // 1. 상대방에게 메세지 발행
-        String channel1 = obj.get("roomNumber") + ":" + message.getToUserId().getUserId();
+        String channel1 = roomNumber + ":" + message.getToUserId().getUserId();
         redisTemplate.convertAndSend(channel1, obj.toString());
-        System.out.println("1. 상대방에게 메세지 발행: 상대방 -->> " + channel1);
 
+        // 2. 나에게도 메세지 발행
+        String channel2 = roomNumber + ":" + message.getFromUserId().getUserId();
+        redisTemplate.convertAndSend(channel2, obj.toString());
 
-        // 해당 채팅방에 상대방 없으면 이 전 대화 복구를 위해 Redis 임시저장본 -> DB 저장
 //        boolean status = SocketHandler.getSessions().containsKey(message.getChatRoomId().getChatRoomId() + ":" + message.getToUserId().getUserId()); // 이건 서버에서 찾는거
-        boolean userStatus = isUserInRoomNumber(obj.get("roomNumber").toString(), obj.get("toUserId").toString());
-
+        boolean userStatus = isUserInRoomNumber(roomNumber, obj.get("toUserId").toString());
         if (!userStatus) {
-            userNotExistsInChatRoom(obj);
-
-            // 2. 상대방이 미 접속시 나에게도 메세지 발행
-            String channel2 = obj.get("roomNumber") + ":" + message.getFromUserId().getUserId();
-            redisTemplate.convertAndSend(channel2, obj.toString());
+            // 해당 채팅방에 상대방 없으면 이 전 대화 복구를 위해 Redis 임시저장본 -> DB 저장
+            convertAndSaveToMessages(roomNumber);
         }
     }
 
-    private void userNotExistsInChatRoom(JSONObject obj) {
-        List<String> messages = findMessagesByChatRoomId("messages:" + obj.get("roomNumber").toString());
+    private void convertAndSaveToMessages(String roomNumber) {
+        List<String> messages = findMessagesByChatRoomId("messages:" + roomNumber);
 
         if (messages != null && !messages.isEmpty()) {
             // 메세지 Entity 로 변환
-            List<ChatMessageEntity> entity = getChatMessageEntities(messages);
+            List<ChatMessageEntity> entity = convertMessagesToEntities(messages);
 
             // 임시 저장본 DB 일괄 저장
             chatMessageRepository.saveAll(entity);
 
             // 저장 후 Redis 데이터 삭제
-            deleteMessagesByChatRoomId("messages:" + obj.get("roomNumber").toString());
+            deleteMessagesByChatRoomId("messages:" + roomNumber);
         }
     }
 
     @NotNull
-    private List<ChatMessageEntity> getChatMessageEntities(List<String> messages) {
+    private List<ChatMessageEntity> convertMessagesToEntities(List<String> messages) {
         return messages.stream().map(msg -> {
             String[] parts = msg.split("\\|");
 

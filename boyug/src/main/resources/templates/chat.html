@@ -75,7 +75,7 @@
             </th:block>
 
             <!-- roomList Start -->
-            <th:block th:if="${ userRoomList == null }">
+            <th:block th:if="${ userRoomList == null || userRoomList.isEmpty }">
                 <span text="이 전 대화 목록이 없습니다."></span>
             </th:block>
             <th:block sec:authorize="isAuthenticated()">

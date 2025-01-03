@@ -3,9 +3,7 @@ package com.boyug.repository;
 import com.boyug.dto.NotificationDto;
 import com.boyug.entity.NotificationEntity;
 import com.boyug.entity.UserEntity;
-import org.hibernate.annotations.BatchSize;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -33,11 +31,17 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
 
     @Modifying
     @Transactional
-    @Query("UPDATE NotificationEntity n SET n.isRead = true WHERE n.notificationId = :notificationId")
+    @Query("UPDATE NotificationEntity n " +
+            "SET n.isRead = true " +
+            "WHERE n.notificationId = :notificationId " +
+            "AND n.isRead = false")
     void updateIsReadByNotificationId(int notificationId);
 
     @Modifying
     @Transactional
-    @Query("UPDATE NotificationEntity n SET n.isRead = true WHERE n.toUser.userId = :userId")
+    @Query("UPDATE NotificationEntity n " +
+            "SET n.isRead = true " +
+            "WHERE n.toUser.userId = :userId " +
+            "AND n.isRead = false")
     void updateIsReadByToUserId(int userId);
 }

@@ -304,7 +304,7 @@ $(function() {
                     console.log('메세지 저장 완료');
                 }
             },
-            error: function(xhr, status, err) {
+            error: function(xhr) {
                 if(xhr.status === 401) {
                     alert("로그인 세션이 만료되었습니다. 다시 로그인 해주세요.");
                     window.close();

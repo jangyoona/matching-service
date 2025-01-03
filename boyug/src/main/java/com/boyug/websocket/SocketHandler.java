@@ -106,7 +106,10 @@ public class SocketHandler extends TextWebSocketHandler {
 //        }
     }
 
-    public void sendToUser(ChatMessageVO message) throws IOException {
+    /**
+     * Redis Message 발행 시 웹소켓으로 전송 메서드
+     **/
+    public void sendMessageToSynchronized(ChatMessageVO message, String subscriber) throws IOException {
 
         JSONObject obj = new JSONObject();
         obj.put("roomNumber", message.getRoomNumber());
@@ -114,17 +117,10 @@ public class SocketHandler extends TextWebSocketHandler {
         obj.put("fromUserId", message.getFromUserId());
         obj.put("toUserId", message.getToUserId());
 
-        // From
-        String fromSessionKey = message.getRoomNumber() + ":" + message.getFromUserId();
-        sendMessageToSynchronized(fromSessionKey, obj);
+        // 수신자 sessionKey 설정
+        String sessionKey = message.getRoomNumber() + ":" + subscriber;
 
-        // To
-        String toSessionKey = message.getRoomNumber() + ":" + message.getToUserId();
-        sendMessageToSynchronized(toSessionKey, obj);
-
-    }
-    // 동기화 블록 -> 세션 있으면 메세지 전송
-    private void sendMessageToSynchronized(String sessionKey, JSONObject obj) throws IOException {
+        // 각자의 서버에 session 존재 시 웹소켓 채팅 발송
         WebSocketSession session = sessions.get(sessionKey);
         if (session != null) {
             synchronized (session) {
@@ -134,6 +130,7 @@ public class SocketHandler extends TextWebSocketHandler {
             }
         }
     }
+
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
@@ -152,21 +149,15 @@ public class SocketHandler extends TextWebSocketHandler {
             String uri = session.getUri().toString();
             String roomNumber = extractRoomNumberFromUri(uri);
 
-            // key 생성
+            // key 생성 및 세션 제거
             String sessionKey = roomNumber + ":" + userId;
-
-            // 세션 제거
             sessions.remove(sessionKey);
 
-            boolean userInRoomNumber = redisService.isUserInRoomNumber(roomNumber, userId);
+            // Redis 해당 채팅방 유저 접속 정보 삭제
+            redisService.removeUserFromRoomNumber(roomNumber, userId);
 
-            if (userInRoomNumber) {
-                if (!userId.equals("")) {
-                    redisService.removeUserFromRoomNumber(roomNumber, userId);
-                }
-                // 소켓 종료 시 Redis 에 저장된 채팅 DB 저장
-                saveMessagesToDB(roomNumber);
-            }
+            // Redis 임시저장 채팅 존재할 경우 DB 저장 후 종료
+            saveMessagesToDB(roomNumber);
 
             // Redis 구독 해제
             redisSubscriberConfig.unsubscribe(sessionKey);

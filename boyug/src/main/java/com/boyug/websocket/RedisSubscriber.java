@@ -23,12 +23,15 @@ public class RedisSubscriber implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         String channel = new String(pattern);
-        String msg = message.toString();
-        ChatMessageVO vo = parseMessage(msg);
+        ChatMessageVO vo = parseMessage(message.toString());
 
-        // 메시지 처리 및 전달
+        // 방번호:userId 에서 수신자 추출
+        String[] channelParts = channel.split(":");
+        String subscriber = channelParts[channelParts.length - 1];
+
+        // 메세지 WebSocket 발송
         try {
-            socketHandler.sendToUser(vo);
+            socketHandler.sendMessageToSynchronized(vo, subscriber);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -45,4 +48,5 @@ public class RedisSubscriber implements MessageListener {
             throw new RuntimeException("Message parsing failed", e);
         }
     }
+
 }

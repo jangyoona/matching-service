@@ -17,10 +17,13 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, 
     // 메세지 읽음 처리
     @Modifying
     @Transactional
-    @Query("UPDATE ChatMessageEntity c SET c.toIsRead = true WHERE c.chatRoom.chatRoomId = :chatRoomId AND c.toUser.userId = :toUserId")
+    @Query("UPDATE ChatMessageEntity c " +
+            "SET c.toIsRead = true " +
+            "WHERE c.chatRoom.chatRoomId = :chatRoomId " +
+            "AND c.toUser.userId = :toUserId " +
+            "AND c.toIsRead = false")
     void updateToIsRead(int chatRoomId, int toUserId);
 
-//    @Query("SELECT COUNT(DISTINCT cr.chatRoomId) " +
     @Query("SELECT DISTINCT cr.chatRoomId " +
                 "FROM ChatMessageEntity cm " +
                 "JOIN cm.chatRoom cr " +

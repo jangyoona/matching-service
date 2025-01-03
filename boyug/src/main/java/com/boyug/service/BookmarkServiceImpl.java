@@ -5,16 +5,19 @@ import com.boyug.dto.UserDto;
 import com.boyug.entity.BookmarkEntity;
 import com.boyug.entity.BookmarkId;
 import com.boyug.repository.BookmarkRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
+@RequiredArgsConstructor
 public class BookmarkServiceImpl implements BookmarkService{
 
-    @Setter
-    BookmarkRepository bookmarkRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     @Override
     public void insertProgramBookmark(UserDto fromUser, UserDto toUser) {

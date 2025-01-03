@@ -9,6 +9,7 @@ import com.boyug.repository.NotificationRepository;
 import com.boyug.websocket.SocketHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.java.Log;
 import org.slf4j.Logger;
@@ -17,31 +18,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Service
+@RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
 
     private static final Logger log = LoggerFactory.getLogger(NotificationServiceImpl.class);
-    @Setter
-    private NotificationRepository notificationRepository;
 
-    @Setter(onMethod_ = { @Autowired})
-    ChattingService chattingService;
+    private final NotificationRepository notificationRepository;
+    private final ChattingService chattingService;
+    private final AccountService accountService;
+    private final RedisService redisService;
 
-    @Setter(onMethod_ = { @Autowired})
-    AccountService accountService;
-
-    @Setter(onMethod_ = { @Autowired})
-    RedisService redisService;
-
-    private static Map<String, SseEmitter> emitters = new HashMap<>();
+    private static final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
 
     @Override

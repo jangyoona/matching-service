@@ -99,26 +99,6 @@ public class RootConfiguration {
 		return new JdbcTemplate(dataSource());
 	}
 
-
-	@Bean
-	public HomeService homeService(AccountService accountService, ActivityService activityService) throws Exception {
-		HomeServiceImpl homeService = new HomeServiceImpl();
-		homeService.setAccountService(accountService);
-		homeService.setActivityService(activityService);
-		return homeService;
-	}
-
-	@Bean
-	public AccountService accountService(AccountRepository accountRepository, ProfileImageRepository profileImageRepository,
-										 BoyugUserRepository boyugUserRepository, KaKaoApi kaKaoApi) throws Exception {
-		AccountServiceImpl accountService = new AccountServiceImpl();
-		accountService.setAccountRepository(accountRepository);
-		accountService.setProfileImageRepository(profileImageRepository);
-		accountService.setBoyugUserRepository(boyugUserRepository);
-		accountService.setKakaoApi(kaKaoApi);
-		return accountService;
-	}
-
 	@Bean
 	public AdminService adminService(AdminRepository adminRepository, AdminUserDetailRepository adminUserDetailRepository,
 									 AdminBoyugUserRepository adminBoyugUserRepository, AdminUserRepository adminUserRepository,
@@ -206,21 +186,6 @@ public class RootConfiguration {
 		return boyugMyPageService;
 	}
 
-	@Bean
-	public NotificationService notificationService(NotificationRepository notificationRepository) throws Exception {
-		NotificationServiceImpl notificationService = new NotificationServiceImpl();
-		notificationService.setNotificationRepository(notificationRepository);
-//		notificationService.setChattingHelper(chattingHelper);
-		return notificationService;
-	}
-
-	@Bean
-	public BookmarkService bookmarkService(BookmarkRepository bookmarkRepository) throws Exception {
-		BookmarkServiceImpl bookmarkService = new BookmarkServiceImpl();
-		bookmarkService.setBookmarkRepository(bookmarkRepository);
-		return bookmarkService;
-	}
-
 	// JPA 트랜잭션
 	@Bean
 	public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
@@ -237,13 +202,6 @@ public class RootConfiguration {
 		TransactionTemplate transactionTemplate = new TransactionTemplate();
 		transactionTemplate.setTransactionManager(transactionManager(entityManagerFactory));
 		return transactionTemplate;
-	}
-
-	@Bean
-	SangDamService sangDamService(SangDamRepository sangDamRepository) throws Exception {
-		SangDamServiceImpl sangDamService = new SangDamServiceImpl();
-		sangDamService.setSangDamRepository(sangDamRepository);
-		return sangDamService;
 	}
 }
 

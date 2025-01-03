@@ -3,19 +3,19 @@ package com.boyug.service;
 import com.boyug.dto.BoyugProgramDto;
 import com.boyug.dto.ProfileImageDto;
 import com.boyug.dto.UserDto;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
+@RequiredArgsConstructor
 public class HomeServiceImpl implements HomeService {
 
-    @Setter
-    AccountService accountService;
-
-    @Setter
-    ActivityService activityService;
+    private final AccountService accountService;
+    private final ActivityService activityService;
 
 
     /*
