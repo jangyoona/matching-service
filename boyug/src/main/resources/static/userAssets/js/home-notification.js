@@ -65,6 +65,8 @@ $(function() {
                 if(!resp) {
                     alert("채팅방 접속 중 오류가 발생하였습니다.");
                     href.reload();
+                } else {
+                    $('.container-fluid #nav-container-box').load('/navbar');
                 }
             });
 

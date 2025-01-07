@@ -22,10 +22,11 @@ public class RedisSubscriber implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        String channel = new String(pattern);
+
         ChatMessageVO vo = parseMessage(message.toString());
 
         // 방번호:userId 에서 수신자 추출
+        String channel = new String(pattern);
         String[] channelParts = channel.split(":");
         String subscriber = channelParts[channelParts.length - 1];
 
