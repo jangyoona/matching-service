@@ -2,7 +2,7 @@
 // https://velog.io/@hi_young/input-%EB%82%A0%EC%A7%9C%EC%9E%90%EB%8F%99-%ED%95%98%EC%9D%B4%ED%94%88-%EC%88%AB%EC%9E%90%EB%A7%8C-%EC%9E%85%EB%A0%A5
 
 $('.container-fluid #nav-container-box').load('/navbar');
-$('#privacy-container').load('/userView/account/privacy-policy');
+
 
 // ajax function
 function commonAjax(url, method, data, successCallback) {
