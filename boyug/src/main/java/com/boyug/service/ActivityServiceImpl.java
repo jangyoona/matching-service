@@ -4,6 +4,7 @@ import com.boyug.dto.*;
 import com.boyug.entity.*;
 import com.boyug.repository.*;
 import lombok.Setter;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -309,6 +310,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+//    @CacheEvict(value = "recentProgramList", allEntries = true) // allEntries ? 기존 저장된 값을 모두 제거할래?
     public void writeBoyugProgram(BoyugProgramDto program) {
 
         // 보육 프로그램 모집 글 저장

@@ -11,14 +11,18 @@ import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -76,6 +80,20 @@ public class RootConfiguration {
 		// 설정 초기화
 //		template.afterPropertiesSet();
 		return template;
+	}
+
+	// Cache 직렬화 설정
+	@Bean
+	public CacheManager cacheManager(RedisConnectionFactory connectionFactory) throws Exception{
+		RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager.builder(redisTemplate(connectionFactory).getConnectionFactory());
+
+		// 기본 캐시 설정 (직렬화 방식 설정)
+		builder.cacheDefaults(
+				RedisCacheConfiguration.defaultCacheConfig()
+						.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+		);
+
+		return builder.build();
 	}
 
 	@Bean

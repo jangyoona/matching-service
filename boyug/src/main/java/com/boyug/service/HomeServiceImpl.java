@@ -4,6 +4,7 @@ import com.boyug.dto.BoyugProgramDto;
 import com.boyug.dto.ProfileImageDto;
 import com.boyug.dto.UserDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class HomeServiceImpl implements HomeService {
     /*
     * 메인 최신 공고글 20개 노출
     * */
+//    @Cacheable("recentProgramList")
     @Override
     public Page<BoyugProgramDto> getLatestBoyugProgramList() {
 

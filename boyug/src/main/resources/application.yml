@@ -18,6 +18,8 @@ spring:
       naming:
         physical-strategy: ${NAMING_PHYSICAL}
     show-sql: ${JPA_SHOW_SQL}
+  cache:
+    type: REDIS
   data:
     redis:
       port: 6379

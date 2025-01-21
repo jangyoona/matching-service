@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BoyugProgramDto {
+public class BoyugProgramDto implements Serializable{
+//public class BoyugProgramDto implements Serializable{
+//    private static final long serialVersionUID = 1L;
 
     private int boyugProgramId;
     private String boyugProgramName;
@@ -24,6 +27,7 @@ public class BoyugProgramDto {
     private int boyugProgramCount;
     private boolean boyugProgramIsOpen;
 
+//    private transient List<BoyugProgramDetailDto> programDetails;
     private List<BoyugProgramDetailDto> programDetails;
 
     private UserDto user;
