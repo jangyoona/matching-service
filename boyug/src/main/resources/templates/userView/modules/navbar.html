@@ -63,6 +63,7 @@
             </th:block>
             <th:block sec:authorize="isAuthenticated()">
                 <a th:if="${#authentication.principal.user.userCategory == 2}" href="/myPage/boyug-my-info">내정보</a>
+                <a th:if="${#authentication.principal.user.userCategory == 3}" href="/personal/personalHome">내정보</a>
             </th:block>
     <!--        <div>-->
     <!--            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>-->
