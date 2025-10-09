@@ -103,12 +103,17 @@
                 </div>
                 <div class="page">
                     <a th:href="@{boyugProgramList(page=0)}">처음</a>
-                    <th:block th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
-                        <a th:class="${pageNum == currentPage ? 'currentPage-active' : ''}"
-                           th:href="@{boyugProgramList(page=${pageNum}, size=${size})}"
-                           th:text="${pageNum + 1}">1</a>
+                    <th:block th:if="${totalPages > 0}">
+                        <th:block th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+                            <a th:class="${pageNum == currentPage ? 'currentPage-active' : ''}"
+                               th:href="@{boyugProgramList(page=${pageNum}, size=${size})}"
+                               th:text="${pageNum + 1}">1</a>
+                        </th:block>
                     </th:block>
-                    <a th:href="@{boyugProgramList(page=${totalPages -1})}">마지막</a>
+                    <th:block th:if="${totalPages == 0}">
+                        <a th:class="${pageNum == currentPage ? 'currentPage-active' : ''}">1</a>
+                    </th:block>
+                    <a th:href="@{boyugProgramList(page=${(totalPages == 0) ? 0 : totalPages - 1})}">마지막</a>
                 </div>
             </div>
         </div>
